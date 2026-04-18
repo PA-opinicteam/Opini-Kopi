@@ -288,8 +288,3 @@ Untuk generate format struk thermal printer (printer kasir).
 </p>
 
 
-<p align="center">
-  <sub>🤎 Terima kasih telah menggunakan Opini POS 🤎</sub>
-</p>
-
-
