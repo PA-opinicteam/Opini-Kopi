@@ -745,14 +745,14 @@ class _ReportPageState extends State<ReportPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                "Riwayat Order",
+                "Riwayat Transaksi",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
               const SizedBox(height: 16),
               if (orders.isEmpty)
                 const SizedBox(
                   height: 120,
-                  child: Center(child: Text("Belum ada riwayat order")),
+                  child: Center(child: Text("Belum ada riwayat Transaksi")),
                 )
               else
                 ListView.separated(

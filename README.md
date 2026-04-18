@@ -22,17 +22,33 @@ Melalui aplikasi ini, mitra dapat melakukan pengelolaan bisnis secara lebih efek
 
 ## b). Halaman Login
 
-<img width="1919" height="909" alt="image" src="https://github.com/user-attachments/assets/c974dc96-2d27-4dfc-bfdb-22eb8a349b4c" />
+<img width="1919" height="907" alt="image" src="https://github.com/user-attachments/assets/08e10d2f-2831-435d-8e5a-a2e2c45fac65" />
 
-- Halaman login digunakan sebagai akses awal untuk masuk ke dalam sistem aplikasi.
-- Pengguna diminta memasukkan email dan password yang telah terdaftar.
-- Sistem akan memverifikasi data login untuk menentukan hak akses pengguna, baik sebagai kasir maupun owner.
-- Terdapat fitur untuk menyembunyikan atau menampilkan password guna meningkatkan kenyamanan pengguna.
-- Setelah login berhasil, pengguna akan diarahkan ke halaman sesuai dengan role yang dimiliki.
+- Halaman login sebagai akses awal ke sistem.
+- Pengguna memasukkan email dan password yang terdaftar.
+- Sistem memverifikasi data dan menentukan role (kasir/owner).
+- Tersedia fitur show/hide password.
+- Pengguna diarahkan ke halaman sesuai role setelah login.
 
 ## c). Halaman Dashboard Owner
 
-<img width="1919" height="908" alt="image" src="https://github.com/user-attachments/assets/0530a63e-5d13-446c-99e7-6863cbe59b78" />
+### Preview Dashboard Owner
+
+<table align="center">
+  <tr>
+    <td align="center">
+      <img width="1919" height="910" alt="image" src="https://github.com/user-attachments/assets/73b02b44-b285-4052-94d8-d7f0d01d0d8e" />
+     <br/>
+      <sub><b>Desktop View</b></sub>
+    </td>
+    <td align="center">
+      <img width="621" height="906" alt="image" src="https://github.com/user-attachments/assets/c3316228-b502-457e-b9f8-ea39659ed2af" />
+     <br/>
+      <sub><b>Mobile View</b></sub>
+    </td>
+  </tr>
+</table>
+
 
 - Halaman dashboard menampilkan ringkasan bisnis secara keseluruhan dalam satu tampilan utama sehingga memudahkan owner dalam memantau kondisi usaha.
 - Informasi penjualan hari ini ditampilkan secara langsung untuk memberikan gambaran pendapatan harian secara cepat.
@@ -44,10 +60,24 @@ Melalui aplikasi ini, mitra dapat melakukan pengelolaan bisnis secara lebih efek
 
 ## d). Halaman Manajemen Menu Owner
 
-<img width="1916" height="898" alt="image" src="https://github.com/user-attachments/assets/e4d7bc67-5c1e-4fdf-8b52-c7be92d97054" />
+### Preview Manajemen Menu Owner
+
+<table align="center">
+  <tr>
+    <td align="center">
+      <img width="1919" height="906" alt="image" src="https://github.com/user-attachments/assets/d0f0b0fd-c892-4770-a031-83422c35157e" />
+       <br/>
+      <sub><b>Desktop View</b></sub>
+    </td>
+    <td align="center">
+      <img width="616" height="903" alt="image" src="https://github.com/user-attachments/assets/66f6cfba-cb13-4158-85c7-22e9722e5444" />
+      <sub><b>Mobile View</b></sub>
+    </td>
+  </tr>
+</table>
 
 - Halaman manajemen menu digunakan untuk mengelola seluruh daftar produk yang dijual oleh mitra dalam satu tampilan terpusat.
-- Owner dapat melihat informasi produk secara lengkap seperti nama produk, harga, kategori, dan status ketersediaan.
+- Owner dapat melihat informasi produk secara lengkap seperti nama produk, harga, kategori, dan status.
 - Fitur pencarian produk memudahkan owner dalam menemukan menu tertentu secara cepat.
 - Fitur filter kategori memungkinkan penyaringan produk berdasarkan jenis tertentu, seperti coffee atau non-coffee.
 - Owner dapat menambahkan produk baru melalui tombol tambah menu yang tersedia pada bagian atas halaman.
@@ -58,17 +88,30 @@ Melalui aplikasi ini, mitra dapat melakukan pengelolaan bisnis secara lebih efek
 
 ## e). Halaman Laporan Penjualan Owner
 
-<img width="1918" height="904" alt="image" src="https://github.com/user-attachments/assets/c91a6a67-b338-4482-b072-caedbd9106dc" />
+### Preview Laporan Penjualan Owner
 
-- Halaman laporan penjualan digunakan untuk memantau performa bisnis secara lebih detail berdasarkan periode waktu tertentu.
-- Owner dapat memilih tampilan data secara mingguan atau bulanan sesuai kebutuhan analisis.
-- Fitur pemilihan tanggal memungkinkan owner untuk melihat data pada rentang waktu tertentu secara fleksibel.
-- Total penjualan ditampilkan sebagai indikator utama untuk mengetahui pendapatan dalam periode yang dipilih.
-- Jumlah total order ditampilkan untuk menunjukkan banyaknya transaksi yang terjadi.
-- Rata-rata nilai transaksi (average order) membantu owner dalam memahami nilai pembelian pelanggan.
-- Grafik penjualan disajikan dalam bentuk visual untuk melihat tren naik atau turun dalam periode tertentu.
-- Informasi top produk menampilkan daftar produk dengan penjualan tertinggi untuk membantu analisis produk paling diminati.
-- Data top produk juga menunjukkan jumlah terjual sehingga memudahkan evaluasi performa masing-masing produk.
+<table align="center">
+  <tr>
+    <td align="center">
+      <img width="1919" height="914" alt="image" src="https://github.com/user-attachments/assets/28e2cd93-d68d-4033-980f-75a65d73c341" />
+       <br/>
+      <sub><b>Desktop View</b></sub>
+    </td>
+    <td align="center">
+      <img width="619" height="906" alt="image" src="https://github.com/user-attachments/assets/9dc44021-29c5-4c7a-8319-2b5ded63b55a" />
+      <sub><b>Mobile View</b></sub>
+    </td>
+  </tr>
+</table>
+
+- Halaman laporan penjualan digunakan untuk memantau performa bisnis berdasarkan periode tertentu (mingguan/bulanan).
+- Owner dapat memilih rentang tanggal secara fleksibel untuk melihat data yang diinginkan.
+- Menampilkan total penjualan, jumlah order, dan rata-rata transaksi.
+- Dilengkapi grafik untuk melihat tren penjualan.
+- Menampilkan beberapa top produk beserta jumlah terjual.
+- Tersedia fitur export laporan ke PDF dan Excel.
+- Menampilkan riwayat transaksi pada bagian bawah.
+
 
 ## f). Halaman Manajemen Stok Owner
 
@@ -102,16 +145,7 @@ Melalui aplikasi ini, mitra dapat melakukan pengelolaan bisnis secara lebih efek
 - Tersedia aksi hapus untuk menghapus user dari sistem.
 - Status user ditampilkan untuk menunjukkan apakah akun sedang aktif atau tidak.
 
-## h). Halaman Settings Owner
-
-<img width="1919" height="908" alt="image" src="https://github.com/user-attachments/assets/eb1efa5f-5c74-4da2-84dd-162d7083a94a" />
-
-- Halaman settings digunakan untuk mengelola informasi bisnis dan preferensi sistem sesuai kebutuhan operasional.
-- Bagian profil bisnis menampilkan informasi utama seperti nama toko, nomor telepon, dan alamat usaha.
-- Bagian akun menampilkan informasi pengguna seperti nama dan email yang digunakan dalam sistem.
-- Bagian preferensi sistem memungkinkan pengaturan pajak (tax rate) dan jenis pembayaran yang digunakan dalam transaksi.
-
-## i). Halaman Order Kasir
+## h). Halaman Order Kasir
 
 <img width="1919" height="905" alt="image" src="https://github.com/user-attachments/assets/2313147a-2de1-4cae-86f6-74ae3d4b2a13" />
 
@@ -125,7 +159,7 @@ Melalui aplikasi ini, mitra dapat melakukan pengelolaan bisnis secara lebih efek
 - Sistem secara otomatis menghitung subtotal, pajak, dan total pembayaran.
 - Tombol bayar digunakan untuk menyelesaikan proses transaksi setelah pesanan dikonfirmasi.
 
-## j). Halaman Pembayaran Kasir
+## i). Halaman Pembayaran Kasir
 
 <img width="1919" height="904" alt="image" src="https://github.com/user-attachments/assets/29b5db88-ce18-4f96-b3bb-dcd7170e82de" />
 
@@ -140,7 +174,7 @@ Melalui aplikasi ini, mitra dapat melakukan pengelolaan bisnis secara lebih efek
 - Tombol konfirmasi pembayaran digunakan untuk menyelesaikan transaksi dan menyimpan data ke sistem.
 - Tombol batal disediakan untuk membatalkan proses pembayaran jika diperlukan.
 
-## k). Halaman Struk Kasri
+## j). Halaman Struk Kasri
 
 <img width="1917" height="909" alt="image" src="https://github.com/user-attachments/assets/5fc4e37f-7ad9-4ec4-8543-ef75b07f71dc" />
 
@@ -183,3 +217,33 @@ Digunakan untuk menampilkan grafik data penjualan seperti bar chart atau line ch
 - syncfusion_flutter_datepicker: ^24.1.41
 
 Digunakan untuk memilih tanggal atau rentang waktu dengan tampilan yang interaktif dan mudah digunakan.
+
+- pdf (^3.11.3)
+
+Digunakan untuk membuat file PDF, seperti struk atau laporan transaksi.
+
+- printing (^5.14.2)
+
+Untuk mencetak file PDF langsung dari aplikasi (print struk).
+
+- excel (^4.0.6)
+
+Digunakan untuk export data ke file Excel (.xlsx), misalnya laporan penjualan.
+
+- path_provider (^2.1.5)
+
+Mengambil lokasi penyimpanan di device (buat simpan PDF / Excel).
+
+- esc_pos_utils_plus (^2.0.4)
+
+Untuk generate format struk thermal printer (printer kasir).
+
+# D. Teknologi Yang Digunakan
+
+<p align="left">
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg" width="50" height="50"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dart/dart-original.svg" width="50" height="50"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/supabase/supabase-original.svg" width="50" height="50"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/android/android-original.svg" width="50" height="50"/>
+</p>
+

@@ -106,141 +106,247 @@ class _AddStockDialogState extends State<AddStockDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final isMobile = screenWidth < 600;
+
     return Dialog(
       backgroundColor: Colors.white,
+      insetPadding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 16 : 24,
+        vertical: isMobile ? 20 : 24,
+      ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-      child: Container(
-        width: 500,
-        padding: const EdgeInsets.all(28),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: isMobile ? screenWidth - 32 : 500,
+          maxHeight: screenHeight * 0.9,
+        ),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(isMobile ? 18 : 28),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.item == null
+                                ? "Tambah Bahan"
+                                : "Update Bahan",
+                            style: TextStyle(
+                              fontSize: isMobile ? 18 : 22,
+                              fontWeight: FontWeight.bold,
+                              color: darkBrown,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          const Text(
+                            "Lengkapi informasi bahan baku baru",
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      visualDensity: VisualDensity.compact,
+                      constraints: const BoxConstraints(
+                        minWidth: 40,
+                        minHeight: 40,
+                      ),
+                      padding: EdgeInsets.zero,
+                      icon: const Icon(Icons.close),
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: isMobile ? 18 : 24),
+
+                const Text(
+                  "Nama Bahan",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF4A2419),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                TextFormField(
+                  controller: _nameCtrl,
+                  decoration: inputDeco("Contoh: Susu Oat"),
+                  validator: (v) {
+                    if (v == null || v.trim().isEmpty)
+                      return "Nama wajib diisi";
+                    if (v.length < 3) return "Minimal 3 karakter";
+                    return null;
+                  },
+                ),
+
+                SizedBox(height: isMobile ? 16 : 20),
+
+                if (isMobile) ...[
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        widget.item == null ? "Tambah Bahan" : "Update Bahan",
+                      const Text(
+                        "Jumlah Awal",
                         style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: darkBrown,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF4A2419),
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      const Text(
-                        "Lengkapi informasi bahan baku baru",
-                        style: TextStyle(color: Colors.grey),
+                      const SizedBox(height: 6),
+                      TextFormField(
+                        controller: _stockCtrl,
+                        keyboardType: TextInputType.number,
+                        decoration: inputDeco("0.00"),
+                        validator: (v) {
+                          if (v == null || v.trim().isEmpty) {
+                            return "Jumlah wajib diisi";
+                          }
+                          if (double.tryParse(v) == null) {
+                            return "Harus angka";
+                          }
+                          if (double.parse(v) < 0) {
+                            return "Tidak boleh minus";
+                          }
+                          return null;
+                        },
                       ),
                     ],
                   ),
-                  IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close),
+                  const SizedBox(height: 16),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Satuan",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF4A2419),
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      DropdownButtonFormField<String>(
+                        value: _selectedUnit,
+                        decoration: inputDeco("Pilih Satuan"),
+                        items: ["Kg", "L", "Gram", "Pcs"]
+                            .map(
+                              (e) => DropdownMenuItem(value: e, child: Text(e)),
+                            )
+                            .toList(),
+                        onChanged: (v) => setState(() => _selectedUnit = v!),
+                      ),
+                    ],
+                  ),
+                ] else ...[
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Jumlah Awal",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF4A2419),
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            TextFormField(
+                              controller: _stockCtrl,
+                              keyboardType: TextInputType.number,
+                              decoration: inputDeco("0.00"),
+                              validator: (v) {
+                                if (v == null || v.trim().isEmpty) {
+                                  return "Jumlah wajib diisi";
+                                }
+                                if (double.tryParse(v) == null) {
+                                  return "Harus angka";
+                                }
+                                if (double.parse(v) < 0) {
+                                  return "Tidak boleh minus";
+                                }
+                                return null;
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Satuan",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF4A2419),
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            DropdownButtonFormField<String>(
+                              value: _selectedUnit,
+                              decoration: inputDeco("Pilih Satuan"),
+                              items: ["Kg", "L", "Gram", "Pcs"]
+                                  .map(
+                                    (e) => DropdownMenuItem(
+                                      value: e,
+                                      child: Text(e),
+                                    ),
+                                  )
+                                  .toList(),
+                              onChanged: (v) =>
+                                  setState(() => _selectedUnit = v!),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ],
-              ),
 
-              const SizedBox(height: 24),
+                SizedBox(height: isMobile ? 22 : 28),
 
-              const Text(
-                "Nama Bahan",
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF4A2419),
-                ),
-              ),
-              const SizedBox(height: 6),
-              TextFormField(
-                controller: _nameCtrl,
-                decoration: inputDeco("Contoh: Susu Oat"),
-                validator: (v) {
-                  if (v == null || v.trim().isEmpty) return "Nama wajib diisi";
-                  if (v.length < 3) return "Minimal 3 karakter";
-                  return null;
-                },
-              ),
-
-              const SizedBox(height: 20),
-
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Jumlah Awal",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF4A2419),
-                          ),
+                if (isMobile) ...[
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _handleSave,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: primaryBrown,
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
                         ),
-                        const SizedBox(height: 6),
-                        TextFormField(
-                          controller: _stockCtrl,
-                          keyboardType: TextInputType.number,
-                          decoration: inputDeco("0"),
-                          validator: (v) {
-                            if (v == null || v.trim().isEmpty) {
-                              return "Jumlah wajib diisi";
-                            }
-                            if (double.tryParse(v) == null) {
-                              return "Harus angka";
-                            }
-                            if (double.parse(v) < 0) {
-                              return "Tidak boleh minus";
-                            }
-                            return null;
-                          },
+                      ),
+                      child: const Text(
+                        "Simpan Bahan",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
                         ),
-                      ],
+                      ),
                     ),
                   ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Satuan",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF4A2419),
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        DropdownButtonFormField<String>(
-                          value: _selectedUnit,
-                          decoration: inputDeco("Pilih Satuan"),
-                          items: ["Kg", "L", "Gram", "Pcs"]
-                              .map(
-                                (e) =>
-                                    DropdownMenuItem(value: e, child: Text(e)),
-                              )
-                              .toList(),
-                          onChanged: (v) => setState(() => _selectedUnit = v!),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 28),
-
-              Row(
-                children: [
-                  Expanded(
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    width: double.infinity,
                     child: OutlinedButton(
                       onPressed: () => Navigator.pop(context),
                       style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 18),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
                         side: const BorderSide(color: Color(0xFFEFEBE9)),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
@@ -255,30 +361,54 @@ class _AddStockDialogState extends State<AddStockDialog> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: _handleSave,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: primaryBrown,
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(vertical: 18),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
+                ] else ...[
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.pop(context),
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 18),
+                            side: const BorderSide(color: Color(0xFFEFEBE9)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                          ),
+                          child: const Text(
+                            "Batal",
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ),
                       ),
-                      child: const Text(
-                        "Simpan Bahan",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: _handleSave,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: primaryBrown,
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(vertical: 18),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                          ),
+                          child: const Text(
+                            "Simpan Bahan",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
                 ],
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

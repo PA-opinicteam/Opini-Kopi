@@ -117,20 +117,30 @@ class _AddMenuDialogState extends State<AddMenuDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Theme(
       data: Theme.of(context).copyWith(
         colorScheme: const ColorScheme.light(primary: Color(0xFF4A2419)),
       ),
       child: Dialog(
+        insetPadding: EdgeInsets.symmetric(
+          horizontal: screenWidth < 600 ? 16 : 24,
+          vertical: screenWidth < 600 ? 20 : 24,
+        ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
         child: LayoutBuilder(
           builder: (context, constraints) {
             final isCompact = constraints.maxWidth < 640;
 
             return ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 700),
+              constraints: BoxConstraints(
+                maxWidth: 700,
+                maxHeight: screenHeight * 0.9,
+              ),
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(28),
+                padding: EdgeInsets.all(isCompact ? 18 : 28),
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -169,27 +179,33 @@ class _AddMenuDialogState extends State<AddMenuDialog> {
   }
 
   Widget _buildHeader() => Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            widget.item == null ? "Tambah Menu" : "Edit Menu",
-            style: const TextStyle(
-              fontSize: 26,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF4A2419),
+      Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              widget.item == null ? "Tambah Menu" : "Edit Menu",
+              style: TextStyle(
+                fontSize: MediaQuery.of(context).size.width < 600 ? 20 : 26,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF4A2419),
+              ),
             ),
-          ),
-          const Text(
-            "Lengkapi detail menu untuk ditampilkan.",
-            style: TextStyle(color: Colors.black45, fontSize: 13),
-          ),
-        ],
+            const Text(
+              "Lengkapi detail menu untuk ditampilkan.",
+              style: TextStyle(color: Colors.black45, fontSize: 13),
+            ),
+          ],
+        ),
       ),
+      const SizedBox(width: 8),
       IconButton(
         onPressed: () => Navigator.pop(context),
+        visualDensity: VisualDensity.compact,
+        constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+        padding: EdgeInsets.zero,
         icon: const Icon(Icons.close, color: Color(0xFF4A2419)),
       ),
     ],
@@ -230,10 +246,7 @@ class _AddMenuDialogState extends State<AddMenuDialog> {
       if (isCompact)
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _radio(true, "Aktif"),
-            _radio(false, "Nonaktif"),
-          ],
+          children: [_radio(true, "Aktif"), _radio(false, "Nonaktif")],
         )
       else
         Row(
@@ -271,9 +284,11 @@ class _AddMenuDialogState extends State<AddMenuDialog> {
       DropdownButtonFormField<String>(
         value: _category,
         decoration: _inputDeco(""),
-        items: ['Coffee', 'Non Coffee', 'Snack']
-            .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-            .toList(),
+        items: [
+          'Coffee',
+          'Non Coffee',
+          'Snack',
+        ].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
         onChanged: (v) => setState(() => _category = v!),
       ),
     ],

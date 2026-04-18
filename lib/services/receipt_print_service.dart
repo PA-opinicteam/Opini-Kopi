@@ -81,9 +81,9 @@ class ReceiptPrintService {
           ),
           pw.SizedBox(height: 8),
           _line(),
-          _row('Invoice', (payment['invoice_code'] ?? '-').toString()),
-          _row('Customer', (order['customer_name'] ?? 'Guest').toString()),
-          _row('Date', _dateFormat.format(DateTime.now())),
+          _row('ID Pesanan', (payment['invoice_code'] ?? '-').toString()),
+          _row('Pelanggan', (order['customer_name'] ?? 'Guest').toString()),
+          _row('Tanggal', _dateFormat.format(DateTime.now())),
           _line(),
           ...cart.map((item) {
             final title = (item['title'] ?? '').toString();
@@ -108,12 +108,12 @@ class ReceiptPrintService {
           }),
           _line(),
           _row('Subtotal', CurrencyFormatter.idr(subtotal)),
-          _row('Tax', CurrencyFormatter.idr(tax)),
+          _row('Pajak (10%)', CurrencyFormatter.idr(tax)),
           _row('TOTAL', CurrencyFormatter.idr(total), bold: true),
           pw.SizedBox(height: 6),
-          _row('Payment', paymentMethod == 'cash' ? 'TUNAI' : 'QRIS'),
-          _row('Paid', CurrencyFormatter.idr(cashReceived)),
-          _row('Change', CurrencyFormatter.idr(change)),
+          _row('Metode Pembayaran', paymentMethod == 'cash' ? 'TUNAI' : 'QRIS'),
+          _row('Uang Diberikan', CurrencyFormatter.idr(cashReceived)),
+          _row('Kembalian', CurrencyFormatter.idr(change)),
           _line(),
           pw.Center(
             child: pw.Text(
@@ -156,11 +156,11 @@ class ReceiptPrintService {
       ),
     );
     bytes.addAll(generator.hr());
-    bytes.addAll(generator.text('Invoice: ${payment['invoice_code'] ?? '-'}'));
+    bytes.addAll(generator.text('ID Pesanan: ${payment['invoice_code'] ?? '-'}'));
     bytes.addAll(
-      generator.text('Customer: ${order['customer_name'] ?? 'Guest'}'),
+      generator.text('Pelanggan: ${order['customer_name'] ?? 'Guest'}'),
     );
-    bytes.addAll(generator.text('Date: ${_dateFormat.format(DateTime.now())}'));
+    bytes.addAll(generator.text('Tanggal: ${_dateFormat.format(DateTime.now())}'));
     bytes.addAll(generator.hr());
 
     for (final item in cart) {
@@ -184,7 +184,7 @@ class ReceiptPrintService {
     bytes.addAll(
       generator.text('Subtotal: ${CurrencyFormatter.idr(subtotal)}'),
     );
-    bytes.addAll(generator.text('Tax: ${CurrencyFormatter.idr(tax)}'));
+    bytes.addAll(generator.text('Pajak (10%): ${CurrencyFormatter.idr(tax)}'));
     bytes.addAll(
       generator.text(
         'TOTAL: ${CurrencyFormatter.idr(total)}',
@@ -192,12 +192,12 @@ class ReceiptPrintService {
       ),
     );
     bytes.addAll(
-      generator.text('Payment: ${paymentMethod == 'cash' ? 'TUNAI' : 'QRIS'}'),
+      generator.text('Metode Pembayaran: ${paymentMethod == 'cash' ? 'TUNAI' : 'QRIS'}'),
     );
     bytes.addAll(
-      generator.text('Paid: ${CurrencyFormatter.idr(cashReceived)}'),
+      generator.text('Uang Diberikan: ${CurrencyFormatter.idr(cashReceived)}'),
     );
-    bytes.addAll(generator.text('Change: ${CurrencyFormatter.idr(change)}'));
+    bytes.addAll(generator.text('Kembalian: ${CurrencyFormatter.idr(change)}'));
     bytes.addAll(generator.feed(2));
     bytes.addAll(generator.cut());
 
