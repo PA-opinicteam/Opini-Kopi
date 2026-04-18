@@ -51,7 +51,7 @@ class _ReportPageState extends State<ReportPage> {
         summary: _latestSummary ?? await summaryFuture,
       );
       if (!mounted) return;
-      SnackbarUtils.success(context, 'PDF berhasil dibuat');
+      SnackbarUtils.info(context, 'PDF berhasil dibuat');
     });
   }
 
@@ -62,7 +62,7 @@ class _ReportPageState extends State<ReportPage> {
         summary: _latestSummary ?? await summaryFuture,
       );
       if (!mounted) return;
-      SnackbarUtils.success(context, 'Excel tersimpan: $path');
+      SnackbarUtils.info(context, 'Excel tersimpan: $path');
     });
   }
 
@@ -73,7 +73,7 @@ class _ReportPageState extends State<ReportPage> {
       await task();
     } catch (e) {
       if (!mounted) return;
-      SnackbarUtils.error(context, 'Export gagal: $e');
+      SnackbarUtils.error(context, 'Ekspor gagal: $e');
     } finally {
       if (mounted) setState(() => _isExporting = false);
     }
@@ -180,7 +180,7 @@ class _ReportPageState extends State<ReportPage> {
                         style: OutlinedButton.styleFrom(
                           foregroundColor: const Color(0xFF4A2419),
                         ),
-                        child: const Text("Cancel"),
+                        child: const Text("Batal"),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -189,7 +189,7 @@ class _ReportPageState extends State<ReportPage> {
                         onPressed: () {
                           if (tempRange != null) {
                             setState(() {
-                              selectedFilter = "Custom";
+                              selectedFilter = "Kustom";
                               selectedRange = tempRange;
                               loadData();
                             });
@@ -200,7 +200,7 @@ class _ReportPageState extends State<ReportPage> {
                           backgroundColor: const Color(0xFF4A2419),
                         ),
                         child: const Text(
-                          "Save",
+                          "Simpan",
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
@@ -571,7 +571,7 @@ class _ReportPageState extends State<ReportPage> {
                               return Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
                                 child: Text(
-                                  "Mgg ${val.toInt()}",
+                                  "MINGGU ${val.toInt()}",
                                   style: const TextStyle(
                                     fontSize: 10,
                                     color: Colors.grey,
@@ -799,7 +799,7 @@ class _ReportPageState extends State<ReportPage> {
         ),
         Expanded(
           flex: 2,
-          child: Text((order['customer_name'] ?? 'Guest').toString()),
+          child: Text((order['customer_name'] ?? 'Pengunjung').toString()),
         ),
         Expanded(
           child: Text(

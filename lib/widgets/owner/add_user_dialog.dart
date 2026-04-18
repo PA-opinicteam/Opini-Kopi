@@ -20,6 +20,7 @@ class _AddUserDialogState extends State<AddUserDialog> {
 
   String role = 'kasir';
   bool isActive = true;
+  bool _isPasswordVisible = false;
 
   final service = UsersService();
 
@@ -213,7 +214,7 @@ class _AddUserDialogState extends State<AddUserDialog> {
       padding: const EdgeInsets.only(bottom: 12),
       child: TextFormField(
         controller: c,
-        obscureText: isPassword,
+        obscureText: isPassword && !_isPasswordVisible,
 
         validator: (value) {
           if (value == null || value.trim().isEmpty) {
@@ -240,6 +241,21 @@ class _AddUserDialogState extends State<AddUserDialog> {
           hintText: hint,
           filled: true,
           fillColor: const Color(0xFFF8F5F2),
+          suffixIcon: isPassword
+              ? IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _isPasswordVisible = !_isPasswordVisible;
+                    });
+                  },
+                  icon: Icon(
+                    _isPasswordVisible
+                        ? Icons.visibility_off
+                        : Icons.visibility,
+                    color: const Color(0xFF4A2419),
+                  ),
+                )
+              : null,
 
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(14),

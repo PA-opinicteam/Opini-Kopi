@@ -24,7 +24,7 @@ class _DashboardPageState extends State<DashboardPage> {
   String get _mobileTitle {
     switch (selectedIndex) {
       default:
-        return 'Owner Opini Kopi';
+        return 'Opini Kopi Manajemen';
     }
   }
 

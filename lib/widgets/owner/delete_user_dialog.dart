@@ -16,7 +16,7 @@ class DeleteUserDialog extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Text(
-                "Hapus User",
+                "Hapus Pengguna",
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -25,7 +25,7 @@ class DeleteUserDialog extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               const Text(
-                "Apakah anda yakin ingin menghapus user ini?",
+                "Apakah anda yakin ingin menghapus pengguna ini?",
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.black54, fontSize: 13),
               ),
@@ -40,7 +40,7 @@ class DeleteUserDialog extends StatelessWidget {
 
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: const Text("User berhasil dihapus"),
+                        content: const Text("Pengguna berhasil dihapus"),
                         backgroundColor: const Color(0xFF4A2419),
                         behavior: SnackBarBehavior.floating,
                         margin: const EdgeInsets.all(20),

@@ -32,7 +32,7 @@ class SidebarWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Opinic Cashier',
+              'Opini Kopi Kasir',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -43,7 +43,7 @@ class SidebarWidget extends StatelessWidget {
             const SizedBox(height: 28),
 
             const Text(
-              'Main Menu',
+              'Menu',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
 
@@ -161,7 +161,7 @@ class _BottomMenuItem extends StatelessWidget {
             Icon(icon, size: 18, color: Color(0xFF4A2419)),
             const SizedBox(width: 10),
             const Text(
-              'Logout',
+              'Keluar',
               style: TextStyle(fontSize: 14, color: Color(0xFF4A2419)),
             ),
           ],

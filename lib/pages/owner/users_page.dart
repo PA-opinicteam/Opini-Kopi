@@ -94,7 +94,7 @@ class _UsersPageState extends State<UsersPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Manajemen User",
+          "Manajemen Pengguna",
           style: TextStyle(
             fontSize: 32,
             fontWeight: FontWeight.bold,
@@ -108,7 +108,7 @@ class _UsersPageState extends State<UsersPage> {
         ),
       ],
     );
-    final searchField = AppSearchBar(hintText: "Cari user...", onChanged: search);
+    final searchField = AppSearchBar(hintText: "Cari Pengguna...", onChanged: search);
     final addButton = ElevatedButton.icon(
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color(0xFF4A2419),
@@ -122,7 +122,7 @@ class _UsersPageState extends State<UsersPage> {
         );
       },
       icon: const Icon(Icons.add, size: 18, color: Colors.white),
-      label: const Text("Tambah User", style: TextStyle(color: Colors.white)),
+      label: const Text("Tambah Pengguna", style: TextStyle(color: Colors.white)),
     );
 
     if (isCompact) {
@@ -233,7 +233,7 @@ class _UsersPageState extends State<UsersPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Daftar User",
+            "Daftar Pengguna",
             style: TextStyle(
               fontSize: isCompact ? 18 : 20,
               fontWeight: FontWeight.w700,
@@ -272,7 +272,7 @@ class _UsersPageState extends State<UsersPage> {
         padding: EdgeInsets.symmetric(vertical: 24),
         child: Center(
           child: Text(
-            "Belum ada user.",
+            "Belum ada Pengguna.",
             style: TextStyle(color: Colors.black54),
           ),
         ),
@@ -305,7 +305,7 @@ class _UsersPageState extends State<UsersPage> {
     if (filtered.isEmpty) {
       return const Center(
         child: Text(
-          "Belum ada user.",
+          "Belum ada Pengguna.",
           style: TextStyle(color: Colors.black54),
         ),
       );

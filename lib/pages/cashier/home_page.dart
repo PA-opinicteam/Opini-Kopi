@@ -95,10 +95,10 @@ class _HomePageState extends State<HomePage> {
     _showMessage('Item ditambahkan');
   }
 
-  void _handleEditItem(int index) {
+  Future<void> _handleEditItem(int index) async {
     final item = cart[index];
 
-    showDialog(
+    await showDialog<void>(
       context: context,
       builder: (context) {
         return AddOrderDialog(
@@ -125,6 +125,17 @@ class _HomePageState extends State<HomePage> {
   void _handleClearAll() {
     setState(cart.clear);
     _showMessage('Semua pesanan dihapus');
+  }
+
+  void _resetOrderState({bool showMessage = false}) {
+    setState(() {
+      cart.clear();
+      customerController.clear();
+    });
+
+    if (showMessage) {
+      _showMessage('Pesanan selesai, keranjang dikosongkan');
+    }
   }
 
   void _handleDecreaseQty(int index) {
@@ -156,31 +167,43 @@ class _HomePageState extends State<HomePage> {
         (route) => false,
       );
     } catch (_) {
-      _showMessage('Gagal logout');
+      _showMessage('Gagal keluar');
     }
   }
 
-  void _handlePay() {
+  Future<bool> _handlePay() async {
     if (cart.isEmpty) {
-      _showMessage('Cart masih kosong');
-      return;
+      _showMessage('Keranjang masih kosong');
+      return false;
     }
 
-    Navigator.push(
+    final cartSnapshot = cart
+        .map((item) => Map<String, dynamic>.from(item))
+        .toList(growable: false);
+
+    final completed = await Navigator.push<bool>(
       context,
       MaterialPageRoute(
         builder: (_) => PaymentPage(
-          cart: cart,
+          cart: cartSnapshot,
           subtotal: subtotal,
           tax: tax,
           total: total,
           formatRupiah: formatRupiah,
           customerName: customerController.text.trim().isEmpty
-              ? "Guest"
+              ? "Pengunjung"
               : customerController.text.trim(),
+          onOrderCompleted: () => _resetOrderState(showMessage: true),
         ),
       ),
     );
+
+    if (completed == true && mounted) {
+      setState(() {});
+      return true;
+    }
+
+    return false;
   }
 
   void _openCartPage() {
@@ -382,16 +405,16 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class _MobileCartPage extends StatelessWidget {
+class _MobileCartPage extends StatefulWidget {
   final List<Map<String, dynamic>> cart;
   final int subtotal;
   final int tax;
   final int total;
   final String Function(int) formatRupiah;
-  final VoidCallback onPay;
+  final Future<bool> Function() onPay;
   final void Function(int index) onDecreaseQty;
   final void Function(int index) onIncreaseQty;
-  final void Function(int index) onEditItem;
+  final Future<void> Function(int index) onEditItem;
   final void Function(int index) onDeleteItem;
   final VoidCallback onClearAll;
   final Widget Function({required IconData icon, required VoidCallback onTap})
@@ -418,6 +441,51 @@ class _MobileCartPage extends StatelessWidget {
   });
 
   @override
+  State<_MobileCartPage> createState() => _MobileCartPageState();
+}
+
+class _MobileCartPageState extends State<_MobileCartPage> {
+  Future<bool> _handlePay() async {
+    final completed = await widget.onPay();
+
+    if (completed && mounted) {
+      Navigator.pop(context);
+      return true;
+    }
+
+    if (mounted) {
+      setState(() {});
+    }
+
+    return false;
+  }
+
+  void _handleDecreaseQty(int index) {
+    widget.onDecreaseQty(index);
+    if (mounted) setState(() {});
+  }
+
+  void _handleIncreaseQty(int index) {
+    widget.onIncreaseQty(index);
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _handleEditItem(int index) async {
+    await widget.onEditItem(index);
+    if (mounted) setState(() {});
+  }
+
+  void _handleDeleteItem(int index) {
+    widget.onDeleteItem(index);
+    if (mounted) setState(() {});
+  }
+
+  void _handleClearAll() {
+    widget.onClearAll();
+    if (mounted) setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.cashierBackground,
@@ -429,20 +497,20 @@ class _MobileCartPage extends StatelessWidget {
       body: OrderSummaryWidget(
         width: double.infinity,
         margin: const EdgeInsets.all(16),
-        cart: cart,
-        subtotal: subtotal,
-        tax: tax,
-        total: total,
-        formatRupiah: formatRupiah,
-        onPay: onPay,
-        onDecreaseQty: onDecreaseQty,
-        onIncreaseQty: onIncreaseQty,
-        onEditItem: onEditItem,
-        onDeleteItem: onDeleteItem,
-        onClearAll: onClearAll,
-        qtyButtonBuilder: qtyButtonBuilder,
-        priceRowBuilder: priceRowBuilder,
-        customerController: customerController,
+        cart: widget.cart,
+        subtotal: widget.subtotal,
+        tax: widget.tax,
+        total: widget.total,
+        formatRupiah: widget.formatRupiah,
+        onPay: _handlePay,
+        onDecreaseQty: _handleDecreaseQty,
+        onIncreaseQty: _handleIncreaseQty,
+        onEditItem: _handleEditItem,
+        onDeleteItem: _handleDeleteItem,
+        onClearAll: _handleClearAll,
+        qtyButtonBuilder: widget.qtyButtonBuilder,
+        priceRowBuilder: widget.priceRowBuilder,
+        customerController: widget.customerController,
       ),
     );
   }

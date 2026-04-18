@@ -56,22 +56,71 @@ class _StockPageState extends State<StockPage> {
     try {
       final path = await ExportService.saveStockExcel(_filtered);
       if (!mounted) return;
-      SnackbarUtils.success(context, 'Excel stok tersimpan: $path');
+      SnackbarUtils.info(context, 'Excel stok tersimpan: $path');
     } catch (e) {
       if (!mounted) return;
-      SnackbarUtils.error(context, 'Export stok gagal: $e');
+      SnackbarUtils.error(context, 'Ekspor stok gagal: $e');
     } finally {
       if (mounted) setState(() => _isExporting = false);
     }
   }
 
+  String _normalizeUnit(dynamic value) {
+    return value?.toString().toLowerCase().trim() ?? '';
+  }
+
+  double _toDouble(dynamic value) {
+    if (value == null) return 0;
+    if (value is num) return value.toDouble();
+    return double.tryParse(value.toString()) ?? 0;
+  }
+
+  double _lowStockLimit(String unit) {
+    switch (_normalizeUnit(unit)) {
+      case 'g':
+      case 'gr':
+      case 'gram':
+        return 500;
+      case 'kg':
+      case 'kilogram':
+        return 1;
+      case 'ml':
+        return 1000;
+      case 'l':
+      case 'lt':
+      case 'liter':
+        return 2;
+      case 'pcs':
+      case 'pc':
+      case 'piece':
+      case 'pieces':
+        return 10;
+      default:
+        return 5;
+    }
+  }
+
+  String _stockStatus(double stock, String unit) {
+    if (stock <= 0) return 'Habis';
+    if (stock <= _lowStockLimit(unit)) return 'Menipis';
+    return 'Aman';
+  }
+
+  bool _isLowStock(Map<String, dynamic> item) {
+    final stock = _toDouble(item['stock']);
+    final unit = _normalizeUnit(item['unit']);
+    return stock > 0 && stock <= _lowStockLimit(unit);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final habis = _data.where((e) => (e['stock'] ?? 0) == 0).length;
-    final rendah = _data
-        .where((e) => (e['stock'] ?? 0) > 0 && (e['stock'] ?? 0) <= 5)
-        .length;
-    final aman = _data.where((e) => (e['stock'] ?? 0) > 5).length;
+    final habis = _data.where((e) => _toDouble(e['stock']) <= 0).length;
+    final rendah = _data.where(_isLowStock).length;
+    final aman = _data.where((e) {
+      final stock = _toDouble(e['stock']);
+      final unit = _normalizeUnit(e['unit']);
+      return stock > _lowStockLimit(unit);
+    }).length;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5EFE6),
@@ -142,7 +191,10 @@ class _StockPageState extends State<StockPage> {
       ],
     );
 
-    final searchField = AppSearchBar(hintText: "Cari bahan...", onChanged: _search);
+    final searchField = AppSearchBar(
+      hintText: "Cari bahan...",
+      onChanged: _search,
+    );
     final addButton = ElevatedButton.icon(
       onPressed: () => _handleAddEdit(),
       icon: const Icon(Icons.add),
@@ -157,7 +209,7 @@ class _StockPageState extends State<StockPage> {
     final exportButton = OutlinedButton.icon(
       onPressed: _isExporting ? null : _handleExportExcel,
       icon: const Icon(Icons.table_chart_outlined),
-      label: const Text("Export Excel"),
+      label: const Text("Ekspor Excel"),
       style: OutlinedButton.styleFrom(
         foregroundColor: const Color(0xFF4A2419),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
@@ -255,7 +307,7 @@ class _StockPageState extends State<StockPage> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10),
+          BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10),
         ],
       ),
       child: Column(
@@ -337,7 +389,7 @@ class _StockPageState extends State<StockPage> {
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: Divider(
                 height: 1,
-                color: Colors.grey.withOpacity(0.3),
+                color: Colors.grey.withValues(alpha: 0.3),
               ),
             ),
             itemBuilder: (context, index) => _buildDesktopRow(_filtered[index]),
@@ -401,7 +453,7 @@ class _StockPageState extends State<StockPage> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.05),
+              color: color.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, color: color, size: 20),
@@ -429,7 +481,7 @@ class _StockPageState extends State<StockPage> {
   }
 
   Widget _buildDesktopRow(Map<String, dynamic> item) {
-    final stock = (item['stock'] ?? 0).toDouble();
+    final stock = _toDouble(item['stock']);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
@@ -446,7 +498,7 @@ class _StockPageState extends State<StockPage> {
               ),
             ),
           ),
-          Expanded(flex: 2, child: _statusBadge(stock)),
+          Expanded(flex: 2, child: _statusBadge(stock, item['unit'])),
           SizedBox(
             width: 100,
             child: Row(
@@ -468,7 +520,7 @@ class _StockPageState extends State<StockPage> {
   }
 
   Widget _buildMobileItem(Map<String, dynamic> item) {
-    final stock = (item['stock'] ?? 0).toDouble();
+    final stock = _toDouble(item['stock']);
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -503,7 +555,7 @@ class _StockPageState extends State<StockPage> {
             runSpacing: 10,
             children: [
               _infoChip("Stok", "$stock ${item['unit']}"),
-              _statusBadge(stock),
+              _statusBadge(stock, item['unit']),
             ],
           ),
         ],
@@ -583,20 +635,27 @@ class _StockPageState extends State<StockPage> {
     );
   }
 
-  Widget _statusBadge(double stock) {
-    final c = stock == 0
-        ? Colors.red
-        : (stock <= 5 ? Colors.orange : Colors.green);
-    final t = stock == 0 ? "Habis" : (stock <= 5 ? "Menipis" : "Aman");
+  Widget _statusBadge(double stock, dynamic unit) {
+    final status = _stockStatus(stock, unit.toString());
+    final color = switch (status) {
+      'Habis' => Colors.red,
+      'Menipis' => Colors.orange,
+      _ => Colors.green,
+    };
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
-        color: c.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
-        t,
-        style: TextStyle(color: c, fontWeight: FontWeight.bold, fontSize: 13),
+        status,
+        style: TextStyle(
+          color: color,
+          fontWeight: FontWeight.bold,
+          fontSize: 13,
+        ),
       ),
     );
   }

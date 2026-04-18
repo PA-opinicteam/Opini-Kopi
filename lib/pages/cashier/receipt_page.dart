@@ -14,6 +14,7 @@ class ReceiptPage extends StatelessWidget {
   final String Function(int) formatRupiah;
   final Map<String, dynamic> order;
   final Map<String, dynamic> payment;
+  final VoidCallback onOrderCompleted;
 
   const ReceiptPage({
     super.key,
@@ -27,13 +28,13 @@ class ReceiptPage extends StatelessWidget {
     required this.formatRupiah,
     required this.order,
     required this.payment,
+    required this.onOrderCompleted,
   });
 
   int toInt(dynamic value) {
     if (value == null) return 0;
     if (value is int) return value;
-    return int.tryParse(value.toString().replaceAll(RegExp(r'[^0-9]'), '')) ??
-        0;
+    return int.tryParse(value.toString().replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
   }
 
   String generateReceiptText() {
@@ -130,9 +131,7 @@ class ReceiptPage extends StatelessWidget {
                       ],
                     ),
                   ),
-
                   const SizedBox(height: 12),
-
                   Center(
                     child: Container(
                       padding: const EdgeInsets.symmetric(
@@ -152,20 +151,16 @@ class ReceiptPage extends StatelessWidget {
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 16),
-
                   _row('Tanggal', formattedDate),
                   _row(
                     'Pelanggan',
                     (order['customer_name'] ?? '').toString().isEmpty
-                        ? 'Guest'
+                        ? 'Pengunjung'
                         : order['customer_name'],
                   ),
                   _row('ID Pesanan', '#${payment['invoice_code']}'),
-
                   const Divider(),
-
                   ...cart.map((item) {
                     final title = item['title'];
                     final qty = toInt(item['qty']);
@@ -184,7 +179,7 @@ class ReceiptPage extends StatelessWidget {
                             ],
                           ),
                           Text(
-                            'Jumlah $qty x ${formatRupiah(price)}',
+                            'JMLH $qty x ${formatRupiah(price)}',
                             style: const TextStyle(
                               fontSize: 11,
                               color: Colors.grey,
@@ -194,12 +189,9 @@ class ReceiptPage extends StatelessWidget {
                       ),
                     );
                   }),
-
                   const Divider(),
-
                   _row('Subtotal', formatRupiah(subtotal)),
                   _row('Pajak (10%)', formatRupiah(tax)),
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -213,9 +205,7 @@ class ReceiptPage extends StatelessWidget {
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 16),
-
                   Container(
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
@@ -245,13 +235,9 @@ class ReceiptPage extends StatelessWidget {
                       ],
                     ),
                   ),
-
                   const SizedBox(height: 16),
-
                   const Center(child: Icon(Icons.local_cafe, size: 36)),
-
                   const SizedBox(height: 16),
-
                   SizedBox(
                     width: double.infinity,
                     child: OutlinedButton(
@@ -264,12 +250,12 @@ class ReceiptPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 10),
-
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.popUntil(context, (route) => route.isFirst);
+                        onOrderCompleted();
+                        Navigator.pop(context, true);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF4A2419),

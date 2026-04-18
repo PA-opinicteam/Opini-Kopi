@@ -56,8 +56,8 @@ class _LoginPageState extends State<LoginPage> {
       if (!mounted) return;
 
       setState(() {
-        emailError = 'Email atau password salah';
-        passwordError = 'Email atau password salah';
+        emailError = 'Email atau kata sandi salah';
+        passwordError = 'Email atau kata sandi salah';
       });
 
       _formKey.currentState!.validate();
@@ -65,7 +65,7 @@ class _LoginPageState extends State<LoginPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text(
-            'Email atau password salah',
+            'Email atau kata sandi salah',
             style: TextStyle(color: Colors.white),
           ),
           backgroundColor: const Color(0xFF4B2E2B),
@@ -136,7 +136,7 @@ class _LoginPageState extends State<LoginPage> {
             border: Border.all(color: const Color(0xFFE8DFD8)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 30,
                 offset: const Offset(0, 10),
               ),
@@ -162,7 +162,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 16),
                 const Text(
-                  'Opini Kopi',
+                  'OPINI POS',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -208,7 +208,7 @@ class _LoginPageState extends State<LoginPage> {
                         },
                       ),
                       const SizedBox(height: 16),
-                      label('Password'),
+                      label('Kata Sandi'),
                       TextFormField(
                         controller: passwordController,
                         obscureText: isObscure,
@@ -229,7 +229,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Password tidak boleh kosong';
+                            return 'Kata Sandi tidak boleh kosong';
                           }
                           if (value.length < 8) {
                             return 'Minimal 8 karakter';
@@ -254,14 +254,10 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                           onPressed: isLoading ? null : handleLogin,
-                          child: isLoading
-                              ? const CircularProgressIndicator(
-                                  color: Colors.white,
-                                )
-                              : const Text(
-                                  'Masuk',
-                                  style: TextStyle(fontWeight: FontWeight.w600),
-                                ),
+                          child: const Text(
+                            'Masuk',
+                            style: TextStyle(fontWeight: FontWeight.w600),
+                          ),
                         ),
                       ),
                     ],

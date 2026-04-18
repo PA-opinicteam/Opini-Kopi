@@ -5,22 +5,27 @@ import 'package:flutter/foundation.dart';
 class MenuService {
   final supabase = SupabaseService.client;
 
-  Future<List<Map<String, dynamic>>> getMenusByCategory(String category) async {
-    final c = category.toLowerCase();
+  String _normalizeCategory(String value) {
+    return value.toLowerCase().replaceAll('-', ' ').trim();
+  }
 
-    final res = c.contains('cof')
-        ? await supabase
-              .from('menu')
-              .select()
-              .eq('is_available', true)
-              .ilike('category', '%cof%')
-              .order('menu_name', ascending: true)
-        : c.contains('non')
+  Future<List<Map<String, dynamic>>> getMenusByCategory(String category) async {
+    final c = _normalizeCategory(category);
+
+    final res = c.contains('non')
         ? await supabase
               .from('menu')
               .select()
               .eq('is_available', true)
               .ilike('category', '%non%')
+              .order('menu_name', ascending: true)
+        : c.contains('coffee')
+        ? await supabase
+              .from('menu')
+              .select()
+              .eq('is_available', true)
+              .not('category', 'ilike', '%non%')
+              .ilike('category', '%coffee%')
               .order('menu_name', ascending: true)
         : await supabase
               .from('menu')

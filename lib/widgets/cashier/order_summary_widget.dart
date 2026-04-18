@@ -7,10 +7,10 @@ class OrderSummaryWidget extends StatelessWidget {
   final int tax;
   final int total;
   final String Function(int) formatRupiah;
-  final VoidCallback onPay;
+  final Future<bool> Function() onPay;
   final void Function(int index) onDecreaseQty;
   final void Function(int index) onIncreaseQty;
-  final void Function(int index) onEditItem;
+  final Future<void> Function(int index) onEditItem;
   final void Function(int index) onDeleteItem;
   final VoidCallback onClearAll;
   final Widget Function({required IconData icon, required VoidCallback onTap})
@@ -102,7 +102,7 @@ class OrderSummaryWidget extends StatelessWidget {
               children: [
                 const Expanded(
                   child: Text(
-                    'Ringkasan Pesanan ',
+                    'Ringkasan Pesanan',
                     style: TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.bold,
@@ -207,7 +207,7 @@ class OrderSummaryWidget extends StatelessWidget {
                                           if (addonNames.isNotEmpty) ...[
                                             const SizedBox(height: 4),
                                             Text(
-                                              'Tambahan: ${addonNames.join(', ')}',
+                                              'Tambahan:  ${addonNames.join(', ')}',
                                               style: const TextStyle(
                                                 color: Colors.grey,
                                                 fontSize: 12,
@@ -271,64 +271,7 @@ class OrderSummaryWidget extends StatelessWidget {
                                         ),
                                       ),
                                       TextButton(
-                                        onPressed: () async {
-                                          final confirm = await showDialog<bool>(
-                                            context: context,
-                                            builder: (context) {
-                                              return AlertDialog(
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(16),
-                                                ),
-                                                title: const Text(
-                                                  'Konfirmasi',
-                                                  style: TextStyle(
-                                                    color: Color(0xFF4A2419),
-                                                  ),
-                                                ),
-                                                content: const Text(
-                                                  'Yakin mau hapus item ini?',
-                                                  style: TextStyle(
-                                                    color: Color(0xFF4A2419),
-                                                  ),
-                                                ),
-                                                actions: [
-                                                  TextButton(
-                                                    onPressed: () =>
-                                                        Navigator.pop(
-                                                          context,
-                                                          false,
-                                                        ),
-                                                    child: const Text(
-                                                      'Batal',
-                                                      style: TextStyle(
-                                                        color: Color(
-                                                          0xFF4A2419,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  TextButton(
-                                                    onPressed: () =>
-                                                        Navigator.pop(
-                                                          context,
-                                                          true,
-                                                        ),
-                                                    child: const Text(
-                                                      'Hapus',
-                                                      style: TextStyle(
-                                                        color: Colors.red,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
-                                          if (confirm == true) {
-                                            onDeleteItem(index);
-                                          }
-                                        },
+                                        onPressed: () => onDeleteItem(index),
                                         child: const Text(
                                           'Hapus',
                                           style: TextStyle(
@@ -349,7 +292,7 @@ class OrderSummaryWidget extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             const Text(
-              'Nama Pelanggan',
+              'Pelanggan',
               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
             ),
             const SizedBox(height: 6),
@@ -382,7 +325,7 @@ class OrderSummaryWidget extends StatelessWidget {
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: onPay,
+                  onPressed: () => onPay(),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF4A2419),
                     foregroundColor: Colors.white,

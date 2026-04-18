@@ -25,7 +25,7 @@ class _AddOrderDialogState extends State<AddOrderDialog> {
   List<Map<String, dynamic>> _variants = [];
   List<Map<String, dynamic>> _addons = [];
 
-  String _selectedVariantId = 'hot';
+  String _selectedVariantId = '';
   final Set<String> _selectedAddonIds = {};
 
   late TextEditingController _noteController;
@@ -33,6 +33,9 @@ class _AddOrderDialogState extends State<AddOrderDialog> {
   bool _loading = true;
 
   String _text(dynamic v) => v?.toString() ?? '';
+  String _normalize(String value) {
+    return value.toLowerCase().replaceAll('-', ' ').trim();
+  }
 
   int _toInt(dynamic v) {
     if (v == null) return 0;
@@ -41,14 +44,17 @@ class _AddOrderDialogState extends State<AddOrderDialog> {
     return int.tryParse(v.toString().replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
   }
 
-  String get _category => _text(widget.menu['category']).toLowerCase().trim();
-  String get _section => _text(widget.menu['section']).toLowerCase().trim();
+  String get _category => _normalize(_text(widget.menu['category']));
+  String get _section => _normalize(_text(widget.menu['section']));
+
+  bool get _isCoffeeCategory =>
+      _category.contains('coffee') && !_category.contains('non');
 
   bool get _canUseVariants =>
-      _category.contains('cof') && _section == 'espresso series';
+      _isCoffeeCategory && _section == 'espresso series';
 
   bool get _canUseAddons =>
-      _category.contains('cof') || _category.contains('non');
+      _isCoffeeCategory || _category.contains('non');
 
   int get _basePrice => _toInt(widget.menu['price']);
 
@@ -87,9 +93,7 @@ class _AddOrderDialogState extends State<AddOrderDialog> {
     _qty = _toInt(widget.initialItem?['qty']) > 0
         ? _toInt(widget.initialItem?['qty'])
         : 1;
-    _selectedVariantId = _text(widget.initialItem?['variantId']).isNotEmpty
-        ? _text(widget.initialItem?['variantId'])
-        : 'hot';
+    _selectedVariantId = _text(widget.initialItem?['variantId']);
     _load();
   }
 
@@ -103,25 +107,33 @@ class _AddOrderDialogState extends State<AddOrderDialog> {
     try {
       final menuId = _text(widget.menu['id_menu']);
 
-      final results = await Future.wait([
-        _service.getVariants(menuId),
-        _service.getAddons(),
-      ]);
+      final futures = <Future<dynamic>>[_service.getAddons()];
+      if (_canUseVariants) {
+        futures.insert(0, _service.getVariants(menuId));
+      }
 
-      final dbVariants = List<Map<String, dynamic>>.from(results[0]);
-      _addons = List<Map<String, dynamic>>.from(results[1]);
+      final results = await Future.wait(futures);
 
-      _variants = [
-        {'id_variant': 'hot', 'name': 'HOT', 'price': 0},
-        ...dbVariants,
-      ];
+      if (_canUseVariants) {
+        final dbVariants = List<Map<String, dynamic>>.from(results[0]);
+        _variants = [
+          {'id_variant': 'hot', 'name': 'HOT', 'price': 0},
+          ...dbVariants,
+        ];
+        _addons = List<Map<String, dynamic>>.from(results[1]);
+      } else {
+        _variants = [];
+        _addons = List<Map<String, dynamic>>.from(results[0]);
+      }
 
       final editVariantId = _text(widget.initialItem?['variantId']);
       final editVariantName = _text(
         widget.initialItem?['variantName'],
       ).toLowerCase().trim();
 
-      if (editVariantId.isNotEmpty) {
+      if (!_canUseVariants) {
+        _selectedVariantId = '';
+      } else if (editVariantId.isNotEmpty) {
         _selectedVariantId = editVariantId;
       } else if (editVariantName.isNotEmpty) {
         final match = _variants.where((v) {
@@ -175,8 +187,8 @@ class _AddOrderDialogState extends State<AddOrderDialog> {
           : _text(widget.menu['imageUrl']),
       'isFeatured': widget.menu['is_featured'] == true,
       'basePrice': _basePrice,
-      'variantId': _selectedVariantId,
-      'variantName': _text(_selectedVariant?['name']),
+      'variantId': _canUseVariants ? _selectedVariantId : '',
+      'variantName': _canUseVariants ? _text(_selectedVariant?['name']) : '',
       'addonIds': _selectedAddonIds.toList()..sort(),
       'addonNames': _addons
           .where((a) => _selectedAddonIds.contains(a['id_addson'].toString()))

@@ -15,7 +15,8 @@ class PaymentService {
   }) async {
     final now = DateTime.now();
     final invoiceCode =
-        'INV-${now.year}${now.month}${now.day}-${now.millisecondsSinceEpoch.toString().substring(8)}';
+        'INV-${(now.millisecondsSinceEpoch % 10000).toString().padLeft(4, '0')}';
+
 
     final orderRes = await supabase
         .from('orders')

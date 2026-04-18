@@ -9,6 +9,7 @@ class PaymentPage extends StatefulWidget {
   final int total;
   final String Function(int) formatRupiah;
   final String customerName;
+  final VoidCallback onOrderCompleted;
 
   const PaymentPage({
     super.key,
@@ -18,6 +19,7 @@ class PaymentPage extends StatefulWidget {
     required this.total,
     required this.formatRupiah,
     required this.customerName,
+    required this.onOrderCompleted,
   });
 
   @override
@@ -99,7 +101,7 @@ class _PaymentPageState extends State<PaymentPage> {
 
       if (!mounted) return;
 
-      Navigator.push(
+      final completed = await Navigator.push<bool>(
         context,
         MaterialPageRoute(
           builder: (_) => ReceiptPage(
@@ -113,10 +115,16 @@ class _PaymentPageState extends State<PaymentPage> {
             formatRupiah: widget.formatRupiah,
             order: result['order'],
             payment: result['payment'],
+            onOrderCompleted: widget.onOrderCompleted,
           ),
         ),
       );
+
+      if (completed == true && mounted) {
+        Navigator.pop(context, true);
+      }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Gagal pembayaran: $e'),
@@ -323,7 +331,7 @@ class _PaymentPageState extends State<PaymentPage> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'QTY $qty',
+                            'JMLH $qty',
                             style: const TextStyle(
                               fontSize: 12,
                               color: Colors.grey,

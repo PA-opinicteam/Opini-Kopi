@@ -33,12 +33,13 @@ class ExportService {
             mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
             children: [
               _summaryBox(
-                'Total Sales',
+                'Total Penjualan',
                 CurrencyFormatter.idr(summary['total_sales'] ?? 0),
               ),
-              _summaryBox('Total Order', '${summary['total_order'] ?? 0}'),
+              _summaryBox('Total Pesanan',
+               '${summary['total_order'] ?? 0}'),
               _summaryBox(
-                'Avg Order',
+                'Rata-rata Pesanan',
                 CurrencyFormatter.idr(summary['avg_order'] ?? 0),
               ),
             ],
@@ -52,8 +53,8 @@ class ExportService {
           pw.TableHelper.fromTextArray(
             headers: const [
               'Tanggal',
-              'Invoice',
-              'Customer',
+              'ID Pesanan',
+              'Nama Pelanggan',
               'Metode',
               'Total',
             ],
@@ -93,22 +94,22 @@ class ExportService {
     sheet.appendRow([TextCellValue('Laporan Penjualan Opini Kopi')]);
     sheet.appendRow([]);
     sheet.appendRow([
-      TextCellValue('Total Sales'),
+      TextCellValue('Total Penjualan'),
       TextCellValue(CurrencyFormatter.idr(summary['total_sales'] ?? 0)),
     ]);
     sheet.appendRow([
-      TextCellValue('Total Order'),
+      TextCellValue('Total Pesanan'),
       IntCellValue((summary['total_order'] ?? 0) as int),
     ]);
     sheet.appendRow([
-      TextCellValue('Avg Order'),
+      TextCellValue('Rata-rata Pesanan'),
       TextCellValue(CurrencyFormatter.idr(summary['avg_order'] ?? 0)),
     ]);
     sheet.appendRow([]);
     sheet.appendRow([
       TextCellValue('Tanggal'),
-      TextCellValue('Invoice'),
-      TextCellValue('Customer'),
+      TextCellValue('ID Pesanan'),
+      TextCellValue('Nama Pelanggan'),
       TextCellValue('Metode'),
       TextCellValue('Total'),
     ]);
@@ -140,12 +141,13 @@ class ExportService {
 
     for (final item in stock) {
       final stockValue = (item['stock'] ?? 0) as num;
+      final unitValue = (item['unit'] ?? '').toString();
       sheet.appendRow([
         TextCellValue((item['product_name'] ?? '').toString()),
         TextCellValue((item['category'] ?? 'Bahan Baku').toString()),
         DoubleCellValue(stockValue.toDouble()),
-        TextCellValue((item['unit'] ?? '').toString()),
-        TextCellValue(_stockStatus(stockValue)),
+        TextCellValue(unitValue),
+        TextCellValue(_stockStatus(stockValue.toDouble(), unitValue)),
       ]);
     }
 
@@ -218,9 +220,38 @@ class ExportService {
     return null;
   }
 
-  static String _stockStatus(num stock) {
-    if (stock == 0) return 'Habis';
-    if (stock <= 5) return 'Menipis';
+  static String _normalizeUnit(String value) {
+    return value.toLowerCase().trim();
+  }
+
+  static double _lowStockLimit(String unit) {
+    switch (_normalizeUnit(unit)) {
+      case 'g':
+      case 'gr':
+      case 'gram':
+        return 500;
+      case 'kg':
+      case 'kilogram':
+        return 1;
+      case 'ml':
+        return 1000;
+      case 'l':
+      case 'lt':
+      case 'liter':
+        return 2;
+      case 'pcs':
+      case 'pc':
+      case 'piece':
+      case 'pieces':
+        return 10;
+      default:
+        return 5;
+    }
+  }
+
+  static String _stockStatus(double stock, String unit) {
+    if (stock <= 0) return 'Habis';
+    if (stock <= _lowStockLimit(unit)) return 'Menipis';
     return 'Aman';
   }
 }

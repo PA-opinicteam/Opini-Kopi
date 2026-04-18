@@ -69,7 +69,7 @@ class OwnerSidebarWidget extends StatelessWidget {
                     _item(1, "Menu", Icons.restaurant_menu_outlined),
                     _item(2, "Laporan", Icons.receipt_long_outlined),
                     _item(3, "Stok", Icons.inventory_2_outlined),
-                    _item(4, "User", Icons.people_alt_outlined),
+                    _item(4, "Pengguna", Icons.people_alt_outlined),
                   ],
                 ),
               ),
@@ -177,7 +177,7 @@ class OwnerBottomNavigationBar extends StatelessWidget {
         NavigationDestination(
           icon: Icon(Icons.people_alt_outlined),
           selectedIcon: Icon(Icons.people_alt),
-          label: 'User',
+          label: 'Pengguna',
         ),
       ],
     );
