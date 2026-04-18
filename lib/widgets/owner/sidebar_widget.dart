@@ -43,15 +43,11 @@ class OwnerSidebarWidget extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Opini Kopi',
+                            'Opini Kopi Manajemen',
                             style: TextStyle(
                               fontWeight: FontWeight.w800,
                               color: Color(0xFF4A2419),
                             ),
-                          ),
-                          Text(
-                            'SHOP MANAGEMENT',
-                            style: TextStyle(fontSize: 10),
                           ),
                         ],
                       ),
