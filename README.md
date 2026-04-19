@@ -7,6 +7,7 @@
 | Khairunisa Aprilia          | 2409116060 |
 | Elmy Fadillah               | 2409116075 |
 
+---
 
 # A. Deskripsi Aplikasi
 
@@ -16,410 +17,113 @@ Pengembangan aplikasi ini dilatarbelakangi oleh kebutuhan mitra dalam mengelola 
 
 Melalui aplikasi ini, mitra dapat melakukan pengelolaan bisnis secara lebih efektif, terstruktur, dan berbasis data. Selain itu, integrasi dengan backend menggunakan Supabase memungkinkan penyimpanan data secara real-time.
 
+---
 # B. Fitur Aplikasi
+Aplikasi ini dirancang untuk membantu operasional coffee shop secara digital, mulai dari pengelolaan menu, transaksi kasir, hingga laporan penjualan dalam satu sistem terintegrasi.
 
-## a). Halaman Splash Screen 
-
-### Preview Splash Screen
-
-<img width="1919" height="905" alt="image" src="https://github.com/user-attachments/assets/629f5d43-842b-4d1a-be95-0f3d7bf6f6dd" />
-
-## b). Halaman Login/Masuk
-
-### Preview Halaman Login/Masuk
-
-<img width="1919" height="907" alt="image" src="https://github.com/user-attachments/assets/08e10d2f-2831-435d-8e5a-a2e2c45fac65" />
-
-- Halaman login sebagai akses awal ke sistem.
-- Pengguna memasukkan email dan password yang terdaftar.
-- Sistem memverifikasi data dan menentukan role (kasir/owner).
-- Tersedia fitur show/hide password.
-- Pengguna diarahkan ke halaman sesuai peran setelah login.
-
-## c). Halaman Dashboard Owner
-
-### Preview Dashboard Owner
-
-<table align="center">
-  <tr>
-    <td align="center">
-      <img width="1919" height="910" alt="image" src="https://github.com/user-attachments/assets/73b02b44-b285-4052-94d8-d7f0d01d0d8e" />
-     <br/>
-      <sub><b>Desktop View</b></sub>
-    </td>
-    <td align="center">
-      <img width="621" height="906" alt="image" src="https://github.com/user-attachments/assets/c3316228-b502-457e-b9f8-ea39659ed2af" />
-     <br/>
-      <sub><b>Mobile View</b></sub>
-    </td>
-  </tr>
-</table>
-
-- Dashboard menampilkan ringkasan kondisi bisnis secara keseluruhan.
-- Menampilkan penjualan dan jumlah transaksi harian.
-- Menyediakan informasi produk terlaris.
-- Dilengkapi grafik penjualan mingguan untuk melihat tren.
-- Menampilkan peak hour dan distribusi pengunjung.
-- Membantu pengambilan keputusan operasional dan strategi bisnis.
-
-## d). Halaman Manajemen Menu Owner
-Halaman **Manajemen Menu** digunakan untuk mengelola seluruh daftar produk yang dijual oleh mitra dalam satu tampilan terpusat.
-<br>
-### Preview Manajemen Menu Owner
-
-<table align="center">
-  <tr>
-    <td align="center">
-      <img width="1919" height="906" alt="image" src="https://github.com/user-attachments/assets/d0f0b0fd-c892-4770-a031-83422c35157e" />
-       <br/>
-      <sub><b>Desktop View</b></sub>
-    </td>
-    <td align="center">
-      <img width="616" height="903" alt="image" src="https://github.com/user-attachments/assets/66f6cfba-cb13-4158-85c7-22e9722e5444" />
-      <sub><b>Mobile View</b></sub>
-    </td>
-  </tr>
-</table>
-<br>
-<img width="1916" height="898" alt="image" src="https://github.com/user-attachments/assets/17cc9e31-284d-41c0-990b-cb2e29a659c1" />
-<br>
-<img width="1916" height="898" alt="image" src="https://github.com/user-attachments/assets/14fc9e2e-1222-4605-a8b8-08bc05b50f81" />
-<br>
-<img width="1916" height="898" alt="image" src="https://github.com/user-attachments/assets/905080dd-0040-412c-922d-c2c4b9b02f29" />
-
-#### Fitur dan Fungsi
-
-- **Informasi Produk**
-  
-  Menampilkan nama, harga, kategori, dan status produk.
-
-- **Pencarian**
-  
-  Mencari produk berdasarkan nama.
-
-- **Filter Kategori**
-  
-  Menyaring produk berdasarkan kategori.
-
-- **Tambah Produk**
-    
-  Menambahkan menu melalui tombol **+ Tambah Menu**.
-
-- **Gambar Produk**
-   
-  Thumbnail untuk identifikasi visual.
-
-- **Edit Produk**
-  
-  Mengubah data seperti nama, harga, kategori, status, dan gambar.
-
-- **Hapus Produk**
-   
-  Menghapus produk dengan konfirmasi.
-
-- **Status Produk**
-   
-  Menunjukkan ketersediaan (Aktif / Nonaktif).
-  
-## e). Halaman Laporan Penjualan Owner
-Halaman **Laporan Penjualan** digunakan untuk memantau performa bisnis secara lebih detail berdasarkan periode waktu tertentu.
-<br>
-### Preview Laporan Penjualan Owner
-
-<table align="center">
-  <tr>
-    <td align="center">
-      <img width="1919" height="914" alt="image" src="https://github.com/user-attachments/assets/28e2cd93-d68d-4033-980f-75a65d73c341" />
-       <br/>
-      <sub><b>Desktop View</b></sub>
-    </td>
-    <td align="center">
-      <img width="619" height="906" alt="image" src="https://github.com/user-attachments/assets/9dc44021-29c5-4c7a-8319-2b5ded63b55a" />
-      <sub><b>Mobile View</b></sub>
-    </td>
-  </tr>
-</table>
-<br>
-<img width="1918" height="904" alt="image" src="https://github.com/user-attachments/assets/08907d60-2fde-4bb1-86e1-342062a1cb25" />
-
-#### Fitur dan Fungsi
-
-- **Periode Laporan**  
-  Pilihan tampilan mingguan atau bulanan.
-
-- **Filter Tanggal**  
-  Menentukan rentang waktu laporan.
-
-- **Total Penjualan**  
-  Menampilkan total pendapatan.
-
-- **Total Pesanan**  
-  Menampilkan jumlah transaksi.
-
-- **Rata-rata Pesanan**  
-  Menampilkan nilai rata-rata transaksi.
-
-- **Grafik Penjualan**  
-  Visualisasi tren penjualan.
-
-- **Produk Terlaris**  
-  Menampilkan produk dengan penjualan tertinggi.
-
-- **Riwayat Order**  
-  Menampilkan detail transaksi (ID, waktu, pelanggan, pembayaran, total).
-
-- **Export Data**  
-  Mengunduh laporan dalam format PDF atau Excel.
-
-## f). Halaman Manajemen Stok Owner
-Halaman **Stok Bahan** digunakan untuk mengelola ketersediaan bahan baku yang digunakan dalam operasional coffee shop.
-<br>
-### Preview Manajemen Stok Owner
-
-<table align="center">
-  <tr>
-    <td align="center">
-      <img width="1919" height="900" alt="image" src="https://github.com/user-attachments/assets/b2f0b0fc-2ea5-4965-9b4d-31d9d6016895" />
-       <br/>
-      <sub><b>Desktop View</b></sub>
-    </td>
-    <td align="center">
-      <img width="619" height="910" alt="image" src="https://github.com/user-attachments/assets/2b878d73-6f9f-4a84-9934-a8e39a744d25" />
-      <sub><b>Mobile View</b></sub>
-    </td>
-  </tr>
-</table>
-<br>
-<img width="1919" height="907" alt="image" src="https://github.com/user-attachments/assets/891521fc-62ec-4a49-9113-2ebb9ceb6eaa" />
-<br>
-<img width="1919" height="907" alt="image" src="https://github.com/user-attachments/assets/cadbfe05-b9ae-4e2e-9189-861f93e16b18" />
-<br>
-<img width="1919" height="907" alt="image" src="https://github.com/user-attachments/assets/918088fc-d6a2-445b-b819-79561bbdcae2" />
-
-#### Fitur dan Fungsi
-
-- **Ringkasan Stok**  
-  Menampilkan total bahan, stok aman, rendah, dan habis.
-
-- **Pencarian Bahan**  
-  Mencari bahan dengan cepat.
-
-- **Tambah Bahan**  
-  Menambahkan data melalui tombol **+ Tambah Bahan**.
-
-- **Daftar Bahan**  
-  Menampilkan nama, jumlah, satuan, dan status stok.
-
-- **Status Stok**  
-  Indikator kondisi: **Aman**, **Rendah**, **Habis**.
-
-- **Edit Bahan**  
-  Mengubah data bahan (nama, jumlah, satuan).
-
-- **Hapus Bahan**  
-  Menghapus data bahan.
-
-- **Form Input**  
-  Input nama, jumlah, dan satuan.
-
-- **Export Data**  
-  Unduh data dalam format Excel.
-
-## g). Halaman Manajemen Pengguna Owner
-Halaman **Manajemen Pengguna** digunakan untuk mengelola akun pengguna yang terlibat dalam operasional coffee shop.
-<br>
-### Preview Manajemen Pengguna Owner
-
-<table align="center">
-  <tr>
-    <td align="center">
-      <img width="1909" height="898" alt="image" src="https://github.com/user-attachments/assets/db50824a-63f1-4340-a50a-8aaf65b1171c" />
-       <br/>
-      <sub><b>Desktop View</b></sub>
-    </td>
-    <td align="center">
-      <img width="619" height="905" alt="image" src="https://github.com/user-attachments/assets/ac6a48d9-d3e4-437d-bc37-24af87b8540b" />
-      <sub><b>Mobile View</b></sub>
-    </td>
-  </tr>
-</table>
-<br>
-<img width="1919" height="917" alt="image" src="https://github.com/user-attachments/assets/3b19643d-414b-4a2f-8a23-5ef312d12452" />
-<br>
-<img width="1919" height="917" alt="image" src="https://github.com/user-attachments/assets/0207ab96-f5a0-4f96-a0c1-4c8891710368" />
-<br>
-<img width="1919" height="917" alt="image" src="https://github.com/user-attachments/assets/30fc446e-0447-4375-b4b9-efced5f8f3e6" />
-
-#### Fitur dan Fungsi
-
-- **Ringkasan Pengguna**  
-  Menampilkan total, aktif, dan nonaktif.
-
-- **Pencarian User**  
-  Mencari akun dengan cepat.
-
-- **Tambah User**  
-  Menambahkan user melalui tombol **+ Tambah User**.
-
-- **Daftar User**  
-  Menampilkan nama, email, peran, dan status.
-
-- **Peran User**  
-  Menentukan hak akses (Owner, Kasir).
-
-- **Status User**  
-  Menunjukkan kondisi akun (Aktif / Nonaktif).
-
-- **Edit User**  
-  Mengubah data user (nama, email, peran, status).
-
-- **Hapus User**  
-  Menghapus user dengan konfirmasi.
-
-- **Form Input**  
-  Input nama, email, password, peran, dan status.
-  
-## h). Halaman Transaksi Kasir
-Halaman **Kasir** digunakan untuk melakukan transaksi penjualan secara langsung dengan tampilan menu yang terstruktur dan mudah digunakan.
-<br>
-### Preview Transaksi 
-
-<table align="center">
-  <tr>
-    <td align="center">
-      <img width="1916" height="898" alt="image" src="https://github.com/user-attachments/assets/9e5e39f0-690e-4a88-81d9-a5c05d6a9ff3" />
-       <br/>
-      <sub><b>Desktop View</b></sub>
-    </td>
-    <td align="center">
-      <img width="618" height="908" alt="image" src="https://github.com/user-attachments/assets/fe505a45-888e-4f44-97f2-a9086550e433" />
-      <sub><b>Mobile View</b></sub>
-    </td>
-  </tr>
-</table>
-<br>
-<img width="905" height="439" alt="image" src="https://github.com/user-attachments/assets/ae627f64-01a1-45f2-8382-1eb1e897c658" />
-<br>
-<img width="898" height="432" alt="image" src="https://github.com/user-attachments/assets/a18b91bf-4011-44e8-aef7-cd08256d48b9" />
-<br>
-<img width="910" height="432" alt="image" src="https://github.com/user-attachments/assets/0e7fb3bf-22de-4011-afab-435a9402b337" />
-<br>
-<img width="910" height="432" alt="image" src="https://github.com/user-attachments/assets/36f2b7f2-1a81-49a6-98c2-80812252e902" />
-<br>
-
-#### Fitur dan Fungsi
-
-- **Kategori Menu**  
-  Memilih kategori (Coffee, Non-Coffee, Snack).
-
-- **Pencarian Menu**  
-  Mencari produk berdasarkan nama.
-
-- **Daftar Produk**  
-  Menampilkan gambar, nama, dan harga.
-
-- **Pilih Produk**  
-  Menambahkan produk ke pesanan.
-
-- **Varian & Tambahan**  
-  Memilih varian, tambahan, catatan, dan jumlah.
-
-- **Ringkasan Pesanan**  
-  Menampilkan item, jumlah, harga, serta aksi edit dan hapus.
-
-- **Nama Pelanggan**  
-  Input nama untuk transaksi.
-
-- **Perhitungan Otomatis**  
-  Menghitung subtotal, pajak, dan total.
-
-- **Reset Pesanan**  
-  Mengosongkan pesanan (**Hapus Semua**).
-
-- **Pembayaran**  
-  Menyelesaikan transaksi melalui tombol **Bayar**.
+## a. Login
+
+Halaman **Login** digunakan sebagai akses awal ke sistem untuk mengautentikasi pengguna.
+
+* Input email & password
+* Validasi data user
+* Role otomatis (Owner / Kasir)
+* Show / hide password
+* Redirect sesuai peran
+
+## b. Dashboard
+
+Halaman **Dashboard** digunakan untuk menampilkan ringkasan kondisi bisnis secara keseluruhan.
+
+* Ringkasan penjualan
+* Jumlah transaksi
+* Produk terlaris
+* Grafik penjualan
+* Analisis jam ramai
+
+## c. Manajemen Menu
+
+Halaman **Manajemen Menu** digunakan untuk mengelola seluruh daftar produk dalam satu tampilan terpusat.
+
+* Lihat daftar produk
+* Tambah menu
+* Edit data produk
+* Hapus menu
+* Pencarian & filter
+* Status produk
+
+## d. Laporan Penjualan
+
+Halaman **Laporan Penjualan** digunakan untuk memantau performa bisnis berdasarkan periode tertentu.
+
+* Filter tanggal
+* Pilih periode
+* Total penjualan & transaksi
+* Rata-rata pesanan
+* Grafik penjualan
+* Produk terlaris
+* Riwayat order
+* Export PDF & Excel
+
+## e. Manajemen Stok
+
+Halaman **Manajemen Stok** digunakan untuk mengelola ketersediaan bahan baku.
+
+* Ringkasan stok
+* Tambah bahan
+* Edit data
+* Hapus bahan
+* Pencarian
+* Status stok
+* Export data
+
+## f. Manajemen Pengguna
+
+Halaman **Manajemen Pengguna** digunakan untuk mengatur data dan hak akses pengguna.
+
+* Lihat user
+* Tambah user
+* Edit data
+* Hapus user
+* Role (Owner/Kasir)
+* Status user
+* Pencarian
+
+## g. Transaksi Kasir
+
+Halaman **Kasir** digunakan untuk melakukan transaksi penjualan secara langsung.
+
+* Pilih kategori
+* Cari produk
+* Tambah ke pesanan
+* Atur jumlah & tambahan
+* Input nama pelanggan
+* Hitung total otomatis
+* Edit / hapus item
+* Reset pesanan
+
+## h. Pembayaran
+
+Halaman **Pembayaran** digunakan untuk menyelesaikan proses transaksi.
+
+* Ringkasan pesanan
+* Metode pembayaran
+* Input nominal
+* Hitung kembalian
+* Konfirmasi transaksi
+
+## i. Struk
+
+Halaman **Struk** digunakan untuk menampilkan bukti transaksi.
+
+* Status transaksi
+* Detail pesanan
+* Rincian pembayaran
+* Metode pembayaran
+* Cetak struk
 
   
-## i). Halaman Pembayaran Kasir
-Halaman **Pembayaran** digunakan untuk menyelesaikan transaksi setelah pesanan dipilih oleh kasir.
-<br>
-### Preview Pembayaran
-
-<table align="center">
-  <tr>
-    <td align="center">
-      <img width="1919" height="905" alt="image" src="https://github.com/user-attachments/assets/90451112-c859-4909-be6b-55b47bb10e68" />
-       <br/>
-      <sub><b>Desktop View</b></sub>
-    </td>
-    <td align="center">
-      <img width="622" height="905" alt="image" src="https://github.com/user-attachments/assets/2ea5da1c-0e98-4f35-b7fd-b9e4cbb4ef64" />
-      <sub><b>Mobile View</b></sub>
-    </td>
-  </tr>
-</table>
-
-#### Fitur dan Fungsi
-
-- **Ringkasan Pesanan**  
-  Menampilkan pelanggan, item, jumlah, dan harga.
-
-- **Total Pembayaran**  
-  Menampilkan total yang harus dibayar.
-
-- **Metode Pembayaran**  
-  Pilihan QRIS atau tunai.
-
-- **Pembayaran Tunai**  
-  Input nominal atau pilih nominal cepat.
-
-- **Nominal Cepat**  
-  Shortcut pilihan nominal.
-
-- **Perhitungan**  
-  Menghitung subtotal, pajak, total, dan kembalian.
-
-- **Rincian Transaksi**  
-  Menampilkan subtotal, pajak, dan total.
-
-- **Konfirmasi Pembayaran**  
-  Menyelesaikan dan menyimpan transaksi.
-
-- **Pembatalan**  
-  Membatalkan proses pembayaran.
-
-## j). Halaman Struk Kasir
-Halaman **Struk** ditampilkan setelah transaksi berhasil dilakukan sebagai bukti pembayaran kepada customer.
-<bar>
-### Preview Struk
-
-<img width="1919" height="908" alt="image" src="https://github.com/user-attachments/assets/286d34d6-1a09-4e13-9059-5fb12444b278" />
-
-#### Fitur dan Fungsi
-
-- **Status Transaksi**  
-  Menampilkan status pembayaran berhasil.
-
-- **Informasi Transaksi**  
-  Menampilkan tanggal, customer, dan ID pesanan.
-
-- **Daftar Item**  
-  Menampilkan produk, jumlah, dan harga.
-
-- **Rincian Pembayaran**  
-  Menampilkan subtotal, pajak, dan total.
-
-- **Metode Pembayaran**  
-  Menampilkan metode yang digunakan (Tunai / QRIS).
-
-- **Uang & Kembalian**  
-  Menampilkan uang diterima dan kembalian.
-
-- **Cetak Struk**  
-  Mencetak bukti transaksi.
-
-- **Selesai Transaksi**  
-  Mengakhiri transaksi dan kembali ke kasir.
+---
  
 # C. Widget Yang Digunakan
 # Daftar Widget yang Digunakan
@@ -587,6 +291,7 @@ Berikut adalah beberapa package yang digunakan dalam pengembangan aplikasi:
 | path_provider                 |  ^2.1.5  | Digunakan untuk mengambil lokasi penyimpanan di device (untuk menyimpan PDF / Excel).                   |
 | esc_pos_utils_plus            |  ^2.0.4  | Digunakan untuk generate format struk thermal printer (printer kasir).                                  |
 
+---
 # D. Teknologi Yang Digunakan
 
 <p align="center">
@@ -595,7 +300,11 @@ Berikut adalah beberapa package yang digunakan dalam pengembangan aplikasi:
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/supabase/supabase-original.svg" width="60"/>
 </p> 
 
+---
 # E. Cara Install Aplikasi
+
+
+---
 
 # F. Preview Aplikasi 
 <p align="center">
@@ -605,6 +314,7 @@ Berikut adalah beberapa package yang digunakan dalam pengembangan aplikasi:
   <em>Halaman Splash</em>
 </p>
 
+---
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/08e10d2f-2831-435d-8e5a-a2e2c45fac65" width="800"/>
@@ -612,6 +322,8 @@ Berikut adalah beberapa package yang digunakan dalam pengembangan aplikasi:
 <p align="center">
   <em>Halaman Login</em>
 </p>
+
+---
 
 <table align="center">
   <tr>
@@ -631,6 +343,8 @@ Berikut adalah beberapa package yang digunakan dalam pengembangan aplikasi:
   <em>Halaman Dashboard Owner</em>
 </p>
 
+---
+
 <table align="center">
   <tr>
     <td align="center">
@@ -648,6 +362,7 @@ Berikut adalah beberapa package yang digunakan dalam pengembangan aplikasi:
   <em>Halaman Manajemen Menu Owner</em>
 </p>
 
+---
 
 <table align="center">
   <tr>
@@ -666,6 +381,8 @@ Berikut adalah beberapa package yang digunakan dalam pengembangan aplikasi:
   <em>Halaman Laporan Penjualan Owner</em>
 </p>
 
+---
+
 <table align="center">
   <tr>
     <td align="center">
@@ -682,6 +399,8 @@ Berikut adalah beberapa package yang digunakan dalam pengembangan aplikasi:
 <p align="center">
   <em>Halaman Manajemen Stok Owner</em>
 </p>
+
+---
 
 <table align="center">
   <tr>
@@ -700,6 +419,7 @@ Berikut adalah beberapa package yang digunakan dalam pengembangan aplikasi:
   <em>Halaman Manajemen Pengguna Owner</em>
 </p>
 
+---
 
 <table align="center">
   <tr>
@@ -718,6 +438,8 @@ Berikut adalah beberapa package yang digunakan dalam pengembangan aplikasi:
   <em>Halaman Transaksi Kasir</em>
 </p>
 
+---
+
 <table align="center">
   <tr>
     <td align="center">
@@ -735,6 +457,7 @@ Berikut adalah beberapa package yang digunakan dalam pengembangan aplikasi:
   <em>Halaman Pembayaran Kasir</em>
 </p>
 
+---
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/286d34d6-1a09-4e13-9059-5fb12444b278"/>
