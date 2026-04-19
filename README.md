@@ -19,7 +19,7 @@ Melalui aplikasi ini, mitra dapat melakukan pengelolaan bisnis secara lebih efek
 
 ---
 # B. Fitur Aplikasi
-Aplikasi ini dirancang untuk membantu operasional coffee shop secara digital, mulai dari pengelolaan menu, transaksi kasir, hingga laporan penjualan dalam satu sistem terintegrasi.
+Aplikasi ini dirancang untuk membantu operasional coffee shop Opini Kopi secara digital, mulai dari pengelolaan menu, transaksi kasir, hingga laporan penjualan dalam satu sistem terintegrasi.
 
 ## a. Login
 
