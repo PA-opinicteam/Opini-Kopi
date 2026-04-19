@@ -1,4 +1,4 @@
-# OPINI KOPI - APLIKASI POS
+# OPINI KOPI - APLIKASI OPINI POS
 
 ## OPINICTEAM
 ## - Moch. Farris Alfiansyah (2409116079)
@@ -8,7 +8,7 @@
 
 # A. Deskripsi Aplikasi
 
-Aplikasi Opini Kopi merupakan aplikasi berbasis Flutter yang dikembangkan berdasarkan studi kasus dari mitra usaha coffee shop, yaitu Opini Kopi.
+Aplikasi Opini POS merupakan aplikasi berbasis Flutter yang dikembangkan berdasarkan studi kasus dari mitra usaha coffee shop, yaitu Opini Kopi.
 
 Pengembangan aplikasi ini dilatarbelakangi oleh kebutuhan mitra dalam mengelola operasional bisnis yang sebelumnya masih dilakukan secara manual, seperti pencatatan transaksi, pengelolaan produk, serta pemantauan penjualan.
 
@@ -61,7 +61,8 @@ Melalui aplikasi ini, mitra dapat melakukan pengelolaan bisnis secara lebih efek
 - Membantu pengambilan keputusan operasional dan strategi bisnis.
 
 ## d). Halaman Manajemen Menu Owner
-
+Halaman **Manajemen Menu** digunakan untuk mengelola seluruh daftar produk yang dijual oleh mitra dalam satu tampilan terpusat.
+<br>
 ### Preview Manajemen Menu Owner
 
 <table align="center">
@@ -77,17 +78,50 @@ Melalui aplikasi ini, mitra dapat melakukan pengelolaan bisnis secara lebih efek
     </td>
   </tr>
 </table>
+<br>
+<img width="1916" height="898" alt="image" src="https://github.com/user-attachments/assets/17cc9e31-284d-41c0-990b-cb2e29a659c1" />
+<br>
+<img width="1916" height="898" alt="image" src="https://github.com/user-attachments/assets/14fc9e2e-1222-4605-a8b8-08bc05b50f81" />
+<br>
+<img width="1916" height="898" alt="image" src="https://github.com/user-attachments/assets/905080dd-0040-412c-922d-c2c4b9b02f29" />
 
-- Halaman manajemen menu digunakan untuk mengelola seluruh produk dalam satu tempat.
-- Menampilkan informasi produk seperti nama, harga, kategori, dan status.
-- Dilengkapi fitur pencarian dan filter kategori.
-- Owner dapat menambah, mengedit, dan menghapus produk.
-- Setiap produk memiliki gambar untuk identifikasi visual.
-- Status produk menunjukkan ketersediaan (aktif/nonaktif).
+#### Fitur dan Fungsi
 
+- **Informasi Produk**
+  
+  Menampilkan nama, harga, kategori, dan status produk.
 
+- **Pencarian**
+  
+  Mencari produk berdasarkan nama.
+
+- **Filter Kategori**
+  
+  Menyaring produk berdasarkan kategori.
+
+- **Tambah Produk**
+    
+  Menambahkan menu melalui tombol **+ Tambah Menu**.
+
+- **Gambar Produk**
+   
+  Thumbnail untuk identifikasi visual.
+
+- **Edit Produk**
+  
+  Mengubah data seperti nama, harga, kategori, status, dan gambar.
+
+- **Hapus Produk**
+   
+  Menghapus produk dengan konfirmasi.
+
+- **Status Produk**
+   
+  Menunjukkan ketersediaan (Aktif / Nonaktif).
+  
 ## e). Halaman Laporan Penjualan Owner
-
+Halaman **Laporan Penjualan** digunakan untuk memantau performa bisnis secara lebih detail berdasarkan periode waktu tertentu.
+<br>
 ### Preview Laporan Penjualan Owner
 
 <table align="center">
@@ -103,18 +137,41 @@ Melalui aplikasi ini, mitra dapat melakukan pengelolaan bisnis secara lebih efek
     </td>
   </tr>
 </table>
+<br>
+<img width="1918" height="904" alt="image" src="https://github.com/user-attachments/assets/08907d60-2fde-4bb1-86e1-342062a1cb25" />
 
-- Halaman laporan penjualan digunakan untuk memantau performa bisnis berdasarkan periode tertentu (mingguan/bulanan).
-- Owner dapat memilih rentang tanggal secara fleksibel untuk melihat data yang diinginkan.
-- Menampilkan total penjualan, jumlah order, dan rata-rata transaksi.
-- Dilengkapi grafik untuk melihat tren penjualan.
-- Menampilkan beberapa top produk beserta jumlah terjual.
-- Tersedia fitur ekspor laporan ke PDF dan Excel.
-- Menampilkan riwayat transaksi pada bagian bawah.
+#### Fitur dan Fungsi
 
+- **Periode Laporan**  
+  Pilihan tampilan mingguan atau bulanan.
+
+- **Filter Tanggal**  
+  Menentukan rentang waktu laporan.
+
+- **Total Penjualan**  
+  Menampilkan total pendapatan.
+
+- **Total Pesanan**  
+  Menampilkan jumlah transaksi.
+
+- **Rata-rata Pesanan**  
+  Menampilkan nilai rata-rata transaksi.
+
+- **Grafik Penjualan**  
+  Visualisasi tren penjualan.
+
+- **Produk Terlaris**  
+  Menampilkan produk dengan penjualan tertinggi.
+
+- **Riwayat Order**  
+  Menampilkan detail transaksi (ID, waktu, pelanggan, pembayaran, total).
+
+- **Export Data**  
+  Mengunduh laporan dalam format PDF atau Excel.
 
 ## f). Halaman Manajemen Stok Owner
-
+Halaman **Stok Bahan** digunakan untuk mengelola ketersediaan bahan baku yang digunakan dalam operasional coffee shop.
+<br>
 ### Preview Manajemen Stok Owner
 
 <table align="center">
@@ -130,16 +187,45 @@ Melalui aplikasi ini, mitra dapat melakukan pengelolaan bisnis secara lebih efek
     </td>
   </tr>
 </table>
+<br>
+<img width="1919" height="907" alt="image" src="https://github.com/user-attachments/assets/891521fc-62ec-4a49-9113-2ebb9ceb6eaa" />
+<br>
+<img width="1919" height="907" alt="image" src="https://github.com/user-attachments/assets/cadbfe05-b9ae-4e2e-9189-861f93e16b18" />
+<br>
+<img width="1919" height="907" alt="image" src="https://github.com/user-attachments/assets/918088fc-d6a2-445b-b819-79561bbdcae2" />
 
-- Halaman stok bahan digunakan untuk mengelola ketersediaan bahan baku.
-- Menampilkan jumlah stok, satuan, dan status (aman, rendah, habis).
-- Dilengkapi indikator stok untuk memantau kondisi bahan.
-- Tersedia fitur pencarian untuk memudahkan pencarian bahan.
-- Owner dapat menambah, mengedit, dan menghapus data bahan.
-- Tersedia fitur ekspor lke Excel.
+#### Fitur dan Fungsi
+
+- **Ringkasan Stok**  
+  Menampilkan total bahan, stok aman, rendah, dan habis.
+
+- **Pencarian Bahan**  
+  Mencari bahan dengan cepat.
+
+- **Tambah Bahan**  
+  Menambahkan data melalui tombol **+ Tambah Bahan**.
+
+- **Daftar Bahan**  
+  Menampilkan nama, jumlah, satuan, dan status stok.
+
+- **Status Stok**  
+  Indikator kondisi: **Aman**, **Rendah**, **Habis**.
+
+- **Edit Bahan**  
+  Mengubah data bahan (nama, jumlah, satuan).
+
+- **Hapus Bahan**  
+  Menghapus data bahan.
+
+- **Form Input**  
+  Input nama, jumlah, dan satuan.
+
+- **Export Data**  
+  Unduh data dalam format Excel.
 
 ## g). Halaman Manajemen Pengguna Owner
-
+Halaman **Manajemen Pengguna** digunakan untuk mengelola akun pengguna yang terlibat dalam operasional coffee shop.
+<br>
 ### Preview Manajemen Pengguna Owner
 
 <table align="center">
@@ -155,16 +241,45 @@ Melalui aplikasi ini, mitra dapat melakukan pengelolaan bisnis secara lebih efek
     </td>
   </tr>
 </table>
+<br>
+<img width="1919" height="917" alt="image" src="https://github.com/user-attachments/assets/3b19643d-414b-4a2f-8a23-5ef312d12452" />
+<br>
+<img width="1919" height="917" alt="image" src="https://github.com/user-attachments/assets/0207ab96-f5a0-4f96-a0c1-4c8891710368" />
+<br>
+<img width="1919" height="917" alt="image" src="https://github.com/user-attachments/assets/30fc446e-0447-4375-b4b9-efced5f8f3e6" />
 
-- Halaman manajemen user digunakan untuk mengelola akun pengguna.
-- Menampilkan total user, user aktif, dan tidak aktif.
-- Menyediakan informasi nama, email, role, dan status akun.
-- Dilengkapi fitur pencarian untuk memudahkan pencarian user.
-- Owner dapat menambah, mengedit, dan menghapus user.
-- Peran dan status menentukan hak akses dan kondisi akun.
+#### Fitur dan Fungsi
 
+- **Ringkasan Pengguna**  
+  Menampilkan total, aktif, dan nonaktif.
+
+- **Pencarian User**  
+  Mencari akun dengan cepat.
+
+- **Tambah User**  
+  Menambahkan user melalui tombol **+ Tambah User**.
+
+- **Daftar User**  
+  Menampilkan nama, email, peran, dan status.
+
+- **Peran User**  
+  Menentukan hak akses (Owner, Kasir).
+
+- **Status User**  
+  Menunjukkan kondisi akun (Aktif / Nonaktif).
+
+- **Edit User**  
+  Mengubah data user (nama, email, peran, status).
+
+- **Hapus User**  
+  Menghapus user dengan konfirmasi.
+
+- **Form Input**  
+  Input nama, email, password, peran, dan status.
+  
 ## h). Halaman Transaksi Kasir
-
+Halaman **Kasir** digunakan untuk melakukan transaksi penjualan secara langsung dengan tampilan menu yang terstruktur dan mudah digunakan.
+<br>
 ### Preview Transaksi 
 
 <table align="center">
@@ -180,18 +295,52 @@ Melalui aplikasi ini, mitra dapat melakukan pengelolaan bisnis secara lebih efek
     </td>
   </tr>
 </table>
+<br>
+<img width="905" height="439" alt="image" src="https://github.com/user-attachments/assets/ae627f64-01a1-45f2-8382-1eb1e897c658" />
+<br>
+<img width="898" height="432" alt="image" src="https://github.com/user-attachments/assets/a18b91bf-4011-44e8-aef7-cd08256d48b9" />
+<br>
+<img width="910" height="432" alt="image" src="https://github.com/user-attachments/assets/0e7fb3bf-22de-4011-afab-435a9402b337" />
+<br>
+<img width="910" height="432" alt="image" src="https://github.com/user-attachments/assets/36f2b7f2-1a81-49a6-98c2-80812252e902" />
+<br>
 
-- Halaman kasir digunakan untuk melakukan transaksi dengan menu berdasarkan kategori.
-- Produk ditampilkan dalam bentuk kartu (gambar, nama, harga) dan dilengkapi fitur pencarian.
-- Kasir dapat menambahkan produk ke pesanan dan melihatnya di order summary.
-- Sistem menghitung subtotal, pajak, dan total secara otomatis.
-- Kasir dapat mengisi nama customer sebelum pembayaran.
-- Tersedia fitur keranjang (cart) di tampilan mobile untuk memudahkan melihat pesanan.
-- Tombol bayar digunakan untuk menyelesaikan transaksi.
+#### Fitur dan Fungsi
 
+- **Kategori Menu**  
+  Memilih kategori (Coffee, Non-Coffee, Snack).
 
+- **Pencarian Menu**  
+  Mencari produk berdasarkan nama.
+
+- **Daftar Produk**  
+  Menampilkan gambar, nama, dan harga.
+
+- **Pilih Produk**  
+  Menambahkan produk ke pesanan.
+
+- **Varian & Tambahan**  
+  Memilih varian, tambahan, catatan, dan jumlah.
+
+- **Ringkasan Pesanan**  
+  Menampilkan item, jumlah, harga, serta aksi edit dan hapus.
+
+- **Nama Pelanggan**  
+  Input nama untuk transaksi.
+
+- **Perhitungan Otomatis**  
+  Menghitung subtotal, pajak, dan total.
+
+- **Reset Pesanan**  
+  Mengosongkan pesanan (**Hapus Semua**).
+
+- **Pembayaran**  
+  Menyelesaikan transaksi melalui tombol **Bayar**.
+
+  
 ## i). Halaman Pembayaran Kasir
-
+Halaman **Pembayaran** digunakan untuk menyelesaikan transaksi setelah pesanan dipilih oleh kasir.
+<br>
 ### Preview Pembayaran
 
 <table align="center">
@@ -208,75 +357,353 @@ Melalui aplikasi ini, mitra dapat melakukan pengelolaan bisnis secara lebih efek
   </tr>
 </table>
 
-- Halaman pembayaran digunakan untuk menyelesaikan transaksi.
-- Menampilkan ringkasan pesanan (item, jumlah, harga) dan total pembayaran.
-- Mendukung metode pembayaran seperti QRIS dan tunai.
-- Pada pembayaran tunai, kasir dapat memasukkan jumlah uang dan sistem menghitung kembalian otomatis.
-- Tersedia tombol nominal cepat untuk mempermudah input.
-- Menampilkan rincian subtotal, pajak, dan total.
-- Tombol konfirmasi untuk menyelesaikan transaksi dan tombol batal untuk membatalkan.
+#### Fitur dan Fungsi
+
+- **Ringkasan Pesanan**  
+  Menampilkan pelanggan, item, jumlah, dan harga.
+
+- **Total Pembayaran**  
+  Menampilkan total yang harus dibayar.
+
+- **Metode Pembayaran**  
+  Pilihan QRIS atau tunai.
+
+- **Pembayaran Tunai**  
+  Input nominal atau pilih nominal cepat.
+
+- **Nominal Cepat**  
+  Shortcut pilihan nominal.
+
+- **Perhitungan**  
+  Menghitung subtotal, pajak, total, dan kembalian.
+
+- **Rincian Transaksi**  
+  Menampilkan subtotal, pajak, dan total.
+
+- **Konfirmasi Pembayaran**  
+  Menyelesaikan dan menyimpan transaksi.
+
+- **Pembatalan**  
+  Membatalkan proses pembayaran.
 
 ## j). Halaman Struk Kasir
-
+Halaman **Struk** ditampilkan setelah transaksi berhasil dilakukan sebagai bukti pembayaran kepada customer.
+<bar>
 ### Preview Struk
 
 <img width="1919" height="908" alt="image" src="https://github.com/user-attachments/assets/286d34d6-1a09-4e13-9059-5fb12444b278" />
 
+#### Fitur dan Fungsi
 
-- Halaman struk ditampilkan sebagai bukti transaksi setelah pembayaran berhasil.
-- Menampilkan informasi transaksi seperti tanggal, pelanggan, dan ID pesanan.
-- Menampilkan daftar item, jumlah, harga, serta rincian subtotal, pajak, dan total.
-- Menampilkan metode pembayaran, uang diterima, dan kembalian.
-- Tersedia tombol cetak struk (masih dalam pengembangan).
-- Tombol selesai untuk kembali ke halaman kasir.
+- **Status Transaksi**  
+  Menampilkan status pembayaran berhasil.
+
+- **Informasi Transaksi**  
+  Menampilkan tanggal, customer, dan ID pesanan.
+
+- **Daftar Item**  
+  Menampilkan produk, jumlah, dan harga.
+
+- **Rincian Pembayaran**  
+  Menampilkan subtotal, pajak, dan total.
+
+- **Metode Pembayaran**  
+  Menampilkan metode yang digunakan (Tunai / QRIS).
+
+- **Uang & Kembalian**  
+  Menampilkan uang diterima dan kembalian.
+
+- **Cetak Struk**  
+  Mencetak bukti transaksi.
+
+- **Selesai Transaksi**  
+  Mengakhiri transaksi dan kembali ke kasir.
  
 # C. Widget Yang Digunakan
-- supabase_flutter: ^2.12.0
+# Daftar Widget yang Digunakan
 
-Digunakan untuk autentikasi pengguna dan pengelolaan database secara real-time.
+Project **Opini Kopi** menggunakan berbagai widget Flutter untuk membangun tampilan kasir, dashboard owner, form input, popup dialog, navigasi, dan visualisasi data. Berikut daftar widget yang digunakan beserta penjelasan singkatnya.
 
-- flutter_dotenv: ^5.0.2
+## 1. Root Widget
+### `MaterialApp`
+Digunakan sebagai pembungkus utama aplikasi Flutter. Widget ini mengatur struktur dasar aplikasi seperti tema, halaman awal, dan navigasi.
 
-Digunakan untuk menyimpan konfigurasi penting seperti API key dan URL secara aman.
+### `StatelessWidget`
+Digunakan untuk widget yang tampilannya tidak berubah selama dijalankan, misalnya sidebar atau komponen kecil.
 
-- image_picker: ^1.0.4
+### `StatefulWidget`
+Digunakan untuk widget yang memiliki state atau data yang bisa berubah, misalnya halaman login, halaman kasir, dan dialog input.
 
-Digunakan untuk mengambil gambar dari kamera atau galeri perangkat.
+---
 
-- fancy_shimmer_image: ^2.0.3
+## 2. Struktur dan Layout
+### `Scaffold`
+Kerangka utama halaman Flutter. Biasanya berisi `AppBar`, `body`, dan `bottomNavigationBar`.
 
-Digunakan untuk menampilkan gambar dengan efek loading (shimmer) agar tampilan lebih menarik.
+### `SafeArea`
+Digunakan agar tampilan tidak tertutup oleh notch, status bar, atau bagian sistem pada perangkat.
 
-- intl: ^0.19.0
+### `Container`
+Widget serbaguna untuk membungkus elemen UI, memberi warna, ukuran, padding, margin, dan dekorasi.
 
-Digunakan untuk formatting angka, mata uang, serta tanggal.
+### `SizedBox`
+Digunakan untuk memberi jarak atau menentukan ukuran tetap pada widget.
 
-- fl_chart: ^1.2.0
+### `Padding`
+Memberi ruang di sekeliling widget agar tampilan lebih rapi.
 
-Digunakan untuk menampilkan grafik data penjualan seperti bar chart atau line chart.
+### `Expanded`
+Membuat widget mengisi sisa ruang yang tersedia di dalam `Row` atau `Column`.
 
-- syncfusion_flutter_datepicker: ^24.1.41
+### `Spacer`
+Digunakan untuk memberi jarak fleksibel antar widget di dalam `Row` atau `Column`.
 
-Digunakan untuk memilih tanggal atau rentang waktu dengan tampilan yang interaktif dan mudah digunakan.
+### `ConstrainedBox`
+Memberi batas ukuran minimum atau maksimum pada widget.
 
-- pdf (^3.11.3)
+### `LayoutBuilder`
+Digunakan untuk membuat tampilan responsif berdasarkan ukuran area yang tersedia.
 
+---
+
+## 3. Susunan Posisi
+### `Column`
+Menyusun widget secara vertikal dari atas ke bawah.
+
+### `Row`
+Menyusun widget secara horizontal dari kiri ke kanan.
+
+### `Wrap`
+Menyusun widget seperti `Row`, tetapi bisa pindah ke baris berikutnya jika ruang tidak cukup.
+
+### `Stack`
+Menumpuk beberapa widget di area yang sama.
+
+### `Positioned`
+Digunakan di dalam `Stack` untuk menentukan posisi widget secara spesifik.
+
+### `Center`
+Menempatkan widget tepat di tengah area yang tersedia.
+
+---
+
+## 4. Teks dan Ikon
+### `Text`
+Menampilkan teks pada layar, seperti judul, label, deskripsi, dan isi informasi.
+
+### `Icon`
+Menampilkan ikon bawaan Flutter, misalnya ikon kopi, logout, edit, dan hapus.
+
+### `CircleAvatar`
+Menampilkan avatar berbentuk lingkaran, misalnya ikon pengguna atau logo kecil.
+
+---
+
+## 5. Gambar
+### `Image.asset`
+Menampilkan gambar dari folder assets project, misalnya logo aplikasi.
+
+### `Image.network`
+Menampilkan gambar dari URL internet.
+
+### `Image.memory`
+Menampilkan gambar dari data bytes, biasanya dipakai setelah memilih gambar dari galeri.
+
+### `FancyShimmerImage`
+Widget dari package tambahan untuk menampilkan gambar dengan efek loading shimmer.
+
+---
+
+## 6. Tombol dan Interaksi
+### `ElevatedButton`
+Tombol utama dengan background berwarna. Biasanya digunakan untuk aksi penting seperti simpan, login, atau bayar.
+
+### `OutlinedButton`
+Tombol dengan garis tepi, biasanya untuk aksi sekunder seperti batal atau export.
+
+### `TextButton`
+Tombol berbentuk teks tanpa background besar, biasanya dipakai untuk aksi ringan.
+
+### `FilledButton`
+Tombol modern Flutter dengan tampilan terisi warna.
+
+### `IconButton`
+Tombol yang hanya berisi ikon, misalnya tombol close atau show/hide password.
+
+### `GestureDetector`
+Mendeteksi interaksi seperti tap pada widget custom.
+
+### `InkWell`
+Widget interaktif dengan efek sentuh ripple, biasanya dipakai pada item menu.
+
+---
+
+## 7. Input Pengguna
+### `TextField`
+Digunakan untuk input teks sederhana, misalnya pencarian atau catatan.
+
+### `TextFormField`
+Digunakan untuk input yang membutuhkan validasi, seperti email, password, nama menu, dan harga.
+
+### `Form`
+Membungkus beberapa field input agar bisa divalidasi secara bersamaan.
+
+### `DropdownButton`
+Menampilkan pilihan dropdown sederhana.
+
+### `DropdownButtonFormField`
+Versi dropdown yang terintegrasi dengan `Form` dan bisa divalidasi.
+
+### `Radio`
+Digunakan untuk memilih satu opsi dari beberapa pilihan.
+
+### `Checkbox`
+Digunakan untuk memilih addon atau tambahan pada menu.
+
+---
+
+## 8. List dan Scroll
+### `ListView`
+Menampilkan daftar item yang bisa discroll.
+
+### `ListView.builder`
+Digunakan untuk membuat daftar secara dinamis dari data.
+
+### `ListView.separated`
+Sama seperti `ListView`, tetapi dengan pemisah antar item.
+
+### `GridView.builder`
+Menampilkan data dalam bentuk grid, misalnya daftar menu kasir.
+
+### `SingleChildScrollView`
+Membuat satu area dapat discroll jika isi lebih panjang dari layar.
+
+---
+
+## 9. Navigasi
+### `Navigator`
+Digunakan untuk berpindah halaman di dalam aplikasi.
+
+### `MaterialPageRoute`
+Membuat transisi ke halaman baru dengan gaya navigasi material design.
+
+---
+
+## 10. Feedback ke Pengguna
+### `SnackBar`
+Menampilkan pesan singkat di bagian bawah layar, misalnya saat data berhasil disimpan atau gagal diproses.
+
+### `ScaffoldMessenger`
+Digunakan untuk menampilkan `SnackBar`.
+
+### `CircularProgressIndicator`
+Menampilkan indikator loading saat proses sedang berjalan.
+
+---
+
+## 11. Dialog dan Popup
+### `Dialog`
+Digunakan untuk menampilkan popup seperti tambah data, edit data, atau konfirmasi hapus.
+
+---
+
+## 12. Dekorasi dan Styling
+### `BoxDecoration`
+Digunakan untuk memberi warna, border, shadow, atau radius pada `Container`.
+
+### `Border`
+Menambahkan garis tepi pada widget.
+
+### `OutlineInputBorder`
+Border khusus untuk field input.
+
+### `RoundedRectangleBorder`
+Membuat sudut melengkung pada tombol, dialog, atau snackbar.
+
+### `LinearGradient`
+Membuat background gradasi warna.
+
+### `ClipRRect`
+Memotong tampilan widget dengan sudut melengkung, biasanya dipakai pada gambar.
+
+### `Divider`
+Membuat garis pemisah antar bagian tampilan.
+
+---
+
+## 13. Navigasi Modern
+### `NavigationBar`
+Digunakan sebagai navigasi bawah modern untuk tampilan mobile.
+
+### `NavigationDestination`
+Item tujuan di dalam `NavigationBar`.
+
+---
+
+## 14. Data dan Async
+### `FutureBuilder`
+Digunakan untuk menampilkan data hasil proses asynchronous, misalnya dari database Supabase.
+
+---
+
+## 15. Theme dan Media
+### `Theme`
+Digunakan untuk mengatur tampilan tema pada bagian tertentu, misalnya dialog.
+
+### `MediaQuery`
+Digunakan untuk mengetahui ukuran layar agar tampilan bisa responsif.
+
+---
+
+## 16. Widget Package Tambahan
+### `LineChart`
+Widget dari package `fl_chart` yang digunakan untuk menampilkan grafik penjualan.
+
+### `FlSpot`
+Bukan widget tampilan utama, tetapi struktur data yang digunakan untuk titik pada grafik.
+
+### `SfDateRangePicker`
+Widget dari package `syncfusion_flutter_datepicker` untuk memilih rentang tanggal pada halaman laporan.
+
+
+# D. Package Yang Digunakan
+
+Berikut adalah beberapa package yang digunakan dalam pengembangan aplikasi:
+
+- **supabase_flutter: ^2.12.0**
+  Digunakan untuk autentikasi pengguna dan pengelolaan database secara real-time menggunakan Supabase.
+
+- **flutter_dotenv: ^5.0.2**
+  Digunakan untuk menyimpan konfigurasi penting seperti API key dan URL secara aman melalui file .env.
+
+- **image_picker: ^1.0.4**
+  Digunakan untuk mengambil gambar dari kamera atau galeri perangkat.
+
+- **fancy_shimmer_image: ^2.0.3**
+  Digunakan untuk menampilkan gambar dengan efek loading (shimmer) agar tampilan lebih menarik.
+
+- **intl: ^0.19.0**
+  Digunakan untuk formatting angka, mata uang, serta tanggal sesuai locale.
+
+- **fl_chart: ^1.2.0**
+  Digunakan untuk menampilkan grafik data seperti penjualan dalam bentuk line chart atau bar chart.
+
+- **syncfusion_flutter_datepicker: ^24.1.41**
+  Digunakan untuk memilih tanggal atau rentang waktu dengan tampilan yang interaktif dan mudah digunakan.
+
+- **pdf (^3.11.3)**
 Digunakan untuk membuat file PDF, seperti struk atau laporan transaksi.
 
-- printing (^5.14.2)
-
+- **printing (^5.14.2)**
 Untuk mencetak file PDF langsung dari aplikasi (print struk).
 
-- excel (^4.0.6)
-
+- **excel (^4.0.6)**
 Digunakan untuk export data ke file Excel (.xlsx), misalnya laporan penjualan.
 
-- path_provider (^2.1.5)
-
+- **path_provider (^2.1.5)**
 Mengambil lokasi penyimpanan di device (buat simpan PDF / Excel).
 
-- esc_pos_utils_plus (^2.0.4)
-
+- **esc_pos_utils_plus (^2.0.4)**
 Untuk generate format struk thermal printer (printer kasir).
 
 # D. Teknologi Yang Digunakan
@@ -285,6 +712,6 @@ Untuk generate format struk thermal printer (printer kasir).
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg" width="60"/>
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dart/dart-original.svg" width="60"/>
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/supabase/supabase-original.svg" width="60"/>
-</p>
+</p> 
 
 

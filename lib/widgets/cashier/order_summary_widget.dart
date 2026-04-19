@@ -1,5 +1,6 @@
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
+import 'package:opini_kopi/widgets/cashier/delete_item_dialog.dart';
 
 class OrderSummaryWidget extends StatelessWidget {
   final List<Map<String, dynamic>> cart;
@@ -14,9 +15,9 @@ class OrderSummaryWidget extends StatelessWidget {
   final void Function(int index) onDeleteItem;
   final VoidCallback onClearAll;
   final Widget Function({required IconData icon, required VoidCallback onTap})
-  qtyButtonBuilder;
+      qtyButtonBuilder;
   final Widget Function(String title, String value, {bool isTotal})
-  priceRowBuilder;
+      priceRowBuilder;
   final bool readOnly;
   final TextEditingController customerController;
   final double? width;
@@ -49,8 +50,7 @@ class OrderSummaryWidget extends StatelessWidget {
     if (value == null) return 0;
     if (value is int) return value;
     if (value is double) return value.toInt();
-    return int.tryParse(value.toString().replaceAll(RegExp(r'[^0-9]'), '')) ??
-        0;
+    return int.tryParse(value.toString().replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
   }
 
   String _text(dynamic value) => value?.toString() ?? '';
@@ -98,6 +98,7 @@ class OrderSummaryWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+
             Row(
               children: [
                 const Expanded(
@@ -110,20 +111,35 @@ class OrderSummaryWidget extends StatelessWidget {
                     ),
                   ),
                 ),
+
                 if (cart.isNotEmpty && !readOnly)
                   TextButton(
-                    onPressed: onClearAll,
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => DeleteItemDialog(
+                          title: "Hapus Semua",
+                          message:
+                              "Semua item dalam pesanan akan dihapus.\nLanjutkan?",
+                          confirmText: "Hapus Semua",
+                          confirmColor: Color(0xFF4A2419),
+                          onConfirm: onClearAll,
+                        ),
+                      );
+                    },
                     child: const Text(
                       'Hapus Semua',
                       style: TextStyle(
-                        color: Colors.red,
+                        color: Color(0xFF4A2419),
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
               ],
             ),
+
             const SizedBox(height: 20),
+
             Expanded(
               child: cart.isEmpty
                   ? const Center(
@@ -143,14 +159,12 @@ class OrderSummaryWidget extends StatelessWidget {
                         final variantName = _text(item['variantName']);
                         final addonNames = item['addonNames'] is List
                             ? List<String>.from(
-                                (item['addonNames'] as List).map(
-                                  (e) => e.toString(),
-                                ),
+                                (item['addonNames'] as List)
+                                    .map((e) => e.toString()),
                               )
                             : <String>[];
-                        final unitPrice = _toInt(
-                          item['unitPrice'] ?? item['price'],
-                        );
+                        final unitPrice =
+                            _toInt(item['unitPrice'] ?? item['price']);
                         final qty = _toInt(item['qty']).clamp(1, 9999);
 
                         return Padding(
@@ -207,7 +221,7 @@ class OrderSummaryWidget extends StatelessWidget {
                                           if (addonNames.isNotEmpty) ...[
                                             const SizedBox(height: 4),
                                             Text(
-                                              'Tambahan:  ${addonNames.join(', ')}',
+                                              'Tambahan: ${addonNames.join(', ')}',
                                               style: const TextStyle(
                                                 color: Colors.grey,
                                                 fontSize: 12,
@@ -238,13 +252,16 @@ class OrderSummaryWidget extends StatelessWidget {
                                     ),
                                   ],
                                 ),
+
                                 const SizedBox(height: 12),
+
                                 if (!readOnly) ...[
                                   Row(
                                     children: [
                                       qtyButtonBuilder(
                                         icon: Icons.remove,
-                                        onTap: () => onDecreaseQty(index),
+                                        onTap: () =>
+                                            onDecreaseQty(index),
                                       ),
                                       const SizedBox(width: 10),
                                       Text(
@@ -257,11 +274,15 @@ class OrderSummaryWidget extends StatelessWidget {
                                       const SizedBox(width: 10),
                                       qtyButtonBuilder(
                                         icon: Icons.add,
-                                        onTap: () => onIncreaseQty(index),
+                                        onTap: () =>
+                                            onIncreaseQty(index),
                                       ),
                                       const Spacer(),
+
+    
                                       TextButton(
-                                        onPressed: () => onEditItem(index),
+                                        onPressed: () =>
+                                            onEditItem(index),
                                         child: const Text(
                                           'Edit',
                                           style: TextStyle(
@@ -270,8 +291,30 @@ class OrderSummaryWidget extends StatelessWidget {
                                           ),
                                         ),
                                       ),
+
                                       TextButton(
-                                        onPressed: () => onDeleteItem(index),
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) =>
+                                                DeleteItemDialog(
+                                              title: "Hapus Item",
+                                              message:
+                                                  "Yakin ingin menghapus \"$title\"?",
+                                              onConfirm: () {
+                                                onDeleteItem(index);
+
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  const SnackBar(
+                                                    content: Text(
+                                                        "Item berhasil dihapus"),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          );
+                                        },
                                         child: const Text(
                                           'Hapus',
                                           style: TextStyle(
@@ -290,7 +333,9 @@ class OrderSummaryWidget extends StatelessWidget {
                       },
                     ),
             ),
+
             const SizedBox(height: 16),
+
             const Text(
               'Pelanggan',
               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
@@ -312,14 +357,18 @@ class OrderSummaryWidget extends StatelessWidget {
                 ),
               ),
             ),
+
             const Divider(),
             const SizedBox(height: 8),
+
             priceRowBuilder('Subtotal', formatRupiah(subtotal)),
             const SizedBox(height: 12),
             priceRowBuilder('Pajak (10%)', formatRupiah(tax)),
             const SizedBox(height: 16),
             priceRowBuilder('Total', formatRupiah(total), isTotal: true),
+
             const SizedBox(height: 24),
+
             if (!readOnly) ...[
               SizedBox(
                 width: double.infinity,
@@ -329,14 +378,14 @@ class OrderSummaryWidget extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF4A2419),
                     foregroundColor: Colors.white,
-                    elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
                   ),
                   child: const Text(
                     'Bayar',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                    style: TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.w700),
                   ),
                 ),
               ),
