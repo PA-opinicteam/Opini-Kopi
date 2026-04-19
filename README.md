@@ -1,10 +1,12 @@
 # OPINI KOPI - APLIKASI OPINI POS
+## Anggota Tim - Opinicteam
+| Nama                        |     NIM    |
+| :-------------------------- | :--------: |
+| Moch. Farris Alfiansyah     | 2409116079 |
+| Muhammad Irdhan Nur Faudzan | 2409116077 |
+| Khairunisa Aprilia          | 2409116060 |
+| Elmy Fadillah               | 2409116075 |
 
-## OPINICTEAM
-## - Moch. Farris Alfiansyah (2409116079)
-## - Muhammad Irdhan Nur Faudzan (2409116077)
-## - Khairunisa Aprilia (2409116060)
-## - Elmy Fadillah (2409116075)
 
 # A. Deskripsi Aplikasi
 
@@ -593,4 +595,151 @@ Berikut adalah beberapa package yang digunakan dalam pengembangan aplikasi:
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/supabase/supabase-original.svg" width="60"/>
 </p> 
 
+# E. Cara Install Aplikasi
+
+# F. Preview Aplikasi 
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/629f5d43-842b-4d1a-be95-0f3d7bf6f6dd" width="800"/>
+</p>
+<p align="center">
+  <em>Halaman Splash</em>
+</p>
+
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/08e10d2f-2831-435d-8e5a-a2e2c45fac65" width="800"/>
+</p>
+<p align="center">
+  <em>Halaman Login</em>
+</p>
+
+<table align="center">
+  <tr>
+    <td align="center">
+      <img width="1919" height="910" alt="image" src="https://github.com/user-attachments/assets/73b02b44-b285-4052-94d8-d7f0d01d0d8e" />
+      <br/>
+      <sub><b>Desktop View</b></sub>
+    </td>
+    <td align="center">
+      <img width="621" height="906" alt="image" src="https://github.com/user-attachments/assets/c3316228-b502-457e-b9f8-ea39659ed2af" />
+      <br/>
+      <sub><b>Mobile View</b></sub>
+    </td>
+  </tr>
+</table>
+<p align="center">
+  <em>Halaman Dashboard Owner</em>
+</p>
+
+<table align="center">
+  <tr>
+    <td align="center">
+      <img width="1919" height="906" alt="image" src="https://github.com/user-attachments/assets/d0f0b0fd-c892-4770-a031-83422c35157e" />
+       <br/>
+      <sub><b>Desktop View</b></sub>
+    </td>
+    <td align="center">
+      <img width="616" height="903" alt="image" src="https://github.com/user-attachments/assets/66f6cfba-cb13-4158-85c7-22e9722e5444" />
+      <sub><b>Mobile View</b></sub>
+    </td>
+  </tr>
+</table>
+<p align="center">
+  <em>Halaman Manajemen Menu Owner</em>
+</p>
+
+
+<table align="center">
+  <tr>
+    <td align="center">
+      <img width="1919" height="914" alt="image" src="https://github.com/user-attachments/assets/28e2cd93-d68d-4033-980f-75a65d73c341" />
+       <br/>
+      <sub><b>Desktop View</b></sub>
+    </td>
+    <td align="center">
+      <img width="619" height="906" alt="image" src="https://github.com/user-attachments/assets/9dc44021-29c5-4c7a-8319-2b5ded63b55a" />
+      <sub><b>Mobile View</b></sub>
+    </td>
+  </tr>
+</table>
+<p align="center">
+  <em>Halaman Laporan Penjualan Owner</em>
+</p>
+
+<table align="center">
+  <tr>
+    <td align="center">
+      <img width="1919" height="900" alt="image" src="https://github.com/user-attachments/assets/b2f0b0fc-2ea5-4965-9b4d-31d9d6016895" />
+       <br/>
+      <sub><b>Desktop View</b></sub>
+    </td>
+    <td align="center">
+      <img width="619" height="910" alt="image" src="https://github.com/user-attachments/assets/2b878d73-6f9f-4a84-9934-a8e39a744d25" />
+      <sub><b>Mobile View</b></sub>
+    </td>
+  </tr>
+</table>
+<p align="center">
+  <em>Halaman Manajemen Stok Owner</em>
+</p>
+
+<table align="center">
+  <tr>
+    <td align="center">
+      <img width="1909" height="898" alt="image" src="https://github.com/user-attachments/assets/db50824a-63f1-4340-a50a-8aaf65b1171c" />
+       <br/>
+      <sub><b>Desktop View</b></sub>
+    </td>
+    <td align="center">
+      <img width="619" height="905" alt="image" src="https://github.com/user-attachments/assets/ac6a48d9-d3e4-437d-bc37-24af87b8540b" />
+      <sub><b>Mobile View</b></sub>
+    </td>
+  </tr>
+</table>
+<p align="center">
+  <em>Halaman Manajemen Pengguna Owner</em>
+</p>
+
+
+<table align="center">
+  <tr>
+    <td align="center">
+      <img width="1916" height="898" alt="image" src="https://github.com/user-attachments/assets/9e5e39f0-690e-4a88-81d9-a5c05d6a9ff3" />
+       <br/>
+      <sub><b>Desktop View</b></sub>
+    </td>
+    <td align="center">
+      <img width="618" height="908" alt="image" src="https://github.com/user-attachments/assets/fe505a45-888e-4f44-97f2-a9086550e433" />
+      <sub><b>Mobile View</b></sub>
+    </td>
+  </tr>
+</table>
+<p align="center">
+  <em>Halaman Transaksi Kasir</em>
+</p>
+
+<table align="center">
+  <tr>
+    <td align="center">
+      <img width="1919" height="905" alt="image" src="https://github.com/user-attachments/assets/90451112-c859-4909-be6b-55b47bb10e68" />
+       <br/>
+      <sub><b>Desktop View</b></sub>
+    </td>
+    <td align="center">
+      <img width="622" height="905" alt="image" src="https://github.com/user-attachments/assets/2ea5da1c-0e98-4f35-b7fd-b9e4cbb4ef64" />
+      <sub><b>Mobile View</b></sub>
+    </td>
+  </tr>
+</table>
+<p align="center">
+  <em>Halaman Pembayaran Kasir</em>
+</p>
+
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/286d34d6-1a09-4e13-9059-5fb12444b278"/>
+</p>
+<p align="center">
+  <em>Halaman Struk Kasir</em>
+</p>
 
