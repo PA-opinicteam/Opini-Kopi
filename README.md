@@ -305,7 +305,9 @@ Berikut adalah beberapa package yang digunakan dalam pengembangan aplikasi:
 
 Ikuti langkah berikut untuk menginstall aplikasi di perangkat Android:
 
-1. Download APK di sini 👉 **[Download APK]([https://github.com/username/nama-repo/releases](https://github.com/PA-opinicteam/Opini-Kopi/releases/download/v0.1.0/app-release.apk))**
+1. Download APK di bawah
+ 📥 Download APK
+[![Download APK](https://img.shields.io/badge/Download-APK-green?style=for-the-badge&logo=android)](https://github.com/PA-opinicteam/Opini-Kopi/releases/download/v0.1.0/app-release.apk)
    *(atau klik file `.apk` yang tersedia di halaman tersebut)*
 2. Buka file APK di perangkat.
 3. Aktifkan izin **Install dari sumber tidak dikenal** jika diminta.
