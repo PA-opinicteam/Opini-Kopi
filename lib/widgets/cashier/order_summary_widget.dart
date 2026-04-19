@@ -130,7 +130,7 @@ class OrderSummaryWidget extends StatelessWidget {
                     child: const Text(
                       'Hapus Semua',
                       style: TextStyle(
-                        color: Color(0xFF4A2419),
+                        color: Colors.red,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
