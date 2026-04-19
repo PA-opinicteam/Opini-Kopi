@@ -303,8 +303,15 @@ Berikut adalah beberapa package yang digunakan dalam pengembangan aplikasi:
 ---
 # E. Cara Install Aplikasi
 
+Ikuti langkah berikut untuk menginstall aplikasi di perangkat Android:
 
----
+1. Download APK di sini 👉 **[Download APK]([https://github.com/username/nama-repo/releases](https://github.com/PA-opinicteam/Opini-Kopi/releases/download/v0.1.0/app-release.apk))**
+   *(atau klik file `.apk` yang tersedia di halaman tersebut)*
+2. Buka file APK di perangkat.
+3. Aktifkan izin **Install dari sumber tidak dikenal** jika diminta.
+4. Klik **Install** dan tunggu hingga selesai.
+5. Aplikasi siap digunakan.
+
 
 # F. Preview Aplikasi 
 <p align="center">
