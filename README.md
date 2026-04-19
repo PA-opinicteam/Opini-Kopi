@@ -302,7 +302,9 @@ Berikut adalah beberapa package yang digunakan dalam pengembangan aplikasi:
 <p align="center">
   <sub><b>Built with Flutter, Dart, and Supabase</b></sub>
 </p>
+
 ---
+
 # E. Cara Install Aplikasi
 
 Ikuti langkah berikut untuk menginstall aplikasi di perangkat Android:
