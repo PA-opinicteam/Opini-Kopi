@@ -317,6 +317,7 @@ Ikuti langkah berikut untuk menginstall aplikasi di perangkat Android:
 
 5. Aplikasi siap digunakan.
 
+---
 
 # F. Preview Aplikasi 
 <p align="center">
