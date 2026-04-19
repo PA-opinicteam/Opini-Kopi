@@ -299,7 +299,9 @@ Berikut adalah beberapa package yang digunakan dalam pengembangan aplikasi:
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dart/dart-original.svg" width="60"/>
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/supabase/supabase-original.svg" width="60"/>
 </p> 
-
+<p align="center">
+  <sub><b>Built with Flutter, Dart, and Supabase</b></sub>
+</p>
 ---
 # E. Cara Install Aplikasi
 
