@@ -422,289 +422,168 @@ Halaman **Struk** ditampilkan setelah transaksi berhasil dilakukan sebagai bukti
 # C. Widget Yang Digunakan
 # Daftar Widget yang Digunakan
 
-Project **Opini Kopi** menggunakan berbagai widget Flutter untuk membangun tampilan kasir, dashboard owner, form input, popup dialog, navigasi, dan visualisasi data. Berikut daftar widget yang digunakan beserta penjelasan singkatnya.
+Aplikasi **Opini POS** menggunakan berbagai widget Flutter untuk membangun tampilan kasir, dashboard owner, form input, popup dialog, navigasi, dan visualisasi data. Berikut daftar widget yang digunakan beserta penjelasan singkatnya.
 
 ## 1. Root Widget
-### `MaterialApp`
-Digunakan sebagai pembungkus utama aplikasi Flutter. Widget ini mengatur struktur dasar aplikasi seperti tema, halaman awal, dan navigasi.
+| Nama Widget     | Deskripsi                                                                                                                        |
+| :-------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| MaterialApp     | Digunakan sebagai pembungkus utama aplikasi Flutter yang mengatur struktur dasar seperti tema, halaman awal, dan navigasi.       |
+| StatelessWidget | Digunakan untuk widget yang tampilannya tidak berubah selama dijalankan, misalnya sidebar atau komponen kecil.                   |
+| StatefulWidget  | Digunakan untuk widget yang memiliki state atau data yang bisa berubah, misalnya halaman login, halaman kasir, dan dialog input. |
 
-### `StatelessWidget`
-Digunakan untuk widget yang tampilannya tidak berubah selama dijalankan, misalnya sidebar atau komponen kecil.
-
-### `StatefulWidget`
-Digunakan untuk widget yang memiliki state atau data yang bisa berubah, misalnya halaman login, halaman kasir, dan dialog input.
-
----
 
 ## 2. Struktur dan Layout
-### `Scaffold`
-Kerangka utama halaman Flutter. Biasanya berisi `AppBar`, `body`, dan `bottomNavigationBar`.
+| Nama Widget    | Deskripsi                                                                                          |
+| :------------- | -------------------------------------------------------------------------------------------------- |
+| Scaffold       | Kerangka utama halaman Flutter, biasanya berisi AppBar, body, dan bottomNavigationBar.             |
+| SafeArea       | Digunakan agar tampilan tidak tertutup oleh notch, status bar, atau bagian sistem pada perangkat.  |
+| Container      | Widget serbaguna untuk membungkus elemen UI, memberi warna, ukuran, padding, margin, dan dekorasi. |
+| SizedBox       | Digunakan untuk memberi jarak atau menentukan ukuran tetap pada widget.                            |
+| Padding        | Memberi ruang di sekeliling widget agar tampilan lebih rapi.                                       |
+| Expanded       | Membuat widget mengisi sisa ruang yang tersedia di dalam Row atau Column.                          |
+| Spacer         | Digunakan untuk memberi jarak fleksibel antar widget di dalam Row atau Column.                     |
+| ConstrainedBox | Memberi batas ukuran minimum atau maksimum pada widget.                                            |
+| LayoutBuilder  | Digunakan untuk membuat tampilan responsif berdasarkan ukuran area yang tersedia.                  |
 
-### `SafeArea`
-Digunakan agar tampilan tidak tertutup oleh notch, status bar, atau bagian sistem pada perangkat.
-
-### `Container`
-Widget serbaguna untuk membungkus elemen UI, memberi warna, ukuran, padding, margin, dan dekorasi.
-
-### `SizedBox`
-Digunakan untuk memberi jarak atau menentukan ukuran tetap pada widget.
-
-### `Padding`
-Memberi ruang di sekeliling widget agar tampilan lebih rapi.
-
-### `Expanded`
-Membuat widget mengisi sisa ruang yang tersedia di dalam `Row` atau `Column`.
-
-### `Spacer`
-Digunakan untuk memberi jarak fleksibel antar widget di dalam `Row` atau `Column`.
-
-### `ConstrainedBox`
-Memberi batas ukuran minimum atau maksimum pada widget.
-
-### `LayoutBuilder`
-Digunakan untuk membuat tampilan responsif berdasarkan ukuran area yang tersedia.
-
----
 
 ## 3. Susunan Posisi
-### `Column`
-Menyusun widget secara vertikal dari atas ke bawah.
+| Nama Widget | Deskripsi                                                                                   |
+| :---------- | ------------------------------------------------------------------------------------------- |
+| Column      | Menyusun widget secara vertikal dari atas ke bawah.                                         |
+| Row         | Menyusun widget secara horizontal dari kiri ke kanan.                                       |
+| Wrap        | Menyusun widget seperti Row, tetapi bisa pindah ke baris berikutnya jika ruang tidak cukup. |
+| Stack       | Menumpuk beberapa widget di area yang sama.                                                 |
+| Positioned  | Digunakan di dalam Stack untuk menentukan posisi widget secara spesifik.                    |
+| Center      | Menempatkan widget tepat di tengah area yang tersedia.                                      |
 
-### `Row`
-Menyusun widget secara horizontal dari kiri ke kanan.
-
-### `Wrap`
-Menyusun widget seperti `Row`, tetapi bisa pindah ke baris berikutnya jika ruang tidak cukup.
-
-### `Stack`
-Menumpuk beberapa widget di area yang sama.
-
-### `Positioned`
-Digunakan di dalam `Stack` untuk menentukan posisi widget secara spesifik.
-
-### `Center`
-Menempatkan widget tepat di tengah area yang tersedia.
-
----
 
 ## 4. Teks dan Ikon
-### `Text`
-Menampilkan teks pada layar, seperti judul, label, deskripsi, dan isi informasi.
+| Nama Widget  | Deskripsi                                                                        |
+| :----------- | -------------------------------------------------------------------------------- |
+| Text         | Menampilkan teks pada layar, seperti judul, label, deskripsi, dan isi informasi. |
+| Icon         | Menampilkan ikon bawaan Flutter, misalnya ikon kopi, logout, edit, dan hapus.    |
+| CircleAvatar | Menampilkan avatar berbentuk lingkaran, misalnya ikon pengguna atau logo kecil.  |
 
-### `Icon`
-Menampilkan ikon bawaan Flutter, misalnya ikon kopi, logout, edit, dan hapus.
-
-### `CircleAvatar`
-Menampilkan avatar berbentuk lingkaran, misalnya ikon pengguna atau logo kecil.
-
----
 
 ## 5. Gambar
-### `Image.asset`
-Menampilkan gambar dari folder assets project, misalnya logo aplikasi.
+| Nama Widget       | Deskripsi                                                                                |
+| :---------------- | ---------------------------------------------------------------------------------------- |
+| Image.asset       | Menampilkan gambar dari folder assets project, misalnya logo aplikasi.                   |
+| Image.network     | Menampilkan gambar dari URL internet.                                                    |
+| Image.memory      | Menampilkan gambar dari data bytes, biasanya dipakai setelah memilih gambar dari galeri. |
+| FancyShimmerImage | Widget untuk menampilkan gambar dengan efek loading shimmer agar tampilan lebih menarik. |
 
-### `Image.network`
-Menampilkan gambar dari URL internet.
-
-### `Image.memory`
-Menampilkan gambar dari data bytes, biasanya dipakai setelah memilih gambar dari galeri.
-
-### `FancyShimmerImage`
-Widget dari package tambahan untuk menampilkan gambar dengan efek loading shimmer.
-
----
 
 ## 6. Tombol dan Interaksi
-### `ElevatedButton`
-Tombol utama dengan background berwarna. Biasanya digunakan untuk aksi penting seperti simpan, login, atau bayar.
+| Nama Widget     | Deskripsi                                                                                                         |
+| :-------------- | ----------------------------------------------------------------------------------------------------------------- |
+| ElevatedButton  | Tombol utama dengan background berwarna, biasanya digunakan untuk aksi penting seperti simpan, login, atau bayar. |
+| OutlinedButton  | Tombol dengan garis tepi, biasanya untuk aksi sekunder seperti batal atau export.                                 |
+| TextButton      | Tombol berbentuk teks tanpa background besar, biasanya dipakai untuk aksi ringan.                                 |
+| FilledButton    | Tombol modern Flutter dengan tampilan terisi warna.                                                               |
+| IconButton      | Tombol yang hanya berisi ikon, misalnya tombol close atau show/hide password.                                     |
+| GestureDetector | Mendeteksi interaksi seperti tap pada widget custom.                                                              |
+| InkWell         | Widget interaktif dengan efek sentuh ripple, biasanya dipakai pada item menu.                                     |
 
-### `OutlinedButton`
-Tombol dengan garis tepi, biasanya untuk aksi sekunder seperti batal atau export.
-
-### `TextButton`
-Tombol berbentuk teks tanpa background besar, biasanya dipakai untuk aksi ringan.
-
-### `FilledButton`
-Tombol modern Flutter dengan tampilan terisi warna.
-
-### `IconButton`
-Tombol yang hanya berisi ikon, misalnya tombol close atau show/hide password.
-
-### `GestureDetector`
-Mendeteksi interaksi seperti tap pada widget custom.
-
-### `InkWell`
-Widget interaktif dengan efek sentuh ripple, biasanya dipakai pada item menu.
-
----
 
 ## 7. Input Pengguna
-### `TextField`
-Digunakan untuk input teks sederhana, misalnya pencarian atau catatan.
+| Nama Widget             | Deskripsi                                                                                       |
+| :---------------------- | ----------------------------------------------------------------------------------------------- |
+| TextField               | Digunakan untuk input teks sederhana, misalnya pencarian atau catatan.                          |
+| TextFormField           | Digunakan untuk input yang membutuhkan validasi, seperti email, password, nama menu, dan harga. |
+| Form                    | Membungkus beberapa field input agar bisa divalidasi secara bersamaan.                          |
+| DropdownButton          | Menampilkan pilihan dropdown sederhana.                                                         |
+| DropdownButtonFormField | Versi dropdown yang terintegrasi dengan Form dan bisa divalidasi.                               |
+| Radio                   | Digunakan untuk memilih satu opsi dari beberapa pilihan.                                        |
+| Checkbox                | Digunakan untuk memilih addon atau tambahan pada menu.                                          |
 
-### `TextFormField`
-Digunakan untuk input yang membutuhkan validasi, seperti email, password, nama menu, dan harga.
-
-### `Form`
-Membungkus beberapa field input agar bisa divalidasi secara bersamaan.
-
-### `DropdownButton`
-Menampilkan pilihan dropdown sederhana.
-
-### `DropdownButtonFormField`
-Versi dropdown yang terintegrasi dengan `Form` dan bisa divalidasi.
-
-### `Radio`
-Digunakan untuk memilih satu opsi dari beberapa pilihan.
-
-### `Checkbox`
-Digunakan untuk memilih addon atau tambahan pada menu.
-
----
 
 ## 8. List dan Scroll
-### `ListView`
-Menampilkan daftar item yang bisa discroll.
-
-### `ListView.builder`
-Digunakan untuk membuat daftar secara dinamis dari data.
-
-### `ListView.separated`
-Sama seperti `ListView`, tetapi dengan pemisah antar item.
-
-### `GridView.builder`
-Menampilkan data dalam bentuk grid, misalnya daftar menu kasir.
-
-### `SingleChildScrollView`
-Membuat satu area dapat discroll jika isi lebih panjang dari layar.
-
----
+| Nama Widget           | Deskripsi                                                           |
+| :-------------------- | ------------------------------------------------------------------- |
+| ListView              | Menampilkan daftar item yang bisa discroll.                         |
+| ListView.builder      | Digunakan untuk membuat daftar secara dinamis dari data.            |
+| ListView.separated    | Sama seperti ListView, tetapi dengan pemisah antar item.            |
+| GridView.builder      | Menampilkan data dalam bentuk grid, misalnya daftar menu kasir.     |
+| SingleChildScrollView | Membuat satu area dapat discroll jika isi lebih panjang dari layar. |
 
 ## 9. Navigasi
-### `Navigator`
-Digunakan untuk berpindah halaman di dalam aplikasi.
-
-### `MaterialPageRoute`
-Membuat transisi ke halaman baru dengan gaya navigasi material design.
-
----
+| Nama Widget       | Deskripsi                                                              |
+| :---------------- | ---------------------------------------------------------------------- |
+| Navigator         | Digunakan untuk berpindah halaman di dalam aplikasi.                   |
+| MaterialPageRoute | Membuat transisi ke halaman baru dengan gaya navigasi material design. |
 
 ## 10. Feedback ke Pengguna
-### `SnackBar`
-Menampilkan pesan singkat di bagian bawah layar, misalnya saat data berhasil disimpan atau gagal diproses.
-
-### `ScaffoldMessenger`
-Digunakan untuk menampilkan `SnackBar`.
-
-### `CircularProgressIndicator`
-Menampilkan indikator loading saat proses sedang berjalan.
-
----
+| Nama Widget               | Deskripsi                                                                                                  |
+| :------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| SnackBar                  | Menampilkan pesan singkat di bagian bawah layar, misalnya saat data berhasil disimpan atau gagal diproses. |
+| ScaffoldMessenger         | Digunakan untuk menampilkan SnackBar.                                                                      |
+| CircularProgressIndicator | Menampilkan indikator loading saat proses sedang berjalan.                                                 |
 
 ## 11. Dialog dan Popup
-### `Dialog`
-Digunakan untuk menampilkan popup seperti tambah data, edit data, atau konfirmasi hapus.
+| Nama Widget | Deskripsi                                                                                |
+| :---------- | ---------------------------------------------------------------------------------------- |
+| Dialog      | Digunakan untuk menampilkan popup seperti tambah data, edit data, atau konfirmasi hapus. |
 
----
 
 ## 12. Dekorasi dan Styling
-### `BoxDecoration`
-Digunakan untuk memberi warna, border, shadow, atau radius pada `Container`.
+| Nama Widget            | Deskripsi                                                                       |
+| :--------------------- | ------------------------------------------------------------------------------- |
+| BoxDecoration          | Digunakan untuk memberi warna, border, shadow, atau radius pada Container.      |
+| Border                 | Menambahkan garis tepi pada widget.                                             |
+| OutlineInputBorder     | Border khusus untuk field input.                                                |
+| RoundedRectangleBorder | Membuat sudut melengkung pada tombol, dialog, atau snackbar.                    |
+| LinearGradient         | Membuat background gradasi warna.                                               |
+| ClipRRect              | Memotong tampilan widget dengan sudut melengkung, biasanya dipakai pada gambar. |
+| Divider                | Membuat garis pemisah antar bagian tampilan.                                    |
 
-### `Border`
-Menambahkan garis tepi pada widget.
-
-### `OutlineInputBorder`
-Border khusus untuk field input.
-
-### `RoundedRectangleBorder`
-Membuat sudut melengkung pada tombol, dialog, atau snackbar.
-
-### `LinearGradient`
-Membuat background gradasi warna.
-
-### `ClipRRect`
-Memotong tampilan widget dengan sudut melengkung, biasanya dipakai pada gambar.
-
-### `Divider`
-Membuat garis pemisah antar bagian tampilan.
-
----
 
 ## 13. Navigasi Modern
-### `NavigationBar`
-Digunakan sebagai navigasi bawah modern untuk tampilan mobile.
+| Nama Widget           | Deskripsi                                                      |
+| :-------------------- | -------------------------------------------------------------- |
+| NavigationBar         | Digunakan sebagai navigasi bawah modern untuk tampilan mobile. |
+| NavigationDestination | Item tujuan (menu) yang terdapat di dalam NavigationBar.       |
 
-### `NavigationDestination`
-Item tujuan di dalam `NavigationBar`.
-
----
 
 ## 14. Data dan Async
-### `FutureBuilder`
-Digunakan untuk menampilkan data hasil proses asynchronous, misalnya dari database Supabase.
+| Nama Widget   | Deskripsi                                                                                    |
+| :------------ | -------------------------------------------------------------------------------------------- |
+| FutureBuilder | Digunakan untuk menampilkan data hasil proses asynchronous, misalnya dari database Supabase. |
 
----
 
 ## 15. Theme dan Media
-### `Theme`
-Digunakan untuk mengatur tampilan tema pada bagian tertentu, misalnya dialog.
+| Nama Widget  | Deskripsi                                                                     |
+| :------------| ----------------------------------------------------------------------------- |
+| Theme        | Digunakan untuk mengatur tampilan tema pada bagian tertentu, misalnya dialog. |
+| MediaQuery   | Digunakan untuk mengetahui ukuran layar agar tampilan bisa responsif.         |
 
-### `MediaQuery`
-Digunakan untuk mengetahui ukuran layar agar tampilan bisa responsif.
-
----
 
 ## 16. Widget Package Tambahan
-### `LineChart`
-Widget dari package `fl_chart` yang digunakan untuk menampilkan grafik penjualan.
-
-### `FlSpot`
-Bukan widget tampilan utama, tetapi struktur data yang digunakan untuk titik pada grafik.
-
-### `SfDateRangePicker`
-Widget dari package `syncfusion_flutter_datepicker` untuk memilih rentang tanggal pada halaman laporan.
+| Nama Widget         | Deskripsi                                                                                          |
+| :-------------------| -------------------------------------------------------------------------------------------------- |
+| LineChart           | Widget yang digunakan untuk menampilkan grafik penjualan dalam bentuk line chart.                  |
+| FlSpot              | Struktur data yang digunakan untuk merepresentasikan titik (x, y) pada grafik.                     |
+| SfDateRangePicker   | Widget untuk memilih tanggal atau rentang tanggal pada halaman laporan dengan tampilan interaktif. |
 
 
 # D. Package Yang Digunakan
 
 Berikut adalah beberapa package yang digunakan dalam pengembangan aplikasi:
 
-- **supabase_flutter: ^2.12.0**
-  Digunakan untuk autentikasi pengguna dan pengelolaan database secara real-time menggunakan Supabase.
-
-- **flutter_dotenv: ^5.0.2**
-  Digunakan untuk menyimpan konfigurasi penting seperti API key dan URL secara aman melalui file .env.
-
-- **image_picker: ^1.0.4**
-  Digunakan untuk mengambil gambar dari kamera atau galeri perangkat.
-
-- **fancy_shimmer_image: ^2.0.3**
-  Digunakan untuk menampilkan gambar dengan efek loading (shimmer) agar tampilan lebih menarik.
-
-- **intl: ^0.19.0**
-  Digunakan untuk formatting angka, mata uang, serta tanggal sesuai locale.
-
-- **fl_chart: ^1.2.0**
-  Digunakan untuk menampilkan grafik data seperti penjualan dalam bentuk line chart atau bar chart.
-
-- **syncfusion_flutter_datepicker: ^24.1.41**
-  Digunakan untuk memilih tanggal atau rentang waktu dengan tampilan yang interaktif dan mudah digunakan.
-
-- **pdf (^3.11.3)**
-Digunakan untuk membuat file PDF, seperti struk atau laporan transaksi.
-
-- **printing (^5.14.2)**
-Untuk mencetak file PDF langsung dari aplikasi (print struk).
-
-- **excel (^4.0.6)**
-Digunakan untuk export data ke file Excel (.xlsx), misalnya laporan penjualan.
-
-- **path_provider (^2.1.5)**
-Mengambil lokasi penyimpanan di device (buat simpan PDF / Excel).
-
-- **esc_pos_utils_plus (^2.0.4)**
-Untuk generate format struk thermal printer (printer kasir).
+| Nama Package                  |   Versi  | Deskripsi                                                                                               |
+| :---------------------------- | :------: | ------------------------------------------------------------------------------------------------------- |
+| supabase_flutter              |  ^2.12.0 | Digunakan untuk autentikasi pengguna dan pengelolaan database secara real-time menggunakan Supabase.    |
+| flutter_dotenv                |  ^5.0.2  | Digunakan untuk menyimpan konfigurasi penting seperti API key dan URL secara aman melalui file .env.    |
+| image_picker                  |  ^1.0.4  | Digunakan untuk mengambil gambar dari kamera atau galeri perangkat.                                     |
+| fancy_shimmer_image           |  ^2.0.3  | Digunakan untuk menampilkan gambar dengan efek loading (shimmer) agar tampilan lebih menarik.           |
+| intl                          |  ^0.19.0 | Digunakan untuk formatting angka, mata uang, serta tanggal sesuai locale.                               |
+| fl_chart                      |  ^1.2.0  | Digunakan untuk menampilkan grafik data seperti penjualan dalam bentuk line chart atau bar chart.       |
+| syncfusion_flutter_datepicker | ^24.1.41 | Digunakan untuk memilih tanggal atau rentang waktu dengan tampilan yang interaktif dan mudah digunakan. |
+| pdf                           |  ^3.11.3 | Digunakan untuk membuat file PDF, seperti struk atau laporan transaksi.                                 |
+| printing                      |  ^5.14.2 | Digunakan untuk mencetak file PDF langsung dari aplikasi (print struk).                                 |
+| excel                         |  ^4.0.6  | Digunakan untuk export data ke file Excel (.xlsx), misalnya laporan penjualan.                          |
+| path_provider                 |  ^2.1.5  | Digunakan untuk mengambil lokasi penyimpanan di device (untuk menyimpan PDF / Excel).                   |
+| esc_pos_utils_plus            |  ^2.0.4  | Digunakan untuk generate format struk thermal printer (printer kasir).                                  |
 
 # D. Teknologi Yang Digunakan
 
