@@ -24,14 +24,21 @@ class ResponsiveHelper {
   static bool isDesktop(BuildContext context) =>
       deviceType(context) == DeviceType.desktop;
 
-  static double pagePadding(BuildContext context) =>
-      isMobile(context) ? 16 : 32;
+  static double pagePadding(BuildContext context) {
+    final width = MediaQuery.sizeOf(context).width;
+    if (width < 600) return 16;
+    if (width < 1024) return 20;
+    return 28;
+  }
 
   static int menuGridColumns(BuildContext context) {
     final width = MediaQuery.sizeOf(context).width;
-    if (width < 520) return 2;
-    if (width < 900) return 2;
-    if (width < 1280) return 3;
-    return 4;
+    if (width < 380) return 1;
+    if (width < 720) return 2;
+    if (width < 1100) return 3;
+    if (width < 1500) return 4;
+    return 5;
   }
+
+  static double cardRadius(BuildContext context) => isMobile(context) ? 10 : 12;
 }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:opini_kopi/pages/cashier/home_page.dart';
 import 'package:opini_kopi/pages/owner/dashboard_page.dart';
-import 'package:opini_kopi/services/auth_service.dart';
+import 'package:opini_kopi/providers/auth_provider.dart';
+import 'package:opini_kopi/utils/input_sanitizer.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -32,12 +34,13 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     try {
-      final userData = await AuthService().login(
+      final auth = context.read<AuthProvider>();
+      await auth.login(
         emailController.text.trim(),
         passwordController.text.trim(),
       );
 
-      final role = userData['role'];
+      final role = auth.role;
 
       if (!mounted) return;
 
@@ -127,143 +130,148 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF7F4F2),
       body: Center(
-        child: Container(
-          width: 420,
-          padding: const EdgeInsets.all(28),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: const Color(0xFFE8DFD8)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 30,
-                offset: const Offset(0, 10),
-              ),
-            ],
-          ),
-          child: Form(
-            key: _formKey,
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF5EFE6),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: const Icon(
-                    Icons.coffee,
-                    color: Color(0xFF6F4E37),
-                    size: 30,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'OPINI POS',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF4B2E2B),
-                  ),
-                ),
-                const SizedBox(height: 6),
-                const Text(
-                  'Masuk untuk melanjutkan sebagai Owner atau Kasir.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 13, color: Colors.black54),
-                ),
-                const SizedBox(height: 24),
-                Container(
-                  padding: const EdgeInsets.all(18),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFAF7F5),
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      label('Email'),
-                      TextFormField(
-                        controller: emailController,
-                        decoration: inputStyle('admin@gmail.com'),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Email tidak boleh kosong';
-                          }
-                          final emailRegex = RegExp(
-                            r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                          );
-                          if (!emailRegex.hasMatch(value)) {
-                            return 'Format email tidak valid';
-                          }
-                          if (emailError != null) {
-                            final err = emailError;
-                            emailError = null;
-                            return err;
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                      label('Kata Sandi'),
-                      TextFormField(
-                        controller: passwordController,
-                        obscureText: isObscure,
-                        decoration: inputStyle(
-                          '********',
-                          suffix: IconButton(
-                            onPressed: () {
-                              setState(() {
-                                isObscure = !isObscure;
-                              });
-                            },
-                            icon: Icon(
-                              isObscure
-                                  ? Icons.visibility_off
-                                  : Icons.visibility,
-                            ),
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Kata Sandi tidak boleh kosong';
-                          }
-                          if (value.length < 8) {
-                            return 'Minimal 8 karakter';
-                          }
-                          if (passwordError != null) {
-                            final err = passwordError;
-                            passwordError = null;
-                            return err;
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 20),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: FilledButton(
-                          style: FilledButton.styleFrom(
-                            backgroundColor: const Color(0xFF4B2E2B),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                          ),
-                          onPressed: isLoading ? null : handleLogin,
-                          child: const Text(
-                            'Masuk',
-                            style: TextStyle(fontWeight: FontWeight.w600),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 420),
+            padding: const EdgeInsets.all(28),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: const Color(0xFFE8DFD8)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 30,
+                  offset: const Offset(0, 10),
                 ),
               ],
+            ),
+            child: Form(
+              key: _formKey,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF5EFE6),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const Icon(
+                      Icons.coffee,
+                      color: Color(0xFF6F4E37),
+                      size: 30,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'OPINI POS',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF4B2E2B),
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  const Text(
+                    'Masuk untuk melanjutkan sebagai Owner atau Kasir.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 13, color: Colors.black54),
+                  ),
+                  const SizedBox(height: 24),
+                  Container(
+                    padding: const EdgeInsets.all(18),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFAF7F5),
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        label('Email'),
+                        TextFormField(
+                          controller: emailController,
+                          inputFormatters: [InputSanitizer.safeTextFormatter],
+                          decoration: inputStyle('admin@gmail.com'),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Email tidak boleh kosong';
+                            }
+                            final emailRegex = RegExp(
+                              r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                            );
+                            if (!emailRegex.hasMatch(value)) {
+                              return 'Format email tidak valid';
+                            }
+                            if (emailError != null) {
+                              final err = emailError;
+                              emailError = null;
+                              return err;
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        label('Kata Sandi'),
+                        TextFormField(
+                          controller: passwordController,
+                          obscureText: isObscure,
+                          inputFormatters: [InputSanitizer.safeTextFormatter],
+                          decoration: inputStyle(
+                            '********',
+                            suffix: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  isObscure = !isObscure;
+                                });
+                              },
+                              icon: Icon(
+                                isObscure
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                              ),
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Kata Sandi tidak boleh kosong';
+                            }
+                            if (value.length < 8) {
+                              return 'Minimal 8 karakter';
+                            }
+                            if (passwordError != null) {
+                              final err = passwordError;
+                              passwordError = null;
+                              return err;
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: FilledButton(
+                            style: FilledButton.styleFrom(
+                              backgroundColor: const Color(0xFF4B2E2B),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                            ),
+                            onPressed: isLoading ? null : handleLogin,
+                            child: const Text(
+                              'Masuk',
+                              style: TextStyle(fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

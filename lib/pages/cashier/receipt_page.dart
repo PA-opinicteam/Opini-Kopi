@@ -34,7 +34,8 @@ class ReceiptPage extends StatelessWidget {
   int toInt(dynamic value) {
     if (value == null) return 0;
     if (value is int) return value;
-    return int.tryParse(value.toString().replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
+    return int.tryParse(value.toString().replaceAll(RegExp(r'[^0-9]'), '')) ??
+        0;
   }
 
   String generateReceiptText() {
@@ -54,9 +55,13 @@ class ReceiptPage extends StatelessWidget {
       final title = item['title'];
       final qty = toInt(item['qty']);
       final price = toInt(item['price']);
+      final note = (item['note'] ?? item['notes'] ?? '').toString().trim();
 
       buffer.writeln('$title');
       buffer.writeln('  $qty x ${formatRupiah(price)}');
+      if (note.isNotEmpty) {
+        buffer.writeln('  Catatan: $note');
+      }
     }
 
     buffer.writeln('------------------------------');
@@ -64,9 +69,13 @@ class ReceiptPage extends StatelessWidget {
     buffer.writeln('Pajak: ${formatRupiah(tax)}');
     buffer.writeln('TOTAL: ${formatRupiah(total)}');
     buffer.writeln('');
-    buffer.writeln('Metode Pembayaran: ${paymentMethod == 'cash' ? 'TUNAI' : 'QRIS'}');
-    buffer.writeln('Uang Diberikan: ${formatRupiah(cashReceived)}');
-    buffer.writeln('Kembalian: ${formatRupiah(change)}');
+    buffer.writeln(
+      'Metode Pembayaran: ${paymentMethod == 'cash' ? 'TUNAI' : 'QRIS'}',
+    );
+    if (paymentMethod == 'cash') {
+      buffer.writeln('Uang Diberikan: ${formatRupiah(cashReceived)}');
+      buffer.writeln('Kembalian: ${formatRupiah(change)}');
+    }
     buffer.writeln('==============================');
 
     return buffer.toString();
@@ -165,6 +174,9 @@ class ReceiptPage extends StatelessWidget {
                     final title = item['title'];
                     final qty = toInt(item['qty']);
                     final price = toInt(item['price']);
+                    final note = (item['note'] ?? item['notes'] ?? '')
+                        .toString()
+                        .trim();
 
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 6),
@@ -185,6 +197,14 @@ class ReceiptPage extends StatelessWidget {
                               color: Colors.grey,
                             ),
                           ),
+                          if (note.isNotEmpty)
+                            Text(
+                              'Catatan: $note',
+                              style: const TextStyle(
+                                fontSize: 11,
+                                color: Color(0xFF6B3A2E),
+                              ),
+                            ),
                         ],
                       ),
                     );
@@ -218,20 +238,22 @@ class ReceiptPage extends StatelessWidget {
                           'Metode Pembayaran',
                           paymentMethod == 'cash' ? 'TUNAI' : 'QRIS',
                         ),
-                        _row('Uang Diberikan', formatRupiah(cashReceived)),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text('Kembalian'),
-                            Text(
-                              formatRupiah(change),
-                              style: const TextStyle(
-                                color: Color(0xFF2E7D6B),
-                                fontWeight: FontWeight.bold,
+                        if (paymentMethod == 'cash') ...[
+                          _row('Uang Diberikan', formatRupiah(cashReceived)),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text('Kembalian'),
+                              Text(
+                                formatRupiah(change),
+                                style: const TextStyle(
+                                  color: Color(0xFF2E7D6B),
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
+                            ],
+                          ),
+                        ],
                       ],
                     ),
                   ),

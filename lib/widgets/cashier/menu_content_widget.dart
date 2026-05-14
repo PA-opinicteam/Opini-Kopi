@@ -50,21 +50,7 @@ class _MenuContentWidgetState extends State<MenuContentWidget> {
 
     final allMenus = await _service.getMenusByCategory(widget.selectedCategory);
 
-    final selected = widget.selectedCategory.toLowerCase();
-
-    if (selected == 'coffee') {
-      _menus = allMenus.where((menu) {
-        final section = _text(menu['section']).toLowerCase().trim();
-        return section.isNotEmpty && section != 'null';
-      }).toList();
-    } else if (selected == 'non-coffee') {
-      _menus = allMenus.where((menu) {
-        final section = _text(menu['section']).toLowerCase().trim();
-        return section.isEmpty || section == 'null';
-      }).toList();
-    } else {
-      _menus = allMenus;
-    }
+    _menus = allMenus;
 
     _applyFilter();
 
@@ -114,24 +100,24 @@ class _MenuContentWidgetState extends State<MenuContentWidget> {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
               borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(18),
+                top: Radius.circular(12),
               ),
               child: FancyShimmerImage(
                 imageUrl: imageUrl,
-                height: isMobile ? 110 : 140,
+                height: isMobile ? 92 : 118,
                 width: double.infinity,
                 boxFit: BoxFit.cover,
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -141,15 +127,15 @@ class _MenuContentWidgetState extends State<MenuContentWidget> {
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
-                      fontSize: isMobile ? 15 : 18,
+                      fontSize: isMobile ? 13 : 16,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     _priceText(price),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 14,
+                      fontSize: isMobile ? 12 : 14,
                     ),
                   ),
                 ],
@@ -170,9 +156,9 @@ class _MenuContentWidgetState extends State<MenuContentWidget> {
       itemCount: data.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: columns,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-        mainAxisExtent: isMobile ? 180 : 230,
+        crossAxisSpacing: isMobile ? 10 : 14,
+        mainAxisSpacing: isMobile ? 10 : 14,
+        mainAxisExtent: isMobile ? 150 : 190,
       ),
       itemBuilder: (context, index) {
         return _menuCard(data[index]);
@@ -184,7 +170,9 @@ class _MenuContentWidgetState extends State<MenuContentWidget> {
     final grouped = <String, List<Map<String, dynamic>>>{};
 
     for (final menu in _filtered) {
-      final section = _text(menu['section']);
+      final section = _text(menu['section']).trim().isEmpty
+          ? 'Coffee'
+          : _text(menu['section']).trim();
       grouped.putIfAbsent(section, () => []);
       grouped[section]!.add(menu);
     }
@@ -201,12 +189,12 @@ class _MenuContentWidgetState extends State<MenuContentWidget> {
                 e.key,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 20,
+                  fontSize: 18,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
           _buildGrid(e.value),
           const SizedBox(height: 20),
         ],
@@ -241,11 +229,15 @@ class _MenuContentWidgetState extends State<MenuContentWidget> {
                   itemCount: _filtered.length,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: ResponsiveHelper.menuGridColumns(context),
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
+                    crossAxisSpacing: ResponsiveHelper.isMobile(context)
+                        ? 10
+                        : 14,
+                    mainAxisSpacing: ResponsiveHelper.isMobile(context)
+                        ? 10
+                        : 14,
                     mainAxisExtent: ResponsiveHelper.isMobile(context)
-                        ? 180
-                        : 230,
+                        ? 150
+                        : 190,
                   ),
                   itemBuilder: (context, index) {
                     return _menuCard(_filtered[index]);

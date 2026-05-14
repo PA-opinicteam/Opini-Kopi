@@ -89,6 +89,9 @@ class ReceiptPrintService {
             final title = (item['title'] ?? '').toString();
             final qty = CurrencyFormatter.toInt(item['qty']);
             final price = CurrencyFormatter.toInt(item['price']);
+            final note = (item['note'] ?? item['notes'] ?? '')
+                .toString()
+                .trim();
             return pw.Padding(
               padding: const pw.EdgeInsets.only(bottom: 5),
               child: pw.Column(
@@ -102,6 +105,11 @@ class ReceiptPrintService {
                     '$qty x ${CurrencyFormatter.idr(price)}',
                     CurrencyFormatter.idr(price * qty),
                   ),
+                  if (note.isNotEmpty)
+                    pw.Text(
+                      'Catatan: $note',
+                      style: const pw.TextStyle(fontSize: 8),
+                    ),
                 ],
               ),
             );
@@ -112,8 +120,10 @@ class ReceiptPrintService {
           _row('TOTAL', CurrencyFormatter.idr(total), bold: true),
           pw.SizedBox(height: 6),
           _row('Metode Pembayaran', paymentMethod == 'cash' ? 'TUNAI' : 'QRIS'),
-          _row('Uang Diberikan', CurrencyFormatter.idr(cashReceived)),
-          _row('Kembalian', CurrencyFormatter.idr(change)),
+          if (paymentMethod == 'cash') ...[
+            _row('Uang Diberikan', CurrencyFormatter.idr(cashReceived)),
+            _row('Kembalian', CurrencyFormatter.idr(change)),
+          ],
           _line(),
           pw.Center(
             child: pw.Text(
@@ -156,17 +166,22 @@ class ReceiptPrintService {
       ),
     );
     bytes.addAll(generator.hr());
-    bytes.addAll(generator.text('ID Pesanan: ${payment['invoice_code'] ?? '-'}'));
+    bytes.addAll(
+      generator.text('ID Pesanan: ${payment['invoice_code'] ?? '-'}'),
+    );
     bytes.addAll(
       generator.text('Pelanggan: ${order['customer_name'] ?? 'Guest'}'),
     );
-    bytes.addAll(generator.text('Tanggal: ${_dateFormat.format(DateTime.now())}'));
+    bytes.addAll(
+      generator.text('Tanggal: ${_dateFormat.format(DateTime.now())}'),
+    );
     bytes.addAll(generator.hr());
 
     for (final item in cart) {
       final title = (item['title'] ?? '').toString();
       final qty = CurrencyFormatter.toInt(item['qty']);
       final price = CurrencyFormatter.toInt(item['price']);
+      final note = (item['note'] ?? item['notes'] ?? '').toString().trim();
       bytes.addAll(generator.text(title));
       bytes.addAll(
         generator.row([
@@ -178,6 +193,9 @@ class ReceiptPrintService {
           ),
         ]),
       );
+      if (note.isNotEmpty) {
+        bytes.addAll(generator.text('Catatan: $note'));
+      }
     }
 
     bytes.addAll(generator.hr());
@@ -192,12 +210,20 @@ class ReceiptPrintService {
       ),
     );
     bytes.addAll(
-      generator.text('Metode Pembayaran: ${paymentMethod == 'cash' ? 'TUNAI' : 'QRIS'}'),
+      generator.text(
+        'Metode Pembayaran: ${paymentMethod == 'cash' ? 'TUNAI' : 'QRIS'}',
+      ),
     );
-    bytes.addAll(
-      generator.text('Uang Diberikan: ${CurrencyFormatter.idr(cashReceived)}'),
-    );
-    bytes.addAll(generator.text('Kembalian: ${CurrencyFormatter.idr(change)}'));
+    if (paymentMethod == 'cash') {
+      bytes.addAll(
+        generator.text(
+          'Uang Diberikan: ${CurrencyFormatter.idr(cashReceived)}',
+        ),
+      );
+      bytes.addAll(
+        generator.text('Kembalian: ${CurrencyFormatter.idr(change)}'),
+      );
+    }
     bytes.addAll(generator.feed(2));
     bytes.addAll(generator.cut());
 

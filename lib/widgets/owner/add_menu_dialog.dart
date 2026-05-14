@@ -1,8 +1,9 @@
-import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:opini_kopi/services/menu_service.dart';
+import 'package:opini_kopi/utils/input_sanitizer.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class AddMenuDialog extends StatefulWidget {
   final Map<String, dynamic>? item;
@@ -16,45 +17,113 @@ class _AddMenuDialogState extends State<AddMenuDialog> {
   final _formKey = GlobalKey<FormState>();
   final _menuService = MenuService();
 
-  late TextEditingController _nameCtrl, _priceCtrl;
+  late TextEditingController _nameCtrl, _priceCtrl, _sectionCtrl;
   String _category = 'Coffee';
   bool _isActive = true;
 
   Uint8List? _webImage;
   String? _currentImageUrl;
   bool _isSaving = false;
+  bool _isPickingImage = false;
 
   @override
   void initState() {
     super.initState();
     _nameCtrl = TextEditingController(text: widget.item?['menu_name']);
     _priceCtrl = TextEditingController(text: widget.item?['price']?.toString());
+    _sectionCtrl = TextEditingController(text: widget.item?['section'] ?? '');
     _category = widget.item?['category'] ?? 'Coffee';
     _isActive = widget.item?['is_available'] ?? true;
     _currentImageUrl = widget.item?['image_url'];
   }
 
-  Future<void> _pickImage() async {
-    final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (picked != null) {
-      final bytes = await picked.readAsBytes();
-      setState(() => _webImage = bytes);
+  @override
+  void dispose() {
+    _nameCtrl.dispose();
+    _priceCtrl.dispose();
+    _sectionCtrl.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    if (_isPickingImage) return;
+    Navigator.pop(context);
+    setState(() => _isPickingImage = true);
+
+    try {
+      if (!kIsWeb && source == ImageSource.camera) {
+        final status = await Permission.camera.request();
+        if (!status.isGranted) {
+          _showSnack("Izin kamera diperlukan untuk mengambil foto");
+          return;
+        }
+      }
+
+      final picked = await ImagePicker().pickImage(
+        source: source,
+        maxWidth: 1400,
+        maxHeight: 1400,
+        imageQuality: 78,
+      );
+      if (picked != null) {
+        final bytes = await picked.readAsBytes();
+        setState(() => _webImage = bytes);
+      }
+    } catch (e) {
+      _showSnack("Gagal mengambil gambar: $e");
+    } finally {
+      if (mounted) setState(() => _isPickingImage = false);
     }
+  }
+
+  void _showImageSourceSheet() {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(18),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.photo_camera_outlined),
+                  title: const Text("Ambil dari Kamera"),
+                  onTap: () => _pickImage(ImageSource.camera),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.photo_library_outlined),
+                  title: const Text("Pilih dari Galeri"),
+                  onTap: () => _pickImage(ImageSource.gallery),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showSnack(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: const Color(0xFF4A2419),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(20),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+    );
   }
 
   void _handleSave() async {
     if (!_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text("Periksa kembali input"),
-          backgroundColor: const Color(0xFF4A2419),
-          behavior: SnackBarBehavior.floating,
-          margin: const EdgeInsets.all(20),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-      );
+      _showSnack("Periksa kembali input");
       return;
     }
 
@@ -69,9 +138,13 @@ class _AddMenuDialogState extends State<AddMenuDialog> {
       }
 
       final data = {
-        'menu_name': _nameCtrl.text.trim(),
+        'menu_name': InputSanitizer.sanitizeName(_nameCtrl.text),
         'price': int.parse(_priceCtrl.text),
         'category': _category,
+        'section': InputSanitizer.sanitizeText(
+          _sectionCtrl.text,
+          maxLength: 60,
+        ),
         'is_available': _isActive,
         'image_url': imageUrl,
       };
@@ -83,32 +156,12 @@ class _AddMenuDialogState extends State<AddMenuDialog> {
       }
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text("Berhasil disimpan"),
-            backgroundColor: const Color(0xFF4A2419),
-            behavior: SnackBarBehavior.floating,
-            margin: const EdgeInsets.all(20),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-        );
+        _showSnack("Berhasil disimpan");
         Navigator.pop(context, true);
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Error: $e"),
-            backgroundColor: const Color(0xFF4A2419),
-            behavior: SnackBarBehavior.floating,
-            margin: const EdgeInsets.all(20),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-        );
+        _showSnack("Error: $e");
       }
     } finally {
       if (mounted) setState(() => _isSaving = false);
@@ -217,12 +270,9 @@ class _AddMenuDialogState extends State<AddMenuDialog> {
       _label("Nama Menu"),
       TextFormField(
         controller: _nameCtrl,
+        inputFormatters: [InputSanitizer.safeTextFormatter],
         decoration: _inputDeco("Cappuccino"),
-        validator: (v) {
-          if (v == null || v.trim().isEmpty) return "Nama wajib diisi";
-          if (v.length < 3) return "Minimal 3 karakter";
-          return null;
-        },
+        validator: (v) => InputSanitizer.validateName(v, field: "Nama"),
       ),
       const SizedBox(height: 16),
       if (isCompact)
@@ -241,6 +291,22 @@ class _AddMenuDialogState extends State<AddMenuDialog> {
             Expanded(child: _buildCategoryField()),
           ],
         ),
+      const SizedBox(height: 16),
+      _label("Section"),
+      TextFormField(
+        controller: _sectionCtrl,
+        inputFormatters: [InputSanitizer.safeTextFormatter],
+        decoration: _inputDeco("Espresso Series"),
+        validator: (v) {
+          if (v == null || v.trim().isEmpty) return null;
+          return InputSanitizer.validateName(
+            v,
+            field: "Section",
+            minLength: 2,
+            maxLength: 60,
+          );
+        },
+      ),
       const SizedBox(height: 16),
       _label("Status"),
       if (isCompact)
@@ -266,13 +332,9 @@ class _AddMenuDialogState extends State<AddMenuDialog> {
       TextFormField(
         controller: _priceCtrl,
         keyboardType: TextInputType.number,
+        inputFormatters: [InputSanitizer.numericFormatter],
         decoration: _inputDeco("18000"),
-        validator: (v) {
-          if (v == null || v.trim().isEmpty) return "Harga wajib diisi";
-          if (int.tryParse(v) == null) return "Harus angka";
-          if (int.parse(v) <= 0) return "Harus lebih dari 0";
-          return null;
-        },
+        validator: (v) => InputSanitizer.validatePositiveInt(v, field: "Harga"),
       ),
     ],
   );
@@ -323,9 +385,12 @@ class _AddMenuDialogState extends State<AddMenuDialog> {
       ),
       const SizedBox(height: 16),
       OutlinedButton.icon(
-        onPressed: _pickImage,
-        icon: const Icon(Icons.camera_alt_outlined, size: 18),
-        label: const Text("Ganti Gambar"),
+        onPressed: _isPickingImage ? null : _showImageSourceSheet,
+        icon: Icon(
+          _isPickingImage ? Icons.hourglass_empty : Icons.add_a_photo_outlined,
+          size: 18,
+        ),
+        label: Text(_isPickingImage ? "Memproses..." : "Pilih Gambar"),
         style: OutlinedButton.styleFrom(
           foregroundColor: const Color(0xFF4A2419),
           side: const BorderSide(color: Color(0xFF4A2419)),

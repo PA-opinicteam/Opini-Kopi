@@ -21,6 +21,13 @@ dependencies:
   excel: ^4.0.6
   path_provider: ^2.1.5
   esc_pos_utils_plus: ^2.0.4
+  flutter_local_notifications: ^21.0.0
+  permission_handler: ^12.0.1
+  ambient_light: ^0.1.4
+  open_filex: ^4.7.0
+  provider: ^6.1.5+1
+  shared_preferences: ^2.5.5
+  characters: ^1.4.0
 
 dev_dependencies:
   flutter_test:

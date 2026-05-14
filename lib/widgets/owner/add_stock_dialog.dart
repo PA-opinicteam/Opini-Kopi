@@ -1,4 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:opini_kopi/utils/input_sanitizer.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class AddStockDialog extends StatefulWidget {
   final Map<String, dynamic>? item;
@@ -14,8 +18,12 @@ class _AddStockDialogState extends State<AddStockDialog> {
 
   late TextEditingController _nameCtrl;
   late TextEditingController _stockCtrl;
+  late TextEditingController _minimumStockCtrl;
 
   String _selectedUnit = "Kg";
+  Uint8List? _imageBytes;
+  String? _currentImageUrl;
+  bool _isPickingImage = false;
 
   final primaryBrown = const Color(0xFF6D4C41);
   final darkBrown = const Color(0xFF4A2419);
@@ -30,10 +38,22 @@ class _AddStockDialogState extends State<AddStockDialog> {
     _stockCtrl = TextEditingController(
       text: widget.item?['stock']?.toString() ?? "",
     );
+    _minimumStockCtrl = TextEditingController(
+      text: widget.item?['minimum_stock']?.toString() ?? "",
+    );
+    _currentImageUrl = widget.item?['image_url']?.toString();
 
     if (widget.item?['unit'] != null) {
       _selectedUnit = widget.item!['unit'];
     }
+  }
+
+  @override
+  void dispose() {
+    _nameCtrl.dispose();
+    _stockCtrl.dispose();
+    _minimumStockCtrl.dispose();
+    super.dispose();
   }
 
   InputDecoration inputDeco(String hint) {
@@ -84,24 +104,89 @@ class _AddStockDialogState extends State<AddStockDialog> {
     }
 
     Navigator.pop(context, {
-      'product_name': _nameCtrl.text.trim(),
+      'product_name': InputSanitizer.sanitizeName(_nameCtrl.text),
       'stock': double.parse(_stockCtrl.text),
       'unit': _selectedUnit,
+      if (_minimumStockCtrl.text.trim().isNotEmpty)
+        'minimum_stock': double.parse(_minimumStockCtrl.text),
+      if (_imageBytes != null) '_imageBytes': _imageBytes,
     });
+  }
 
-    Future.delayed(const Duration(milliseconds: 100), () {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text("Data berhasil ditambahkan"),
-          backgroundColor: const Color(0xFF4A2419),
-          behavior: SnackBarBehavior.floating,
-          margin: const EdgeInsets.all(20),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
+  Future<void> _pickImage(ImageSource source) async {
+    if (_isPickingImage) return;
+    Navigator.pop(context);
+    setState(() => _isPickingImage = true);
+
+    try {
+      if (!kIsWeb && source == ImageSource.camera) {
+        final status = await Permission.camera.request();
+        if (!status.isGranted) {
+          _showSnack("Izin kamera diperlukan untuk mengambil foto");
+          return;
+        }
+      }
+
+      final picked = await ImagePicker().pickImage(
+        source: source,
+        maxWidth: 1200,
+        maxHeight: 1200,
+        imageQuality: 76,
       );
-    });
+      if (picked == null) return;
+
+      final bytes = await picked.readAsBytes();
+      setState(() => _imageBytes = bytes);
+    } catch (e) {
+      _showSnack("Gagal mengambil gambar: $e");
+    } finally {
+      if (mounted) setState(() => _isPickingImage = false);
+    }
+  }
+
+  void _showImageSourceSheet() {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(18),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.photo_camera_outlined),
+                  title: const Text("Ambil dari Kamera"),
+                  onTap: () => _pickImage(ImageSource.camera),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.photo_library_outlined),
+                  title: const Text("Pilih dari Galeri"),
+                  onTap: () => _pickImage(ImageSource.gallery),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showSnack(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: const Color(0xFF4A2419),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(20),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+    );
   }
 
   @override
@@ -181,14 +266,14 @@ class _AddStockDialogState extends State<AddStockDialog> {
                 const SizedBox(height: 6),
                 TextFormField(
                   controller: _nameCtrl,
+                  inputFormatters: [InputSanitizer.safeTextFormatter],
                   decoration: inputDeco("Contoh: Susu Oat"),
-                  validator: (v) {
-                    if (v == null || v.trim().isEmpty)
-                      return "Nama wajib diisi";
-                    if (v.length < 3) return "Minimal 3 karakter";
-                    return null;
-                  },
+                  validator: (v) =>
+                      InputSanitizer.validateName(v, field: "Nama"),
                 ),
+
+                SizedBox(height: isMobile ? 16 : 20),
+                _buildImagePicker(),
 
                 SizedBox(height: isMobile ? 16 : 20),
 
@@ -207,19 +292,34 @@ class _AddStockDialogState extends State<AddStockDialog> {
                       TextFormField(
                         controller: _stockCtrl,
                         keyboardType: TextInputType.number,
+                        inputFormatters: [InputSanitizer.numericFormatter],
                         decoration: inputDeco("0.00"),
-                        validator: (v) {
-                          if (v == null || v.trim().isEmpty) {
-                            return "Jumlah wajib diisi";
-                          }
-                          if (double.tryParse(v) == null) {
-                            return "Harus angka";
-                          }
-                          if (double.parse(v) < 0) {
-                            return "Tidak boleh minus";
-                          }
-                          return null;
-                        },
+                        validator: (v) =>
+                            InputSanitizer.validateNonNegativeDouble(
+                              v,
+                              field: "Jumlah",
+                            ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Minimum Stok",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF4A2419),
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      TextFormField(
+                        controller: _minimumStockCtrl,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [InputSanitizer.numericFormatter],
+                        decoration: inputDeco("Opsional"),
+                        validator: _minimumStockValidator,
                       ),
                     ],
                   ),
@@ -265,19 +365,40 @@ class _AddStockDialogState extends State<AddStockDialog> {
                             TextFormField(
                               controller: _stockCtrl,
                               keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                InputSanitizer.numericFormatter,
+                              ],
                               decoration: inputDeco("0.00"),
-                              validator: (v) {
-                                if (v == null || v.trim().isEmpty) {
-                                  return "Jumlah wajib diisi";
-                                }
-                                if (double.tryParse(v) == null) {
-                                  return "Harus angka";
-                                }
-                                if (double.parse(v) < 0) {
-                                  return "Tidak boleh minus";
-                                }
-                                return null;
-                              },
+                              validator: (v) =>
+                                  InputSanitizer.validateNonNegativeDouble(
+                                    v,
+                                    field: "Jumlah",
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Minimum Stok",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF4A2419),
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            TextFormField(
+                              controller: _minimumStockCtrl,
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                InputSanitizer.numericFormatter,
+                              ],
+                              decoration: inputDeco("Opsional"),
+                              validator: _minimumStockValidator,
                             ),
                           ],
                         ),
@@ -412,6 +533,69 @@ class _AddStockDialogState extends State<AddStockDialog> {
           ),
         ),
       ),
+    );
+  }
+
+  String? _minimumStockValidator(String? value) {
+    if (value == null || value.trim().isEmpty) return null;
+    final parsed = double.tryParse(value);
+    if (parsed == null) return "Harus angka";
+    if (parsed < 0) return "Tidak boleh minus";
+    return null;
+  }
+
+  Widget _buildImagePicker() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Foto Bahan",
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF4A2419),
+          ),
+        ),
+        const SizedBox(height: 6),
+        Container(
+          height: 150,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: softBg,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: const Color(0xFFE8DFD8)),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: _imageBytes != null
+              ? Image.memory(_imageBytes!, fit: BoxFit.cover)
+              : (_currentImageUrl != null && _currentImageUrl!.isNotEmpty
+                    ? Image.network(_currentImageUrl!, fit: BoxFit.cover)
+                    : const Center(
+                        child: Icon(
+                          Icons.inventory_2_outlined,
+                          size: 42,
+                          color: Color(0xFF4A2419),
+                        ),
+                      )),
+        ),
+        const SizedBox(height: 10),
+        OutlinedButton.icon(
+          onPressed: _isPickingImage ? null : _showImageSourceSheet,
+          icon: Icon(
+            _isPickingImage
+                ? Icons.hourglass_empty
+                : Icons.add_a_photo_outlined,
+            size: 18,
+          ),
+          label: Text(_isPickingImage ? "Memproses..." : "Pilih Foto"),
+          style: OutlinedButton.styleFrom(
+            foregroundColor: darkBrown,
+            side: BorderSide(color: darkBrown),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:opini_kopi/services/export_service.dart';
+import 'package:opini_kopi/providers/notification_provider.dart';
+import 'package:opini_kopi/services/stock_notification_service.dart';
 import 'package:opini_kopi/utils/responsive_helper.dart';
 import 'package:opini_kopi/utils/snackbar_utils.dart';
 import 'package:opini_kopi/widgets/common/app_search_bar.dart';
+import 'package:provider/provider.dart';
 
 import '../../services/stock_service.dart';
 import '../../widgets/owner/add_stock_dialog.dart';
@@ -31,6 +34,10 @@ class _StockPageState extends State<StockPage> {
   Future<void> _refresh() async {
     setState(() => _isLoading = true);
     final list = await _service.getStock();
+    await StockNotificationService.notifyStockRisks(list);
+    if (mounted) {
+      context.read<NotificationProvider>().syncStockRisks(list);
+    }
     setState(() {
       _data = list;
       _filtered = list;
@@ -128,7 +135,8 @@ class _StockPageState extends State<StockPage> {
         child: LayoutBuilder(
           builder: (context, constraints) {
             final isCompact =
-                ResponsiveHelper.isMobile(context) || constraints.maxWidth < 900;
+                ResponsiveHelper.isMobile(context) ||
+                constraints.maxWidth < 900;
 
             return Padding(
               padding: EdgeInsets.all(
@@ -271,12 +279,7 @@ class _StockPageState extends State<StockPage> {
         Icons.warning_amber_rounded,
         Colors.orange,
       ),
-      _card(
-        "Stok Habis",
-        habis.toString(),
-        Icons.error_outline,
-        Colors.red,
-      ),
+      _card("Stok Habis", habis.toString(), Icons.error_outline, Colors.red),
     ];
 
     if (isCompact) {
@@ -307,7 +310,10 @@ class _StockPageState extends State<StockPage> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
+          ),
         ],
       ),
       child: Column(
@@ -504,7 +510,10 @@ class _StockPageState extends State<StockPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                _actionBtn(Icons.edit_outlined, () => _handleAddEdit(item: item)),
+                _actionBtn(
+                  Icons.edit_outlined,
+                  () => _handleAddEdit(item: item),
+                ),
                 const SizedBox(width: 8),
                 _actionBtn(
                   Icons.delete_outline,
@@ -539,7 +548,10 @@ class _StockPageState extends State<StockPage> {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _actionBtn(Icons.edit_outlined, () => _handleAddEdit(item: item)),
+                  _actionBtn(
+                    Icons.edit_outlined,
+                    () => _handleAddEdit(item: item),
+                  ),
                   _actionBtn(
                     Icons.delete_outline,
                     () => _handleDelete(item),
@@ -666,10 +678,22 @@ class _StockPageState extends State<StockPage> {
       builder: (_) => AddStockDialog(item: item),
     );
     if (res != null) {
+      final data = Map<String, dynamic>.from(res as Map);
+      final imageBytes = data.remove('_imageBytes');
+      if (imageBytes != null) {
+        final imageUrl = await _service.uploadImage(
+          imageBytes,
+          'stock-${DateTime.now().millisecondsSinceEpoch}.jpg',
+        );
+        if (imageUrl != null) {
+          data['image_url'] = imageUrl;
+        }
+      }
+
       if (item == null) {
-        await _service.addStock(res);
+        await _service.addStock(data);
       } else {
-        await _service.updateStock(item['id_inventory'], res);
+        await _service.updateStock(item['id_inventory'], data);
       }
       _refresh();
     }

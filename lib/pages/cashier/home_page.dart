@@ -53,7 +53,8 @@ class _HomePageState extends State<HomePage> {
             return list;
           })()
         : <String>[];
-    return '$menuId|$variantId|${addonIds.join(',')}';
+    final note = _text(item['note'] ?? item['notes']).trim().toLowerCase();
+    return '$menuId|$variantId|${addonIds.join(',')}|$note';
   }
 
   int get subtotal {

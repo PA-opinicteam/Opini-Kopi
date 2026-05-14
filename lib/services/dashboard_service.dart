@@ -13,7 +13,7 @@ class DashboardService {
   }
 
   Future<double> getTodayRevenue() async {
-    final res = await supabase.from('orders').select();
+    final res = await supabase.from('orders').select().eq('status', 'paid');
 
     if (res.isEmpty) return 0;
 
@@ -33,7 +33,7 @@ class DashboardService {
   }
 
   Future<int> getTodayOrders() async {
-    final res = await supabase.from('orders').select();
+    final res = await supabase.from('orders').select().eq('status', 'paid');
 
     if (res.isEmpty) return 0;
 
@@ -53,7 +53,8 @@ class DashboardService {
   Future<String> getBestProduct() async {
     final res = await supabase
         .from('order_details')
-        .select('id_menu, unit_quantity');
+        .select('id_menu, unit_quantity, orders!inner(status)')
+        .eq('orders.status', 'paid');
 
     if (res.isEmpty) return "-";
 
@@ -82,7 +83,10 @@ class DashboardService {
   }
 
   Future<String> getPeakHour() async {
-    final res = await supabase.from('orders').select('created_at');
+    final res = await supabase
+        .from('orders')
+        .select('created_at')
+        .eq('status', 'paid');
 
     if (res.isEmpty) return "-";
 
@@ -108,7 +112,10 @@ class DashboardService {
   }
 
   Future<List<int>> getHourlyDistribution() async {
-    final res = await supabase.from('orders').select('created_at');
+    final res = await supabase
+        .from('orders')
+        .select('created_at')
+        .eq('status', 'paid');
 
     List<int> buckets = List.filled(7, 0);
 
@@ -139,7 +146,7 @@ class DashboardService {
   }
 
   Future<List<double>> getWeeklySales() async {
-    final res = await supabase.from('orders').select();
+    final res = await supabase.from('orders').select().eq('status', 'paid');
 
     List<double> weekly = List.filled(7, 0);
 

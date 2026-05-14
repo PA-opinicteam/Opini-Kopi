@@ -246,10 +246,7 @@ class _PaymentPageState extends State<PaymentPage> {
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    SizedBox(
-                      height: 340,
-                      child: _summaryPanel(double.infinity, isCompact: true),
-                    ),
+                    _summaryPanel(double.infinity, isCompact: true),
                     const SizedBox(height: 16),
                     _paymentPanel(),
                   ],
@@ -272,10 +269,10 @@ class _PaymentPageState extends State<PaymentPage> {
   Widget _summaryPanel(double width, {bool isCompact = false}) {
     return Container(
       width: width,
-      padding: EdgeInsets.all(isCompact ? 16 : 20),
+      padding: EdgeInsets.all(isCompact ? 16 : 18),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -293,70 +290,10 @@ class _PaymentPageState extends State<PaymentPage> {
             ),
           ),
           SizedBox(height: isCompact ? 14 : 20),
-          Expanded(
-            child: ListView.separated(
-              itemCount: widget.cart.length,
-              separatorBuilder: (_, __) => SizedBox(height: isCompact ? 10 : 14),
-              itemBuilder: (context, index) {
-                final item = widget.cart[index];
-                final imageUrl = (item['imageUrl'] ?? '').toString();
-                final title = (item['title'] ?? '').toString();
-                final qty = item['qty'];
-                final price = int.tryParse(item['price'].toString()) ?? 0;
-                final variant = (item['variantName'] ?? '').toString();
-
-                return Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: imageUrl.startsWith('http')
-                          ? Image.network(
-                              imageUrl,
-                              width: 56,
-                              height: 56,
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) => _imageFallback(),
-                            )
-                          : _imageFallback(),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            title,
-                            style: const TextStyle(fontWeight: FontWeight.w700),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'JMLH $qty',
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey,
-                            ),
-                          ),
-                          if (variant.isNotEmpty)
-                            Text(
-                              variant.toUpperCase(),
-                              style: const TextStyle(
-                                fontSize: 11,
-                                color: Colors.grey,
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                    Text(
-                      widget.formatRupiah(price),
-                      style: const TextStyle(fontWeight: FontWeight.w700),
-                    ),
-                  ],
-                );
-              },
-            ),
-          ),
+          if (isCompact)
+            SizedBox(height: 220, child: _orderList(isCompact))
+          else
+            Expanded(child: _orderList(isCompact)),
           Divider(height: isCompact ? 18 : 24),
           _row('Subtotal', widget.formatRupiah(widget.subtotal)),
           SizedBox(height: isCompact ? 6 : 8),
@@ -368,12 +305,82 @@ class _PaymentPageState extends State<PaymentPage> {
     );
   }
 
+  Widget _orderList(bool isCompact) {
+    return ListView.separated(
+      itemCount: widget.cart.length,
+      separatorBuilder: (_, __) => SizedBox(height: isCompact ? 10 : 14),
+      itemBuilder: (context, index) {
+        final item = widget.cart[index];
+        final imageUrl = (item['imageUrl'] ?? '').toString();
+        final title = (item['title'] ?? '').toString();
+        final qty = item['qty'];
+        final price = int.tryParse(item['price'].toString()) ?? 0;
+        final variant = (item['variantName'] ?? '').toString();
+        final note = (item['note'] ?? item['notes'] ?? '').toString().trim();
+
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: imageUrl.startsWith('http')
+                  ? Image.network(
+                      imageUrl,
+                      width: 56,
+                      height: 56,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => _imageFallback(),
+                    )
+                  : _imageFallback(),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(fontWeight: FontWeight.w700),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'JMLH $qty',
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+                  if (variant.isNotEmpty)
+                    Text(
+                      variant.toUpperCase(),
+                      style: const TextStyle(fontSize: 11, color: Colors.grey),
+                    ),
+                  if (note.isNotEmpty)
+                    Text(
+                      'Catatan: $note',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: Color(0xFF6B3A2E),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            Text(
+              widget.formatRupiah(price),
+              style: const TextStyle(fontWeight: FontWeight.w700),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget _paymentPanel({bool expanded = false}) {
     return Container(
-      padding: const EdgeInsets.all(28),
+      padding: EdgeInsets.all(MediaQuery.sizeOf(context).width < 720 ? 18 : 24),
       decoration: BoxDecoration(
         color: const Color(0xFFF5F2EF),
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -384,7 +391,7 @@ class _PaymentPageState extends State<PaymentPage> {
             padding: const EdgeInsets.symmetric(vertical: 32),
             decoration: BoxDecoration(
               color: const Color(0xFF6B3A2E),
-              borderRadius: BorderRadius.circular(28),
+              borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
               children: [
@@ -421,88 +428,106 @@ class _PaymentPageState extends State<PaymentPage> {
             ],
           ),
           const SizedBox(height: 24),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final isNarrow = constraints.maxWidth < 520;
-              final cashInput = _input(
-                'Uang Diterima',
-                TextField(
-                  controller: cashController,
-                  keyboardType: TextInputType.number,
-                  onChanged: _handleCashChanged,
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Masukkan nominal',
-                  ),
-                ),
-              );
-              final changeBox = _input(
-                'Kembalian',
-                Text(
-                  widget.formatRupiah(change),
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-              );
-
-              if (isNarrow) {
-                return Column(
-                  children: [cashInput, const SizedBox(height: 12), changeBox],
-                );
-              }
-
-              return Row(
-                children: [
-                  Expanded(child: cashInput),
-                  const SizedBox(width: 16),
-                  Expanded(child: changeBox),
-                ],
-              );
-            },
-          ),
-          const SizedBox(height: 16),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final isCompactShortcuts = constraints.maxWidth < 720;
-              final chips = [
-                _quickCashChip(20000),
-                _quickCashChip(50000),
-                _quickCashChip(100000),
-                _quickCashChip(150000),
-              ];
-
-              if (isCompactShortcuts) {
-                return Center(
-                  child: Wrap(
-                    alignment: WrapAlignment.center,
-                    spacing: 12,
-                    runSpacing: 12,
-                    children: chips,
+          if (paymentMethod == 'cash') ...[
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final isNarrow = constraints.maxWidth < 520;
+                final cashInput = _input(
+                  'Uang Diterima',
+                  TextField(
+                    controller: cashController,
+                    keyboardType: TextInputType.number,
+                    onChanged: _handleCashChanged,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Masukkan nominal',
+                    ),
                   ),
                 );
-              }
+                final changeBox = _input(
+                  'Kembalian',
+                  Text(
+                    widget.formatRupiah(change),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                );
 
-              return Center(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
+                if (isNarrow) {
+                  return Column(
                     children: [
-                      chips[0],
-                      const SizedBox(width: 12),
-                      chips[1],
-                      const SizedBox(width: 12),
-                      chips[2],
-                      const SizedBox(width: 12),
-                      chips[3],
+                      cashInput,
+                      const SizedBox(height: 12),
+                      changeBox,
                     ],
+                  );
+                }
+
+                return Row(
+                  children: [
+                    Expanded(child: cashInput),
+                    const SizedBox(width: 16),
+                    Expanded(child: changeBox),
+                  ],
+                );
+              },
+            ),
+            const SizedBox(height: 16),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final isCompactShortcuts = constraints.maxWidth < 720;
+                final chips = [
+                  _quickCashChip(20000),
+                  _quickCashChip(50000),
+                  _quickCashChip(100000),
+                  _quickCashChip(150000),
+                ];
+
+                if (isCompactShortcuts) {
+                  return Center(
+                    child: Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: 12,
+                      runSpacing: 12,
+                      children: chips,
+                    ),
+                  );
+                }
+
+                return Center(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        chips[0],
+                        const SizedBox(width: 12),
+                        chips[1],
+                        const SizedBox(width: 12),
+                        chips[2],
+                        const SizedBox(width: 12),
+                        chips[3],
+                      ],
+                    ),
                   ),
-                ),
-              );
-            },
-          ),
+                );
+              },
+            ),
+          ] else
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFFEDE7E3),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Text(
+                'Pembayaran QRIS dikonfirmasi sesuai nominal total.',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+            ),
           if (expanded) const Spacer() else const SizedBox(height: 28),
           Row(
             children: [

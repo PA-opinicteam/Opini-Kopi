@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:excel/excel.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:opini_kopi/utils/currency_formatter.dart';
 import 'package:path_provider/path_provider.dart';
@@ -11,6 +12,9 @@ import 'package:printing/printing.dart';
 class ExportService {
   const ExportService._();
 
+  static const MethodChannel _downloadChannel = MethodChannel(
+    'opini_pos/downloads',
+  );
   static final DateFormat _dateFormat = DateFormat('dd/MM/yyyy HH:mm', 'id_ID');
 
   static Future<void> shareOrderReportPdf({
@@ -36,8 +40,7 @@ class ExportService {
                 'Total Penjualan',
                 CurrencyFormatter.idr(summary['total_sales'] ?? 0),
               ),
-              _summaryBox('Total Pesanan',
-               '${summary['total_order'] ?? 0}'),
+              _summaryBox('Total Pesanan', '${summary['total_order'] ?? 0}'),
               _summaryBox(
                 'Rata-rata Pesanan',
                 CurrencyFormatter.idr(summary['avg_order'] ?? 0),
@@ -124,7 +127,7 @@ class ExportService {
       ]);
     }
 
-    return _saveExcel(excel, 'laporan-opini-kopi.xlsx');
+    return _saveExcel(excel, _timestampedFilename('laporan-opini-kopi'));
   }
 
   static Future<String> saveStockExcel(List<Map<String, dynamic>> stock) async {
@@ -151,7 +154,7 @@ class ExportService {
       ]);
     }
 
-    return _saveExcel(excel, 'stok-opini-kopi.xlsx');
+    return _saveExcel(excel, _timestampedFilename('stok-opini-kopi'));
   }
 
   static pw.Widget _summaryBox(String title, String value) {
@@ -180,14 +183,37 @@ class ExportService {
       return filename;
     }
 
-    final dir = await getApplicationDocumentsDirectory();
-    final path = '${dir.path}${Platform.pathSeparator}$filename';
     final bytes = excel.save();
     if (bytes == null) throw Exception('Gagal membuat file Excel');
 
+    if (Platform.isAndroid) {
+      final path = await _downloadChannel.invokeMethod<String>(
+        'saveToDownloads',
+        {
+          'filename': filename,
+          'bytes': Uint8List.fromList(bytes),
+          'mimeType':
+              'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        },
+      );
+      if (path == null || path.isEmpty) {
+        throw Exception('Gagal menyimpan file ke Downloads');
+      }
+      return path;
+    }
+
+    final dir =
+        await getDownloadsDirectory() ??
+        await getApplicationDocumentsDirectory();
+    final path = '${dir.path}${Platform.pathSeparator}$filename';
     final file = File(path);
     await file.writeAsBytes(bytes, flush: true);
     return path;
+  }
+
+  static String _timestampedFilename(String prefix) {
+    final stamp = DateFormat('yyyyMMdd-HHmmss').format(DateTime.now());
+    return '$prefix-$stamp.xlsx';
   }
 
   static String _dateText(dynamic value) {

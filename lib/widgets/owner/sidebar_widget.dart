@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:opini_kopi/constants/app_colors.dart';
+import 'package:opini_kopi/providers/notification_provider.dart';
+import 'package:provider/provider.dart';
 
 class OwnerSidebarWidget extends StatelessWidget {
   final int selectedIndex;
@@ -65,7 +67,8 @@ class OwnerSidebarWidget extends StatelessWidget {
                     _item(1, "Menu", Icons.restaurant_menu_outlined),
                     _item(2, "Laporan", Icons.receipt_long_outlined),
                     _item(3, "Stok", Icons.inventory_2_outlined),
-                    _item(4, "Pengguna", Icons.people_alt_outlined),
+                    _item(4, "Notifikasi", Icons.notifications_none),
+                    _item(5, "Pengguna", Icons.people_alt_outlined),
                   ],
                 ),
               ),
@@ -118,12 +121,39 @@ class OwnerSidebarWidget extends StatelessWidget {
             children: [
               Icon(icon, color: isSelected ? Colors.white : Colors.grey),
               const SizedBox(width: 10),
-              Text(
-                title,
-                style: TextStyle(
-                  color: isSelected ? Colors.white : Colors.grey,
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    color: isSelected ? Colors.white : Colors.grey,
+                  ),
                 ),
               ),
+              if (index == 4)
+                Consumer<NotificationProvider>(
+                  builder: (context, provider, _) {
+                    if (provider.unreadCount == 0)
+                      return const SizedBox.shrink();
+                    return Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 7,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isSelected ? Colors.white : AppColors.primary,
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Text(
+                        provider.unreadCount.toString(),
+                        style: TextStyle(
+                          color: isSelected ? AppColors.primary : Colors.white,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    );
+                  },
+                ),
             ],
           ),
         ),
@@ -169,6 +199,11 @@ class OwnerBottomNavigationBar extends StatelessWidget {
           icon: Icon(Icons.inventory_2_outlined),
           selectedIcon: Icon(Icons.inventory_2),
           label: 'Stok',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.notifications_none),
+          selectedIcon: Icon(Icons.notifications),
+          label: 'Notif',
         ),
         NavigationDestination(
           icon: Icon(Icons.people_alt_outlined),

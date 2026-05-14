@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  ambient_light
   file_selector_linux
   gtk
   printing

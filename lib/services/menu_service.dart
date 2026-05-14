@@ -1,5 +1,4 @@
 import 'supabase_service.dart';
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 
 class MenuService {
@@ -57,15 +56,11 @@ class MenuService {
     return List<Map<String, dynamic>>.from(res);
   }
 
-  Future<String?> uploadImage(dynamic file, String fileName) async {
+  Future<String?> uploadImage(Uint8List bytes, String fileName) async {
     try {
       final String path = 'public/$fileName';
 
-      if (kIsWeb) {
-        await supabase.storage.from('menu_images').uploadBinary(path, file);
-      } else {
-        await supabase.storage.from('menu_images').upload(path, file as File);
-      }
+      await supabase.storage.from('menu_images').uploadBinary(path, bytes);
 
       return supabase.storage.from('menu_images').getPublicUrl(path);
     } catch (e) {

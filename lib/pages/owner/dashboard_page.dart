@@ -11,6 +11,9 @@ import 'package:opini_kopi/pages/owner/menu_page.dart';
 import 'package:opini_kopi/pages/owner/stock_page.dart';
 import 'package:opini_kopi/pages/owner/users_page.dart';
 import 'package:opini_kopi/pages/owner/report_page.dart';
+import 'package:opini_kopi/pages/owner/notification_page.dart';
+import 'package:opini_kopi/providers/auth_provider.dart';
+import 'package:provider/provider.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -39,6 +42,8 @@ class _DashboardPageState extends State<DashboardPage> {
       case 3:
         return const StockPage();
       case 4:
+        return const NotificationPage();
+      case 5:
         return const UsersPage();
       default:
         return const _DashboardContent();
@@ -58,10 +63,14 @@ class _DashboardPageState extends State<DashboardPage> {
               foregroundColor: AppColors.primary,
               actions: [
                 IconButton(
-                  onPressed: () => Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (_) => const LoginPage()),
-                  ),
+                  onPressed: () async {
+                    await context.read<AuthProvider>().logout();
+                    if (!context.mounted) return;
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => const LoginPage()),
+                    );
+                  },
                   icon: const Icon(Icons.logout),
                 ),
               ],
@@ -74,10 +83,14 @@ class _DashboardPageState extends State<DashboardPage> {
                 OwnerSidebarWidget(
                   selectedIndex: selectedIndex,
                   onTap: (i) => setState(() => selectedIndex = i),
-                  onLogout: () => Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (_) => const LoginPage()),
-                  ),
+                  onLogout: () async {
+                    await context.read<AuthProvider>().logout();
+                    if (!context.mounted) return;
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => const LoginPage()),
+                    );
+                  },
                 ),
                 Expanded(child: _buildSelectedPage()),
               ],

@@ -1,5 +1,6 @@
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
+import 'package:opini_kopi/utils/input_sanitizer.dart';
 import 'package:opini_kopi/widgets/cashier/delete_item_dialog.dart';
 
 class OrderSummaryWidget extends StatelessWidget {
@@ -15,9 +16,9 @@ class OrderSummaryWidget extends StatelessWidget {
   final void Function(int index) onDeleteItem;
   final VoidCallback onClearAll;
   final Widget Function({required IconData icon, required VoidCallback onTap})
-      qtyButtonBuilder;
+  qtyButtonBuilder;
   final Widget Function(String title, String value, {bool isTotal})
-      priceRowBuilder;
+  priceRowBuilder;
   final bool readOnly;
   final TextEditingController customerController;
   final double? width;
@@ -50,7 +51,8 @@ class OrderSummaryWidget extends StatelessWidget {
     if (value == null) return 0;
     if (value is int) return value;
     if (value is double) return value.toInt();
-    return int.tryParse(value.toString().replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
+    return int.tryParse(value.toString().replaceAll(RegExp(r'[^0-9]'), '')) ??
+        0;
   }
 
   String _text(dynamic value) => value?.toString() ?? '';
@@ -85,27 +87,28 @@ class OrderSummaryWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isCompact = MediaQuery.sizeOf(context).width < 720;
+
     return SizedBox(
       width: width,
       height: height ?? MediaQuery.of(context).size.height,
       child: Container(
         margin: margin,
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(isCompact ? 16 : 18),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             Row(
               children: [
-                const Expanded(
+                Expanded(
                   child: Text(
                     'Ringkasan Pesanan',
                     style: TextStyle(
-                      fontSize: 26,
+                      fontSize: isCompact ? 20 : 24,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF1E1E1E),
                     ),
@@ -138,7 +141,7 @@ class OrderSummaryWidget extends StatelessWidget {
               ],
             ),
 
-            const SizedBox(height: 20),
+            SizedBox(height: isCompact ? 12 : 16),
 
             Expanded(
               child: cart.isEmpty
@@ -159,21 +162,24 @@ class OrderSummaryWidget extends StatelessWidget {
                         final variantName = _text(item['variantName']);
                         final addonNames = item['addonNames'] is List
                             ? List<String>.from(
-                                (item['addonNames'] as List)
-                                    .map((e) => e.toString()),
+                                (item['addonNames'] as List).map(
+                                  (e) => e.toString(),
+                                ),
                               )
                             : <String>[];
-                        final unitPrice =
-                            _toInt(item['unitPrice'] ?? item['price']);
+                        final unitPrice = _toInt(
+                          item['unitPrice'] ?? item['price'],
+                        );
                         final qty = _toInt(item['qty']).clamp(1, 9999);
 
                         return Padding(
-                          padding: const EdgeInsets.only(bottom: 16),
+                          padding: EdgeInsets.only(bottom: isCompact ? 10 : 12),
                           child: Container(
+                            constraints: const BoxConstraints(minHeight: 100),
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
                               color: const Color(0xFFF8F5F3),
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(12),
                             ),
                             child: Column(
                               children: [
@@ -260,8 +266,7 @@ class OrderSummaryWidget extends StatelessWidget {
                                     children: [
                                       qtyButtonBuilder(
                                         icon: Icons.remove,
-                                        onTap: () =>
-                                            onDecreaseQty(index),
+                                        onTap: () => onDecreaseQty(index),
                                       ),
                                       const SizedBox(width: 10),
                                       Text(
@@ -274,15 +279,12 @@ class OrderSummaryWidget extends StatelessWidget {
                                       const SizedBox(width: 10),
                                       qtyButtonBuilder(
                                         icon: Icons.add,
-                                        onTap: () =>
-                                            onIncreaseQty(index),
+                                        onTap: () => onIncreaseQty(index),
                                       ),
                                       const Spacer(),
 
-    
                                       TextButton(
-                                        onPressed: () =>
-                                            onEditItem(index),
+                                        onPressed: () => onEditItem(index),
                                         child: const Text(
                                           'Edit',
                                           style: TextStyle(
@@ -296,19 +298,20 @@ class OrderSummaryWidget extends StatelessWidget {
                                         onPressed: () {
                                           showDialog(
                                             context: context,
-                                            builder: (context) =>
-                                                DeleteItemDialog(
+                                            builder: (context) => DeleteItemDialog(
                                               title: "Hapus Item",
                                               message:
                                                   "Yakin ingin menghapus \"$title\"?",
                                               onConfirm: () {
                                                 onDeleteItem(index);
 
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(
+                                                ScaffoldMessenger.of(
+                                                  context,
+                                                ).showSnackBar(
                                                   const SnackBar(
                                                     content: Text(
-                                                        "Item berhasil dihapus"),
+                                                      "Item berhasil dihapus",
+                                                    ),
                                                   ),
                                                 );
                                               },
@@ -343,6 +346,7 @@ class OrderSummaryWidget extends StatelessWidget {
             const SizedBox(height: 6),
             TextField(
               controller: customerController,
+              inputFormatters: [InputSanitizer.safeTextFormatter],
               decoration: InputDecoration(
                 hintText: 'Masukkan nama pelanggan',
                 filled: true,
@@ -384,8 +388,7 @@ class OrderSummaryWidget extends StatelessWidget {
                   ),
                   child: const Text(
                     'Bayar',
-                    style: TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.w700),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
                   ),
                 ),
               ),

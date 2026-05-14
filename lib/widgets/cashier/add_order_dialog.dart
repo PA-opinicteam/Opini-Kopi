@@ -1,6 +1,7 @@
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 import 'package:opini_kopi/utils/currency_formatter.dart';
+import 'package:opini_kopi/utils/input_sanitizer.dart';
 import '../../services/menu_service.dart';
 
 class AddOrderDialog extends StatefulWidget {
@@ -53,8 +54,7 @@ class _AddOrderDialogState extends State<AddOrderDialog> {
   bool get _canUseVariants =>
       _isCoffeeCategory && _section == 'espresso series';
 
-  bool get _canUseAddons =>
-      _isCoffeeCategory || _category.contains('non');
+  bool get _canUseAddons => _isCoffeeCategory || _category.contains('non');
 
   int get _basePrice => _toInt(widget.menu['price']);
 
@@ -74,12 +74,17 @@ class _AddOrderDialogState extends State<AddOrderDialog> {
   int get _addonsTotal {
     var total = 0;
     for (final a in _addons) {
-      if (_selectedAddonIds.contains(a['id_addson'].toString())) {
+      if (_selectedAddonIds.contains(_addonId(a))) {
         total += _toInt(a['price']);
       }
     }
     return total;
   }
+
+  String _addonId(Map<String, dynamic> addon) =>
+      _text(addon['id_addon']).isNotEmpty
+      ? _text(addon['id_addon'])
+      : _text(addon['id_addson']);
 
   int get _unitPrice => _basePrice + _variantPrice + _addonsTotal;
   int get _totalPrice => _unitPrice * _qty;
@@ -191,14 +196,14 @@ class _AddOrderDialogState extends State<AddOrderDialog> {
       'variantName': _canUseVariants ? _text(_selectedVariant?['name']) : '',
       'addonIds': _selectedAddonIds.toList()..sort(),
       'addonNames': _addons
-          .where((a) => _selectedAddonIds.contains(a['id_addson'].toString()))
+          .where((a) => _selectedAddonIds.contains(_addonId(a)))
           .map((e) => e['name'].toString())
           .toList(),
       'addonPrices': _addons
-          .where((a) => _selectedAddonIds.contains(a['id_addson'].toString()))
+          .where((a) => _selectedAddonIds.contains(_addonId(a)))
           .map<int>((a) => _toInt(a['price']))
           .toList(),
-      'note': _noteController.text.trim(),
+      'note': InputSanitizer.sanitizeText(_noteController.text, maxLength: 160),
       'qty': _qty,
       'unitPrice': _unitPrice,
       'price': _unitPrice.toString(),
@@ -241,232 +246,246 @@ class _AddOrderDialogState extends State<AddOrderDialog> {
         ? _text(widget.menu['menu_name'])
         : _text(widget.menu['title']);
 
+    final screen = MediaQuery.sizeOf(context);
+    final isCompact = screen.width < 520;
+
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-      child: Container(
-        width: 430,
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(24),
+      insetPadding: EdgeInsets.symmetric(
+        horizontal: isCompact ? 16 : 24,
+        vertical: 20,
+      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: 430,
+          maxHeight: screen.height * 0.9,
         ),
-        child: _loading
-            ? const Padding(
-                padding: EdgeInsets.all(32),
-                child: Center(
-                  child: CircularProgressIndicator(color: Color(0xFF4A2419)),
-                ),
-              )
-            : SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(14),
-                          child: SizedBox(
-                            width: 68,
-                            height: 68,
-                            child: _menuImage(imageUrl),
+        child: Container(
+          padding: EdgeInsets.all(isCompact ? 16 : 20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: _loading
+              ? const Padding(
+                  padding: EdgeInsets.all(32),
+                  child: Center(
+                    child: CircularProgressIndicator(color: Color(0xFF4A2419)),
+                  ),
+                )
+              : SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(14),
+                            child: SizedBox(
+                              width: 68,
+                              height: 68,
+                              child: _menuImage(imageUrl),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  title,
+                                  style: const TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w700,
+                                    color: Color(0xFF2B1B18),
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  formatRupiah(_basePrice),
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: Color(0xFF6B5B57),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () => Navigator.pop(context),
+                            icon: const Icon(Icons.close),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      if (_canUseVariants) ...[
+                        const Text(
+                          'Pilih Varian',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                title,
-                                style: const TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.w700,
-                                  color: Color(0xFF2B1B18),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: _variants.map((variant) {
+                            final id = variant['id_variant'].toString();
+                            final name = _text(variant['name']);
+                            final price = _toInt(variant['price']);
+                            final selected = _selectedVariantId == id;
+
+                            return Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 8),
+                                child: _variantButton(
+                                  label: price > 0
+                                      ? '$name (+${formatRupiah(price)})'
+                                      : name,
+                                  isSelected: selected,
+                                  onTap: () =>
+                                      setState(() => _selectedVariantId = id),
                                 ),
                               ),
-                              const SizedBox(height: 4),
+                            );
+                          }).toList(),
+                        ),
+                        const SizedBox(height: 10),
+                      ],
+                      if (_canUseAddons) ...[
+                        const Text(
+                          'Tambahan',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        ..._addons.map((addon) {
+                          final id = _addonId(addon);
+                          final name = _text(addon['name']);
+                          final price = _toInt(addon['price']);
+                          final selected = _selectedAddonIds.contains(id);
+
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: _addonTile(
+                              title: name,
+                              price: '+${formatRupiah(price)}',
+                              value: selected,
+                              onChanged: (value) {
+                                setState(() {
+                                  if (value ?? false) {
+                                    _selectedAddonIds.add(id);
+                                  } else {
+                                    _selectedAddonIds.remove(id);
+                                  }
+                                });
+                              },
+                            ),
+                          );
+                        }),
+                        const SizedBox(height: 10),
+                      ],
+                      const Text(
+                        'Catatan (Optional)',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      TextField(
+                        controller: _noteController,
+                        inputFormatters: [InputSanitizer.safeTextFormatter],
+                        maxLength: 160,
+                        maxLines: 2,
+                        decoration: InputDecoration(
+                          hintText: 'Ketik catatan di sini...',
+                          filled: true,
+                          fillColor: const Color(0xFFF5F1EE),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: BorderSide.none,
+                          ),
+                          contentPadding: const EdgeInsets.all(14),
+                        ),
+                      ),
+                      const SizedBox(height: 18),
+                      Row(
+                        children: [
+                          _qtyButton(
+                            icon: Icons.remove,
+                            onTap: () {
+                              if (_qty > 1) {
+                                setState(() => _qty--);
+                              }
+                            },
+                          ),
+                          const SizedBox(width: 12),
+                          Text(
+                            '$_qty',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          _qtyButton(
+                            icon: Icons.add,
+                            onTap: () => setState(() => _qty++),
+                          ),
+                          const Spacer(),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              const Text(
+                                'Total',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                ),
+                              ),
                               Text(
-                                formatRupiah(_basePrice),
+                                formatRupiah(_totalPrice),
                                 style: const TextStyle(
-                                  fontSize: 16,
-                                  color: Color(0xFF6B5B57),
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.w800,
+                                  color: Color(0xFF2B1B18),
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                        IconButton(
-                          onPressed: () => Navigator.pop(context),
-                          icon: const Icon(Icons.close),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    if (_canUseVariants) ...[
-                      const Text(
-                        'Pilih Varian',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                        ),
+                        ],
                       ),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: _variants.map((variant) {
-                          final id = variant['id_variant'].toString();
-                          final name = _text(variant['name']);
-                          final price = _toInt(variant['price']);
-                          final selected = _selectedVariantId == id;
-
-                          return Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.only(right: 8),
-                              child: _variantButton(
-                                label: price > 0
-                                    ? '$name (+${formatRupiah(price)})'
-                                    : name,
-                                isSelected: selected,
-                                onTap: () =>
-                                    setState(() => _selectedVariantId = id),
-                              ),
+                      const SizedBox(height: 18),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 52,
+                        child: ElevatedButton(
+                          onPressed: _submit,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF4A2419),
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
                             ),
-                          );
-                        }).toList(),
+                          ),
+                          child: Text(
+                            widget.initialItem == null
+                                ? 'Tambah Pesanan'
+                                : 'Simpan Perubahan',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
                       ),
-                      const SizedBox(height: 10),
                     ],
-                    if (_canUseAddons) ...[
-                      const Text(
-                        'Tambahan',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      ..._addons.map((addon) {
-                        final id = addon['id_addson'].toString();
-                        final name = _text(addon['name']);
-                        final price = _toInt(addon['price']);
-                        final selected = _selectedAddonIds.contains(id);
-
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 8),
-                          child: _addonTile(
-                            title: name,
-                            price: '+${formatRupiah(price)}',
-                            value: selected,
-                            onChanged: (value) {
-                              setState(() {
-                                if (value ?? false) {
-                                  _selectedAddonIds.add(id);
-                                } else {
-                                  _selectedAddonIds.remove(id);
-                                }
-                              });
-                            },
-                          ),
-                        );
-                      }),
-                      const SizedBox(height: 10),
-                    ],
-                    const Text(
-                      'Catatan (Optional)',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: _noteController,
-                      maxLines: 2,
-                      decoration: InputDecoration(
-                        hintText: 'Ketik catatan di sini...',
-                        filled: true,
-                        fillColor: const Color(0xFFF5F1EE),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: const EdgeInsets.all(14),
-                      ),
-                    ),
-                    const SizedBox(height: 18),
-                    Row(
-                      children: [
-                        _qtyButton(
-                          icon: Icons.remove,
-                          onTap: () {
-                            if (_qty > 1) {
-                              setState(() => _qty--);
-                            }
-                          },
-                        ),
-                        const SizedBox(width: 12),
-                        Text(
-                          '$_qty',
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        _qtyButton(
-                          icon: Icons.add,
-                          onTap: () => setState(() => _qty++),
-                        ),
-                        const Spacer(),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            const Text(
-                              'Total',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey,
-                              ),
-                            ),
-                            Text(
-                              formatRupiah(_totalPrice),
-                              style: const TextStyle(
-                                fontSize: 28,
-                                fontWeight: FontWeight.w800,
-                                color: Color(0xFF2B1B18),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 18),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 52,
-                      child: ElevatedButton(
-                        onPressed: _submit,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF4A2419),
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                        ),
-                        child: Text(
-                          widget.initialItem == null
-                              ? 'Tambah Pesanan'
-                              : 'Simpan Perubahan',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+        ),
       ),
     );
   }

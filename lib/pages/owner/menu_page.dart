@@ -45,8 +45,12 @@ class _MenuPageState extends State<MenuPage> {
         final matchesName = (item['menu_name'] ?? "").toLowerCase().contains(
           _search.toLowerCase(),
         );
+        final itemCategory = (item['category'] ?? '').toString().toLowerCase();
+        final selectedCategory = _category.toLowerCase();
         final matchesCat =
-            _category == "Semua" || item['category'] == _category;
+            _category == "Semua" ||
+            itemCategory.replaceAll('-', ' ') ==
+                selectedCategory.replaceAll('-', ' ');
         return matchesName && matchesCat;
       }).toList();
     });
@@ -60,7 +64,8 @@ class _MenuPageState extends State<MenuPage> {
         child: LayoutBuilder(
           builder: (context, constraints) {
             final isCompact =
-                ResponsiveHelper.isMobile(context) || constraints.maxWidth < 900;
+                ResponsiveHelper.isMobile(context) ||
+                constraints.maxWidth < 900;
 
             return Padding(
               padding: EdgeInsets.all(
@@ -80,7 +85,7 @@ class _MenuPageState extends State<MenuPage> {
                       ),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(12),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.03),
@@ -125,7 +130,7 @@ class _MenuPageState extends State<MenuPage> {
         Text(
           "Manajemen Menu",
           style: TextStyle(
-            fontSize: 32,
+            fontSize: 28,
             fontWeight: FontWeight.bold,
             color: Color(0xFF4E342E),
           ),
@@ -431,7 +436,7 @@ class _MenuPageState extends State<MenuPage> {
     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
     decoration: BoxDecoration(
       color: const Color(0xFFF5EFEB),
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(12),
     ),
     child: Text(
       text,

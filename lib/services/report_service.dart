@@ -20,7 +20,10 @@ class ReportService {
   }
 
   Future<Map<String, dynamic>> getSalesSummary(DateTimeRange? range) async {
-    var query = supabase.from('orders').select('total_price');
+    var query = supabase
+        .from('orders')
+        .select('total_price')
+        .eq('status', 'paid');
     if (range != null) {
       query = query
           .gte('created_at', range.start.toIso8601String())
@@ -48,7 +51,8 @@ class ReportService {
           .from('orders')
           .select(
             'id_order, customer_name, subtotal_price, tax, total_price, status, created_at, payments(invoice_code, payment_method, amount_paid, change_amount)',
-          );
+          )
+          .eq('status', 'paid');
 
       if (range != null) {
         query = query
@@ -74,7 +78,10 @@ class ReportService {
     try {
       var query = supabase
           .from('order_details')
-          .select('unit_quantity, menu(menu_name), orders!inner(created_at)');
+          .select(
+            'unit_quantity, menu(menu_name), orders!inner(created_at, status)',
+          )
+          .eq('orders.status', 'paid');
 
       if (range != null) {
         query = query
@@ -112,7 +119,10 @@ class ReportService {
     DateTimeRange? range,
     String filterType,
   ) async {
-    var query = supabase.from('orders').select('total_price, created_at');
+    var query = supabase
+        .from('orders')
+        .select('total_price, created_at')
+        .eq('status', 'paid');
     if (range != null) {
       query = query
           .gte('created_at', range.start.toIso8601String())

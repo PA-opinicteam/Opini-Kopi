@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:opini_kopi/pages/cashier/home_page.dart';
+import 'package:opini_kopi/pages/owner/dashboard_page.dart';
+import 'package:opini_kopi/providers/auth_provider.dart';
+import 'package:provider/provider.dart';
 import '../auth/login_page.dart';
 
 class SplashPage extends StatefulWidget {
@@ -9,7 +13,6 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-
   @override
   void initState() {
     super.initState();
@@ -17,13 +20,22 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   Future<void> _initApp() async {
-    await Future.delayed(const Duration(seconds: 3)); 
+    await Future.delayed(const Duration(milliseconds: 900));
+    if (!mounted) return;
+
+    final auth = context.read<AuthProvider>();
+    await auth.restoreSession();
 
     if (!mounted) return;
 
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (_) => LoginPage()),
+      MaterialPageRoute(
+        builder: (_) {
+          if (!auth.isAuthenticated) return const LoginPage();
+          return auth.isCashier ? const HomePage() : const DashboardPage();
+        },
+      ),
     );
   }
 
@@ -33,10 +45,7 @@ class _SplashPageState extends State<SplashPage> {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Color(0xFFF5EFE6),
-              Color.fromARGB(255, 255, 228, 200), 
-            ],
+            colors: [Color(0xFFF5EFE6), Color.fromARGB(255, 255, 228, 200)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -45,10 +54,9 @@ class _SplashPageState extends State<SplashPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-
               Image.asset(
                 'assets/images/opini_kopi_no_bg.png',
-                width: 200,
+                width: MediaQuery.sizeOf(context).width < 480 ? 150 : 190,
               ),
 
               const SizedBox(height: 20),
@@ -65,9 +73,7 @@ class _SplashPageState extends State<SplashPage> {
 
               const SizedBox(height: 30),
 
-              const CircularProgressIndicator(
-                color: Color(0xFF4B2E2B), 
-              ),
+              const CircularProgressIndicator(color: Color(0xFF4B2E2B)),
             ],
           ),
         ),
