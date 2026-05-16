@@ -18,33 +18,33 @@ class AppSizes {
   static const double radiusXl = 20;
   static const double radiusDialog = 24;
 
-  static const double title = 32;
+  static const double title = 24;
   static const double subtitle = 16;
   static const double body = 14;
 
   static double adaptivePagePadding(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    if (width > 1200) return 64.0;
-    if (width > 600) return 32.0;  
-    return 16.0;                  
+    double width = MediaQuery.sizeOf(context).width;
+    if (width > 1200) return 48.0;
+    if (width > 600) return 24.0;  
+    return 12.0;                  
   }
 
   static double adaptiveTitle(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    if (width > 1200) return 36.0; 
-    if (width > 600) return 28.0;  
-    return 22.0;                 
+    double width = MediaQuery.sizeOf(context).width;
+    if (width > 1200) return 32.0; 
+    if (width > 600) return 26.0;  
+    return 20.0;                 
   }
 
   static double adaptiveSubtitle(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    if (width > 600) return 18.0; 
-    return 16.0;                  
+    double width = MediaQuery.sizeOf(context).width;
+    if (width > 600) return 16.0; 
+    return 14.0;                  
   }
 
   static double adaptiveBody(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    if (width > 1200) return 15.0; 
-    return 14.0;                   
+    double width = MediaQuery.sizeOf(context).width;
+    if (width > 600) return 14.0; 
+    return 12.0;                   
   }
 }

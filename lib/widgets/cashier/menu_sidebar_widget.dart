@@ -31,12 +31,15 @@ class SidebarWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Opini Kopi Kasir',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF2B1B18),
+            const Center(
+              child: Text(
+                'Opini Kopi Kasir',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF2B1B18),
+                ),
               ),
             ),
 

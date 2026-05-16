@@ -67,7 +67,7 @@ class _AddOrderDialogState extends State<AddOrderDialog> {
       _category.contains('coffee') || _section.contains('espresso') || _section.contains('kopi');
 
   bool get _canUseVariants =>
-      _isCoffeeCategory || _section.contains('espresso');
+      _category.contains('coffee') && _section.contains('espresso');
 
   bool get _canUseAddons =>
       _isCoffeeCategory ||

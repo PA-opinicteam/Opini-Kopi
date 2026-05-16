@@ -158,7 +158,7 @@ class _MenuContentWidgetState extends State<MenuContentWidget> {
         crossAxisCount: columns,
         crossAxisSpacing: isMobile ? 10 : 14,
         mainAxisSpacing: isMobile ? 10 : 14,
-        mainAxisExtent: isMobile ? 150 : 190,
+        mainAxisExtent: isMobile ? 160 : 190,
       ),
       itemBuilder: (context, index) {
         return _menuCard(data[index]);
@@ -185,11 +185,13 @@ class _MenuContentWidgetState extends State<MenuContentWidget> {
             children: [
               Container(width: 4, height: 18, color: Colors.brown),
               const SizedBox(width: 8),
-              Text(
-                e.key,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
+              Expanded(
+                child: Text(
+                  e.key,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
                 ),
               ),
             ],
@@ -236,7 +238,7 @@ class _MenuContentWidgetState extends State<MenuContentWidget> {
                         ? 10
                         : 14,
                     mainAxisExtent: ResponsiveHelper.isMobile(context)
-                        ? 150
+                        ? 160
                         : 190,
                   ),
                   itemBuilder: (context, index) {

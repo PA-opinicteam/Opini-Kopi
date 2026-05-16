@@ -239,7 +239,11 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: AppColors.cashierBackground,
       appBar: isMobile
           ? AppBar(
-              title: const Text('Opini Kopi Kasir'),
+            centerTitle: true,
+              title: const Text(
+                'Opini Kopi Kasir',
+                textAlign: TextAlign.center,
+              ),
               backgroundColor: AppColors.surface,
               foregroundColor: AppColors.primary,
               leading: IconButton(

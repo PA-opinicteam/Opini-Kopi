@@ -304,16 +304,6 @@ class OrderSummaryWidget extends StatelessWidget {
                                                   "Yakin ingin menghapus \"$title\"?",
                                               onConfirm: () {
                                                 onDeleteItem(index);
-
-                                                ScaffoldMessenger.of(
-                                                  context,
-                                                ).showSnackBar(
-                                                  const SnackBar(
-                                                    content: Text(
-                                                      "Item berhasil dihapus",
-                                                    ),
-                                                  ),
-                                                );
                                               },
                                             ),
                                           );
