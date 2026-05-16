@@ -26,14 +26,18 @@ class _AddOrderDialogState extends State<AddOrderDialog> {
   List<Map<String, dynamic>> _variants = [];
   List<Map<String, dynamic>> _addons = [];
 
+  Map<String, dynamic>? _resolvedMenu;
+
   String _selectedVariantId = '';
   final Set<String> _selectedAddonIds = {};
 
   late TextEditingController _noteController;
+
   int _qty = 1;
   bool _loading = true;
 
   String _text(dynamic v) => v?.toString() ?? '';
+
   String _normalize(String value) {
     return value.toLowerCase().replaceAll('-', ' ').trim();
   }
@@ -42,21 +46,36 @@ class _AddOrderDialogState extends State<AddOrderDialog> {
     if (v == null) return 0;
     if (v is int) return v;
     if (v is double) return v.toInt();
-    return int.tryParse(v.toString().replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
+
+    return int.tryParse(
+          v.toString().replaceAll(RegExp(r'[^0-9]'), ''),
+        ) ??
+        0;
   }
 
-  String get _category => _normalize(_text(widget.menu['category']));
-  String get _section => _normalize(_text(widget.menu['section']));
+  Map<String, dynamic> get _menuData {
+    return _resolvedMenu ?? widget.menu;
+  }
+
+  String get _category =>
+      _normalize(_text(_menuData['category']));
+
+  String get _section =>
+      _normalize(_text(_menuData['section']));
 
   bool get _isCoffeeCategory =>
-      _category.contains('coffee') && !_category.contains('non');
+      _category.contains('coffee') || _section.contains('espresso') || _section.contains('kopi');
 
   bool get _canUseVariants =>
-      _isCoffeeCategory && _section == 'espresso series';
+      _isCoffeeCategory || _section.contains('espresso');
 
-  bool get _canUseAddons => _isCoffeeCategory || _category.contains('non');
+  bool get _canUseAddons =>
+      _isCoffeeCategory ||
+      _category.contains('non') ||
+      _section.contains('espresso');
 
-  int get _basePrice => _toInt(widget.menu['price']);
+  int get _basePrice =>
+      _toInt(_menuData['price']);
 
   String formatRupiah(int value) {
     return CurrencyFormatter.idr(value);
@@ -64,41 +83,58 @@ class _AddOrderDialogState extends State<AddOrderDialog> {
 
   Map<String, dynamic>? get _selectedVariant {
     for (final v in _variants) {
-      if (v['id_variant'].toString() == _selectedVariantId) return v;
+      if (v['id_variant'].toString() ==
+          _selectedVariantId) {
+        return v;
+      }
     }
+
     return null;
   }
 
-  int get _variantPrice => _toInt(_selectedVariant?['price']);
+  int get _variantPrice =>
+      _toInt(_selectedVariant?['price']);
 
   int get _addonsTotal {
-    var total = 0;
-    for (final a in _addons) {
-      if (_selectedAddonIds.contains(_addonId(a))) {
-        total += _toInt(a['price']);
+    int total = 0;
+
+    for (final addon in _addons) {
+      if (_selectedAddonIds.contains(
+        _addonId(addon),
+      )) {
+        total += _toInt(addon['price']);
       }
     }
+
     return total;
   }
 
-  String _addonId(Map<String, dynamic> addon) =>
-      _text(addon['id_addon']).isNotEmpty
-      ? _text(addon['id_addon'])
-      : _text(addon['id_addson']);
+  int get _unitPrice =>
+      _basePrice + _variantPrice + _addonsTotal;
 
-  int get _unitPrice => _basePrice + _variantPrice + _addonsTotal;
   int get _totalPrice => _unitPrice * _qty;
+
+  String _addonId(Map<String, dynamic> addon) {
+    return _text(addon['id_addon']).isNotEmpty
+        ? _text(addon['id_addon'])
+        : _text(addon['id_addson']);
+  }
 
   @override
   void initState() {
     super.initState();
+
     _noteController = TextEditingController(
       text: _text(widget.initialItem?['note']),
     );
+
     _qty = _toInt(widget.initialItem?['qty']) > 0
         ? _toInt(widget.initialItem?['qty'])
         : 1;
-    _selectedVariantId = _text(widget.initialItem?['variantId']);
+
+    _selectedVariantId =
+        _text(widget.initialItem?['variantId']);
+
     _load();
   }
 
@@ -110,28 +146,65 @@ class _AddOrderDialogState extends State<AddOrderDialog> {
 
   Future<void> _load() async {
     try {
-      final menuId = _text(widget.menu['id_menu']);
+      final menuId = _text(widget.menu['id_menu']).isNotEmpty
+          ? _text(widget.menu['id_menu'])
+          : _text(widget.menu['menuId']);
 
-      final futures = <Future<dynamic>>[_service.getAddons()];
+      final allMenus =
+          await _service.getAllMenus();
+
+      _resolvedMenu = allMenus.firstWhere(
+        (m) =>
+            _text(m['id_menu']) ==
+            menuId,
+        orElse: () => widget.menu,
+      );
+
+      final futures = <Future<dynamic>>[
+        _service.getAddons(),
+      ];
+
       if (_canUseVariants) {
-        futures.insert(0, _service.getVariants(menuId));
+        futures.insert(
+          0,
+          _service.getVariants(menuId),
+        );
       }
 
-      final results = await Future.wait(futures);
+      final results =
+          await Future.wait(futures);
 
       if (_canUseVariants) {
-        final dbVariants = List<Map<String, dynamic>>.from(results[0]);
+        final dbVariants =
+            List<Map<String, dynamic>>.from(
+          results[0],
+        );
+
         _variants = [
-          {'id_variant': 'hot', 'name': 'HOT', 'price': 0},
+          {
+            'id_variant': 'hot',
+            'name': 'HOT',
+            'price': 0,
+          },
           ...dbVariants,
         ];
-        _addons = List<Map<String, dynamic>>.from(results[1]);
+
+        _addons =
+            List<Map<String, dynamic>>.from(
+          results[1],
+        );
       } else {
         _variants = [];
-        _addons = List<Map<String, dynamic>>.from(results[0]);
+
+        _addons =
+            List<Map<String, dynamic>>.from(
+          results[0],
+        );
       }
 
-      final editVariantId = _text(widget.initialItem?['variantId']);
+      final editVariantId =
+          _text(widget.initialItem?['variantId']);
+
       final editVariantName = _text(
         widget.initialItem?['variantName'],
       ).toLowerCase().trim();
@@ -139,74 +212,189 @@ class _AddOrderDialogState extends State<AddOrderDialog> {
       if (!_canUseVariants) {
         _selectedVariantId = '';
       } else if (editVariantId.isNotEmpty) {
-        _selectedVariantId = editVariantId;
+        _selectedVariantId =
+            editVariantId;
       } else if (editVariantName.isNotEmpty) {
         final match = _variants.where((v) {
-          final name = _text(v['name']).toLowerCase().trim();
-          return name == editVariantName;
+          final name = _text(v['name'])
+              .toLowerCase()
+              .trim();
+
+          return name ==
+              editVariantName;
         }).toList();
 
-        _selectedVariantId = match.isNotEmpty
-            ? match.first['id_variant'].toString()
-            : 'hot';
+        _selectedVariantId =
+            match.isNotEmpty
+                ? match.first['id_variant']
+                    .toString()
+                : 'hot';
       } else {
         _selectedVariantId = 'hot';
       }
 
-      final initialAddonIds = widget.initialItem?['addonIds'];
-      if (initialAddonIds is List) {
-        for (final id in initialAddonIds) {
-          _selectedAddonIds.add(id.toString());
+      final initialAddonIds =
+          widget.initialItem?['addonIds'];
+
+      if (initialAddonIds is List &&
+          initialAddonIds.isNotEmpty) {
+        for (final id
+            in initialAddonIds) {
+          _selectedAddonIds
+              .add(id.toString());
+        }
+      } else {
+        final initialAddonNames =
+            widget.initialItem?['addonNames'];
+
+        if (initialAddonNames is List &&
+            initialAddonNames
+                .isNotEmpty) {
+          final normalizedNames =
+              initialAddonNames
+                  .map(
+                    (e) => e
+                        .toString()
+                        .toLowerCase()
+                        .trim(),
+                  )
+                  .toSet();
+
+          for (final addon
+              in _addons) {
+            final name =
+                _text(addon['name'])
+                    .toLowerCase()
+                    .trim();
+
+            if (normalizedNames
+                .contains(name)) {
+              _selectedAddonIds
+                  .add(
+                _addonId(addon),
+              );
+            }
+          }
         }
       }
 
       if (!mounted) return;
-      setState(() => _loading = false);
-    } catch (_) {
+
+      setState(() {
+        _loading = false;
+      });
+    } catch (e) {
+      debugPrint(
+        'Load Dialog Error: $e',
+      );
+
       if (!mounted) return;
-      setState(() => _loading = false);
+
+      setState(() {
+        _loading = false;
+      });
     }
   }
 
   String _itemKey() {
-    final addonIds = (_selectedAddonIds.toList()..sort()).join(',');
-    return '${_text(widget.menu['id_menu'])}|$_selectedVariantId|$addonIds';
+    final addonIds =
+        (_selectedAddonIds.toList()
+              ..sort())
+            .join(',');
+
+    return '${_text(_menuData['id_menu'])}|$_selectedVariantId|$addonIds';
   }
 
   void _submit() {
-    final menuName = _text(widget.menu['menu_name']).isNotEmpty
-        ? _text(widget.menu['menu_name'])
-        : _text(widget.menu['title']);
+    final menuName =
+        _text(_menuData['menu_name'])
+                .isNotEmpty
+            ? _text(
+                _menuData['menu_name'],
+              )
+            : _text(
+                _menuData['title'],
+              );
 
     widget.onAddToCart({
-      'menuId': _text(widget.menu['id_menu']),
-      'menuCode': _text(widget.menu['menu_code']),
+      'menuId':
+          _text(_menuData['id_menu']),
+      'menuCode':
+          _text(_menuData['menu_code']),
       'title': menuName,
-      'subtitle': _text(widget.menu['section']).isNotEmpty
-          ? _text(widget.menu['section'])
-          : _text(widget.menu['category']),
-      'category': _text(widget.menu['category']),
-      'section': _text(widget.menu['section']),
-      'imageUrl': _text(widget.menu['image_url']).isNotEmpty
-          ? _text(widget.menu['image_url'])
-          : _text(widget.menu['imageUrl']),
-      'isFeatured': widget.menu['is_featured'] == true,
+      'subtitle':
+          _text(_menuData['section'])
+                  .isNotEmpty
+              ? _text(
+                  _menuData['section'],
+                )
+              : _text(
+                  _menuData['category'],
+                ),
+      'category':
+          _text(_menuData['category']),
+      'section':
+          _text(_menuData['section']),
+      'imageUrl':
+          _text(_menuData['image_url'])
+                  .isNotEmpty
+              ? _text(
+                  _menuData['image_url'],
+                )
+              : _text(
+                  _menuData['imageUrl'],
+                ),
+      'isFeatured':
+          _menuData['is_featured'] ==
+              true,
       'basePrice': _basePrice,
-      'variantId': _canUseVariants ? _selectedVariantId : '',
-      'variantName': _canUseVariants ? _text(_selectedVariant?['name']) : '',
-      'addonIds': _selectedAddonIds.toList()..sort(),
+      'variantId': _canUseVariants
+          ? _selectedVariantId
+          : '',
+      'variantName':
+          _canUseVariants
+              ? _text(
+                  _selectedVariant?['name'],
+                )
+              : '',
+      'addonIds':
+          _selectedAddonIds.toList()
+            ..sort(),
       'addonNames': _addons
-          .where((a) => _selectedAddonIds.contains(_addonId(a)))
-          .map((e) => e['name'].toString())
+          .where(
+            (a) =>
+                _selectedAddonIds
+                    .contains(
+              _addonId(a),
+            ),
+          )
+          .map(
+            (e) =>
+                e['name'].toString(),
+          )
           .toList(),
       'addonPrices': _addons
-          .where((a) => _selectedAddonIds.contains(_addonId(a)))
-          .map<int>((a) => _toInt(a['price']))
+          .where(
+            (a) =>
+                _selectedAddonIds
+                    .contains(
+              _addonId(a),
+            ),
+          )
+          .map<int>(
+            (a) =>
+                _toInt(a['price']),
+          )
           .toList(),
-      'note': InputSanitizer.sanitizeText(_noteController.text, maxLength: 160),
+      'note':
+          InputSanitizer.sanitizeText(
+        _noteController.text,
+        maxLength: 160,
+      ),
       'qty': _qty,
       'unitPrice': _unitPrice,
-      'price': _unitPrice.toString(),
+      'price':
+          _unitPrice.toString(),
       'itemKey': _itemKey(),
     });
 
@@ -221,263 +409,516 @@ class _AddOrderDialogState extends State<AddOrderDialog> {
         width: double.infinity,
         height: double.infinity,
         errorWidget: Container(
-          color: const Color(0xFFEDE9E6),
-          child: const Icon(Icons.image_not_supported),
+          color: const Color(
+            0xFFEDE9E6,
+          ),
+          child: const Icon(
+            Icons.image_not_supported,
+          ),
         ),
       );
     }
 
     if (imageUrl.isNotEmpty) {
-      return Image.asset(imageUrl, fit: BoxFit.cover);
+      return Image.asset(
+        imageUrl,
+        fit: BoxFit.cover,
+      );
     }
 
     return Container(
-      color: const Color(0xFFEDE9E6),
-      child: const Icon(Icons.image_not_supported),
+      color: const Color(
+        0xFFEDE9E6,
+      ),
+      child: const Icon(
+        Icons.image_not_supported,
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final imageUrl = _text(widget.menu['image_url']).isNotEmpty
-        ? _text(widget.menu['image_url'])
-        : _text(widget.menu['imageUrl']);
-    final title = _text(widget.menu['menu_name']).isNotEmpty
-        ? _text(widget.menu['menu_name'])
-        : _text(widget.menu['title']);
+    final imageUrl =
+        _text(_menuData['image_url'])
+                .isNotEmpty
+            ? _text(
+                _menuData['image_url'],
+              )
+            : _text(
+                _menuData['imageUrl'],
+              );
 
-    final screen = MediaQuery.sizeOf(context);
-    final isCompact = screen.width < 520;
+    final title =
+        _text(_menuData['menu_name'])
+                .isNotEmpty
+            ? _text(
+                _menuData['menu_name'],
+              )
+            : _text(
+                _menuData['title'],
+              );
+
+    final screen =
+        MediaQuery.sizeOf(context);
+
+    final isCompact =
+        screen.width < 520;
 
     return Dialog(
-      insetPadding: EdgeInsets.symmetric(
-        horizontal: isCompact ? 16 : 24,
+      insetPadding:
+          EdgeInsets.symmetric(
+        horizontal:
+            isCompact ? 16 : 24,
         vertical: 20,
       ),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape:
+          RoundedRectangleBorder(
+        borderRadius:
+            BorderRadius.circular(
+          12,
+        ),
+      ),
       child: ConstrainedBox(
         constraints: BoxConstraints(
           maxWidth: 430,
-          maxHeight: screen.height * 0.9,
+          maxHeight:
+              screen.height * 0.9,
         ),
         child: Container(
-          padding: EdgeInsets.all(isCompact ? 16 : 20),
+          padding: EdgeInsets.all(
+            isCompact ? 16 : 20,
+          ),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius:
+                BorderRadius.circular(
+              12,
+            ),
           ),
           child: _loading
               ? const Padding(
-                  padding: EdgeInsets.all(32),
+                  padding:
+                      EdgeInsets.all(
+                    32,
+                  ),
                   child: Center(
-                    child: CircularProgressIndicator(color: Color(0xFF4A2419)),
+                    child:
+                        CircularProgressIndicator(
+                      color: Color(
+                        0xFF4A2419,
+                      ),
+                    ),
                   ),
                 )
               : SingleChildScrollView(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment:
+                        CrossAxisAlignment
+                            .start,
                     children: [
                       Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment:
+                            CrossAxisAlignment
+                                .start,
                         children: [
                           ClipRRect(
-                            borderRadius: BorderRadius.circular(14),
+                            borderRadius:
+                                BorderRadius.circular(
+                              14,
+                            ),
                             child: SizedBox(
                               width: 68,
                               height: 68,
-                              child: _menuImage(imageUrl),
+                              child:
+                                  _menuImage(
+                                imageUrl,
+                              ),
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          const SizedBox(
+                            width: 12,
+                          ),
                           Expanded(
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment:
+                                  CrossAxisAlignment
+                                      .start,
                               children: [
                                 Text(
                                   title,
-                                  style: const TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.w700,
-                                    color: Color(0xFF2B1B18),
+                                  style:
+                                      const TextStyle(
+                                    fontSize:
+                                        22,
+                                    fontWeight:
+                                        FontWeight
+                                            .w700,
+                                    color: Color(
+                                      0xFF2B1B18,
+                                    ),
                                   ),
                                 ),
-                                const SizedBox(height: 4),
+                                const SizedBox(
+                                  height:
+                                      4,
+                                ),
                                 Text(
-                                  formatRupiah(_basePrice),
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    color: Color(0xFF6B5B57),
+                                  formatRupiah(
+                                    _basePrice,
+                                  ),
+                                  style:
+                                      const TextStyle(
+                                    fontSize:
+                                        16,
+                                    color: Color(
+                                      0xFF6B5B57,
+                                    ),
                                   ),
                                 ),
                               ],
                             ),
                           ),
                           IconButton(
-                            onPressed: () => Navigator.pop(context),
-                            icon: const Icon(Icons.close),
+                            onPressed:
+                                () => Navigator.pop(
+                              context,
+                            ),
+                            icon:
+                                const Icon(
+                              Icons.close,
+                            ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(
+                        height: 20,
+                      ),
                       if (_canUseVariants) ...[
                         const Text(
                           'Pilih Varian',
-                          style: TextStyle(
+                          style:
+                              TextStyle(
                             fontSize: 14,
-                            fontWeight: FontWeight.w700,
+                            fontWeight:
+                                FontWeight
+                                    .w700,
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(
+                          height: 8,
+                        ),
                         Row(
-                          children: _variants.map((variant) {
-                            final id = variant['id_variant'].toString();
-                            final name = _text(variant['name']);
-                            final price = _toInt(variant['price']);
-                            final selected = _selectedVariantId == id;
+                          children:
+                              _variants.map((
+                            variant,
+                          ) {
+                            final id =
+                                variant[
+                                        'id_variant']
+                                    .toString();
+
+                            final name =
+                                _text(
+                              variant[
+                                  'name'],
+                            );
+
+                            final price =
+                                _toInt(
+                              variant[
+                                  'price'],
+                            );
+
+                            final selected =
+                                _selectedVariantId ==
+                                    id;
 
                             return Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 8),
-                                child: _variantButton(
-                                  label: price > 0
-                                      ? '$name (+${formatRupiah(price)})'
-                                      : name,
-                                  isSelected: selected,
-                                  onTap: () =>
-                                      setState(() => _selectedVariantId = id),
+                              child:
+                                  Padding(
+                                padding:
+                                    const EdgeInsets.only(
+                                  right:
+                                      8,
+                                ),
+                                child:
+                                    _variantButton(
+                                  label:
+                                      price > 0
+                                          ? '$name (+${formatRupiah(price)})'
+                                          : name,
+                                  isSelected:
+                                      selected,
+                                  onTap:
+                                      () {
+                                    setState(
+                                      () {
+                                        _selectedVariantId =
+                                            id;
+                                      },
+                                    );
+                                  },
                                 ),
                               ),
                             );
                           }).toList(),
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(
+                          height: 10,
+                        ),
                       ],
                       if (_canUseAddons) ...[
                         const Text(
                           'Tambahan',
-                          style: TextStyle(
+                          style:
+                              TextStyle(
                             fontSize: 14,
-                            fontWeight: FontWeight.w700,
+                            fontWeight:
+                                FontWeight
+                                    .w700,
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        ..._addons.map((addon) {
-                          final id = _addonId(addon);
-                          final name = _text(addon['name']);
-                          final price = _toInt(addon['price']);
-                          final selected = _selectedAddonIds.contains(id);
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        ..._addons.map((
+                          addon,
+                        ) {
+                          final id =
+                              _addonId(
+                            addon,
+                          );
+
+                          final name =
+                              _text(
+                            addon[
+                                'name'],
+                          );
+
+                          final price =
+                              _toInt(
+                            addon[
+                                'price'],
+                          );
+
+                          final selected =
+                              _selectedAddonIds
+                                  .contains(
+                            id,
+                          );
 
                           return Padding(
-                            padding: const EdgeInsets.only(bottom: 8),
-                            child: _addonTile(
-                              title: name,
-                              price: '+${formatRupiah(price)}',
-                              value: selected,
-                              onChanged: (value) {
-                                setState(() {
-                                  if (value ?? false) {
-                                    _selectedAddonIds.add(id);
-                                  } else {
-                                    _selectedAddonIds.remove(id);
-                                  }
-                                });
+                            padding:
+                                const EdgeInsets.only(
+                              bottom:
+                                  8,
+                            ),
+                            child:
+                                _addonTile(
+                              title:
+                                  name,
+                              price:
+                                  '+${formatRupiah(price)}',
+                              value:
+                                  selected,
+                              onChanged:
+                                  (
+                                value,
+                              ) {
+                                setState(
+                                  () {
+                                    if (value ??
+                                        false) {
+                                      _selectedAddonIds
+                                          .add(
+                                        id,
+                                      );
+                                    } else {
+                                      _selectedAddonIds
+                                          .remove(
+                                        id,
+                                      );
+                                    }
+                                  },
+                                );
                               },
                             ),
                           );
                         }),
-                        const SizedBox(height: 10),
+                        const SizedBox(
+                          height: 10,
+                        ),
                       ],
                       const Text(
-                        'Catatan (Optional)',
-                        style: TextStyle(
+                        'Catatan (Opsional)',
+                        style:
+                            TextStyle(
                           fontSize: 14,
-                          fontWeight: FontWeight.w700,
+                          fontWeight:
+                              FontWeight
+                                  .w700,
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(
+                        height: 8,
+                      ),
                       TextField(
-                        controller: _noteController,
-                        inputFormatters: [InputSanitizer.safeTextFormatter],
+                        controller:
+                            _noteController,
+                        inputFormatters: [
+                          InputSanitizer
+                              .safeTextFormatter,
+                        ],
                         maxLength: 160,
                         maxLines: 2,
-                        decoration: InputDecoration(
-                          hintText: 'Ketik catatan di sini...',
+                        decoration:
+                            InputDecoration(
+                          hintText:
+                              'Ketik catatan di sini...',
                           filled: true,
-                          fillColor: const Color(0xFFF5F1EE),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(14),
-                            borderSide: BorderSide.none,
+                          fillColor:
+                              const Color(
+                            0xFFF5F1EE,
                           ),
-                          contentPadding: const EdgeInsets.all(14),
+                          border:
+                              OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.circular(
+                              14,
+                            ),
+                            borderSide:
+                                BorderSide
+                                    .none,
+                          ),
+                          contentPadding:
+                              const EdgeInsets.all(
+                            14,
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 18),
+                      const SizedBox(
+                        height: 18,
+                      ),
                       Row(
                         children: [
                           _qtyButton(
-                            icon: Icons.remove,
+                            icon:
+                                Icons.remove,
                             onTap: () {
-                              if (_qty > 1) {
-                                setState(() => _qty--);
+                              if (_qty >
+                                  1) {
+                                setState(
+                                  () {
+                                    _qty--;
+                                  },
+                                );
                               }
                             },
                           ),
-                          const SizedBox(width: 12),
+                          const SizedBox(
+                            width: 12,
+                          ),
                           Text(
                             '$_qty',
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
+                            style:
+                                const TextStyle(
+                              fontSize:
+                                  18,
+                              fontWeight:
+                                  FontWeight
+                                      .w700,
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          const SizedBox(
+                            width: 12,
+                          ),
                           _qtyButton(
-                            icon: Icons.add,
-                            onTap: () => setState(() => _qty++),
+                            icon:
+                                Icons.add,
+                            onTap: () {
+                              setState(
+                                () {
+                                  _qty++;
+                                },
+                              );
+                            },
                           ),
                           const Spacer(),
                           Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
+                            crossAxisAlignment:
+                                CrossAxisAlignment
+                                    .end,
                             children: [
                               const Text(
                                 'Total',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey,
+                                style:
+                                    TextStyle(
+                                  fontSize:
+                                      12,
+                                  color:
+                                      Colors.grey,
                                 ),
                               ),
                               Text(
-                                formatRupiah(_totalPrice),
-                                style: const TextStyle(
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.w800,
-                                  color: Color(0xFF2B1B18),
+                                formatRupiah(
+                                  _totalPrice,
+                                ),
+                                style:
+                                    const TextStyle(
+                                  fontSize:
+                                      28,
+                                  fontWeight:
+                                      FontWeight
+                                          .w800,
+                                  color:
+                                      Color(
+                                    0xFF2B1B18,
+                                  ),
                                 ),
                               ),
                             ],
                           ),
                         ],
                       ),
-                      const SizedBox(height: 18),
+                      const SizedBox(
+                        height: 18,
+                      ),
                       SizedBox(
-                        width: double.infinity,
+                        width:
+                            double.infinity,
                         height: 52,
-                        child: ElevatedButton(
-                          onPressed: _submit,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF4A2419),
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
+                        child:
+                            ElevatedButton(
+                          onPressed:
+                              _submit,
+                          style:
+                              ElevatedButton.styleFrom(
+                            backgroundColor:
+                                const Color(
+                              0xFF4A2419,
+                            ),
+                            foregroundColor:
+                                Colors.white,
+                            shape:
+                                RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.circular(
+                                14,
+                              ),
                             ),
                           ),
                           child: Text(
-                            widget.initialItem == null
+                            widget.initialItem ==
+                                    null
                                 ? 'Tambah Pesanan'
                                 : 'Simpan Perubahan',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
+                            style:
+                                const TextStyle(
+                              fontSize:
+                                  16,
+                              fontWeight:
+                                  FontWeight
+                                      .w700,
                             ),
                           ),
                         ),
@@ -499,33 +940,61 @@ class _AddOrderDialogState extends State<AddOrderDialog> {
       onTap: onTap,
       child: Container(
         height: 46,
-        padding: const EdgeInsets.symmetric(horizontal: 14),
+        padding:
+            const EdgeInsets.symmetric(
+          horizontal: 14,
+        ),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFFF5E3DD) : Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          color: isSelected
+              ? const Color(
+                  0xFFF5E3DD,
+                )
+              : Colors.white,
+          borderRadius:
+              BorderRadius.circular(
+            12,
+          ),
           border: Border.all(
             color: isSelected
-                ? const Color(0xFF4A2419)
-                : const Color(0xFFE5D9D4),
+                ? const Color(
+                    0xFF4A2419,
+                  )
+                : const Color(
+                    0xFFE5D9D4,
+                  ),
           ),
         ),
         child: Row(
           children: [
             Icon(
-              isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
+              isSelected
+                  ? Icons
+                      .radio_button_checked
+                  : Icons
+                      .radio_button_off,
               size: 18,
-              color: isSelected ? const Color(0xFF4A2419) : Colors.grey,
+              color: isSelected
+                  ? const Color(
+                      0xFF4A2419,
+                    )
+                  : Colors.grey,
             ),
-            const SizedBox(width: 8),
+            const SizedBox(
+              width: 8,
+            ),
             Expanded(
               child: Text(
                 label,
                 style: TextStyle(
                   fontSize: 12,
-                  fontWeight: FontWeight.w600,
+                  fontWeight:
+                      FontWeight.w600,
                   color: isSelected
-                      ? const Color(0xFF4A2419)
-                      : Colors.grey[700],
+                      ? const Color(
+                          0xFF4A2419,
+                        )
+                      : Colors
+                          .grey[700],
                 ),
               ),
             ),
@@ -539,17 +1008,35 @@ class _AddOrderDialogState extends State<AddOrderDialog> {
     required String title,
     required String price,
     required bool value,
-    required ValueChanged<bool?> onChanged,
+    required ValueChanged<bool?>
+        onChanged,
   }) {
     final isSelected = value;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      padding:
+          const EdgeInsets.symmetric(
+        horizontal: 12,
+        vertical: 4,
+      ),
       decoration: BoxDecoration(
-        color: isSelected ? const Color(0xFFF5E3DD) : const Color(0xFFF8F5F3),
-        borderRadius: BorderRadius.circular(12),
+        color: isSelected
+            ? const Color(
+                0xFFF5E3DD,
+              )
+            : const Color(
+                0xFFF8F5F3,
+              ),
+        borderRadius:
+            BorderRadius.circular(
+          12,
+        ),
         border: Border.all(
-          color: isSelected ? const Color(0xFF4A2419) : Colors.transparent,
+          color: isSelected
+              ? const Color(
+                  0xFF4A2419,
+                )
+              : Colors.transparent,
         ),
       ),
       child: Row(
@@ -557,22 +1044,35 @@ class _AddOrderDialogState extends State<AddOrderDialog> {
           Checkbox(
             value: value,
             onChanged: onChanged,
-            activeColor: const Color(0xFF4A2419),
+            activeColor:
+                const Color(
+              0xFF4A2419,
+            ),
           ),
           Expanded(
             child: Text(
               title,
               style: TextStyle(
-                fontWeight: FontWeight.w600,
-                color: isSelected ? const Color(0xFF4A2419) : Colors.black,
+                fontWeight:
+                    FontWeight.w600,
+                color: isSelected
+                    ? const Color(
+                        0xFF4A2419,
+                      )
+                    : Colors.black,
               ),
             ),
           ),
           Text(
             price,
             style: TextStyle(
-              fontWeight: FontWeight.w600,
-              color: isSelected ? const Color(0xFF4A2419) : Colors.black,
+              fontWeight:
+                  FontWeight.w600,
+              color: isSelected
+                  ? const Color(
+                      0xFF4A2419,
+                    )
+                  : Colors.black,
             ),
           ),
         ],
@@ -580,17 +1080,31 @@ class _AddOrderDialogState extends State<AddOrderDialog> {
     );
   }
 
-  Widget _qtyButton({required IconData icon, required VoidCallback onTap}) {
+  Widget _qtyButton({
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: 34,
         height: 34,
         decoration: BoxDecoration(
-          color: const Color(0xFFF1ECE9),
-          borderRadius: BorderRadius.circular(10),
+          color: const Color(
+            0xFFF1ECE9,
+          ),
+          borderRadius:
+              BorderRadius.circular(
+            10,
+          ),
         ),
-        child: Icon(icon, size: 18, color: const Color(0xFF4A2419)),
+        child: Icon(
+          icon,
+          size: 18,
+          color: const Color(
+            0xFF4A2419,
+          ),
+        ),
       ),
     );
   }
