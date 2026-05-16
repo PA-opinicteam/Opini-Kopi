@@ -36,7 +36,7 @@ class DeleteItemDialog extends StatelessWidget {
                   color: Color(0xFF4A2419),
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 4),
               Text(
                 message,
                 textAlign: TextAlign.center,
@@ -45,7 +45,7 @@ class DeleteItemDialog extends StatelessWidget {
                   fontSize: 13,
                 ),
               ),
-              const SizedBox(height: 18),
+              const SizedBox(height: 14),
 
               SizedBox(
                 width: double.infinity,
@@ -70,12 +70,14 @@ class DeleteItemDialog extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 6),
+              const SizedBox(height: 2),
 
               TextButton(
                 onPressed: () => Navigator.pop(context),
                 style: TextButton.styleFrom(
                   foregroundColor: const Color(0xFF4A2419), 
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
                 child: const Text(
                   "Batal",

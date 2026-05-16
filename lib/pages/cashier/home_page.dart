@@ -394,13 +394,15 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildPriceRow(String title, String value, {bool isTotal = false}) {
+    final isMobile = ResponsiveHelper.isMobile(context);
+    
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
           title,
           style: TextStyle(
-            fontSize: isTotal ? 18 : 15,
+            fontSize: isTotal ? (isMobile ? 16 : 18) : (isMobile ? 13 : 15),
             fontWeight: isTotal ? FontWeight.w700 : FontWeight.w400,
           ),
         ),

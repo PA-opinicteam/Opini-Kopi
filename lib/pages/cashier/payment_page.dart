@@ -153,11 +153,11 @@ class _PaymentPageState extends State<PaymentPage> {
         side: const BorderSide(color: Color(0xFF4A2419)),
         foregroundColor: const Color(0xFF4A2419),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       ),
       child: Text(
         widget.formatRupiah(amount),
-        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
       ),
     );
   }
@@ -178,7 +178,7 @@ class _PaymentPageState extends State<PaymentPage> {
         });
       },
       child: Container(
-        height: 85,
+        height: 56,
         decoration: BoxDecoration(
           color: selected ? const Color(0xFFEADDD7) : const Color(0xFFF4F0ED),
           borderRadius: BorderRadius.circular(18),
@@ -206,7 +206,7 @@ class _PaymentPageState extends State<PaymentPage> {
         Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
         const SizedBox(height: 6),
         Container(
-          height: 72,
+          height: 52,
           padding: const EdgeInsets.symmetric(horizontal: 14),
           decoration: BoxDecoration(
             color: const Color(0xFFEDE7E3),
@@ -279,6 +279,7 @@ class _PaymentPageState extends State<PaymentPage> {
         children: [
           const Text(
             'Ringkasan Pesanan',
+            textAlign: TextAlign.center,
             style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: isCompact ? 6 : 8),
@@ -388,7 +389,7 @@ class _PaymentPageState extends State<PaymentPage> {
         children: [
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 32),
+            padding: const EdgeInsets.symmetric(vertical: 16),
             decoration: BoxDecoration(
               color: const Color(0xFF6B3A2E),
               borderRadius: BorderRadius.circular(12),
@@ -407,19 +408,19 @@ class _PaymentPageState extends State<PaymentPage> {
                   widget.formatRupiah(widget.total),
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 32,
+                    fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 28),
+          const SizedBox(height: 24),
           const Text(
             'Metode Pembayaran',
-            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 10),
           Row(
             children: [
               Expanded(child: _method('QRIS', 'qris')),
@@ -474,46 +475,20 @@ class _PaymentPageState extends State<PaymentPage> {
                 );
               },
             ),
-            const SizedBox(height: 16),
-            LayoutBuilder(
-              builder: (context, constraints) {
-                final isCompactShortcuts = constraints.maxWidth < 720;
-                final chips = [
-                  _quickCashChip(20000),
-                  _quickCashChip(50000),
-                  _quickCashChip(100000),
-                  _quickCashChip(150000),
-                ];
-
-                if (isCompactShortcuts) {
-                  return Center(
-                    child: Wrap(
-                      alignment: WrapAlignment.center,
-                      spacing: 12,
-                      runSpacing: 12,
-                      children: chips,
-                    ),
-                  );
-                }
-
-                return Center(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        chips[0],
-                        const SizedBox(width: 12),
-                        chips[1],
-                        const SizedBox(width: 12),
-                        chips[2],
-                        const SizedBox(width: 12),
-                        chips[3],
-                      ],
-                    ),
-                  ),
-                );
-              },
+            const SizedBox(height: 12),
+            GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: 2,
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 8,
+              childAspectRatio: 2.8,
+              children: [
+                _quickCashButton(20000),
+                _quickCashButton(50000),
+                _quickCashButton(100000),
+                _quickCashButton(150000),
+              ],
             ),
           ] else
             Container(
@@ -566,15 +541,22 @@ class _PaymentPageState extends State<PaymentPage> {
                     padding: const EdgeInsets.symmetric(vertical: 18),
                   ),
                   child: isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text(
-                          'Konfirmasi Pembayaran',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 15,
-                          ),
-                        ),
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.5,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Text(
+                      'Konfirmasi Pembayaran',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15,
+                      ),
+                   ),
                 ),
               ),
             ],
@@ -582,10 +564,6 @@ class _PaymentPageState extends State<PaymentPage> {
         ],
       ),
     );
-  }
-
-  Widget _quickCashChip(int amount) {
-    return SizedBox(width: 160, height: 48, child: _quickCashButton(amount));
   }
 
   Widget _imageFallback() {

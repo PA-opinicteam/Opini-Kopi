@@ -2,6 +2,7 @@ import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 import 'package:opini_kopi/utils/input_sanitizer.dart';
 import 'package:opini_kopi/widgets/cashier/delete_item_dialog.dart';
+import 'package:opini_kopi/constants/app_sizes.dart';
 
 class OrderSummaryWidget extends StatelessWidget {
   final List<Map<String, dynamic>> cart;
@@ -87,7 +88,7 @@ class OrderSummaryWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isCompact = MediaQuery.sizeOf(context).width < 720;
+    final isCompact = MediaQuery.sizeOf(context).width < 600;
 
     return SizedBox(
       width: width,
@@ -108,7 +109,7 @@ class OrderSummaryWidget extends StatelessWidget {
                   child: Text(
                     'Ringkasan Pesanan',
                     style: TextStyle(
-                      fontSize: isCompact ? 20 : 24,
+                      fontSize: isCompact ? 18 : 22,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF1E1E1E),
                     ),
@@ -200,7 +201,7 @@ class OrderSummaryWidget extends StatelessWidget {
                                             title,
                                             style: const TextStyle(
                                               fontWeight: FontWeight.w700,
-                                              fontSize: 16,
+                                                fontSize: 15,
                                             ),
                                           ),
                                           if (subtitle.isNotEmpty) ...[
@@ -253,7 +254,7 @@ class OrderSummaryWidget extends StatelessWidget {
                                       formatRupiah(unitPrice),
                                       style: const TextStyle(
                                         fontWeight: FontWeight.w700,
-                                        fontSize: 15,
+                                        fontSize: 14,
                                       ),
                                     ),
                                   ],
@@ -329,9 +330,9 @@ class OrderSummaryWidget extends StatelessWidget {
 
             const SizedBox(height: 16),
 
-            const Text(
+            Text(
               'Pelanggan',
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: isCompact ? 13 : 14),
             ),
             const SizedBox(height: 6),
             TextField(
@@ -342,8 +343,8 @@ class OrderSummaryWidget extends StatelessWidget {
                 filled: true,
                 fillColor: Color(0xFFF5EAE5),
                 contentPadding: EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 10,
+                  horizontal: isCompact ? 10 : 12,
+                  vertical: isCompact ? 8 : 10,
                 ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -366,7 +367,7 @@ class OrderSummaryWidget extends StatelessWidget {
             if (!readOnly) ...[
               SizedBox(
                 width: double.infinity,
-                height: 56,
+                height: isCompact ? 48 : 56,
                 child: ElevatedButton(
                   onPressed: () => onPay(),
                   style: ElevatedButton.styleFrom(
@@ -376,9 +377,9 @@ class OrderSummaryWidget extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                     ),
                   ),
-                  child: const Text(
+                  child: Text(
                     'Bayar',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                    style: TextStyle(fontSize: isCompact ? 16 : 18, fontWeight: FontWeight.w700),
                   ),
                 ),
               ),
