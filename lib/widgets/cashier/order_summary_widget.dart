@@ -2,7 +2,6 @@ import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 import 'package:opini_kopi/utils/input_sanitizer.dart';
 import 'package:opini_kopi/widgets/cashier/delete_item_dialog.dart';
-import 'package:opini_kopi/constants/app_sizes.dart';
 
 class OrderSummaryWidget extends StatelessWidget {
   final List<Map<String, dynamic>> cart;
