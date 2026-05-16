@@ -255,7 +255,7 @@ class ExportService {
       case 'g':
       case 'gr':
       case 'gram':
-        return 500;
+        return 1000;
       case 'kg':
       case 'kilogram':
         return 1;
@@ -264,7 +264,7 @@ class ExportService {
       case 'l':
       case 'lt':
       case 'liter':
-        return 2;
+        return 1;
       case 'pcs':
       case 'pc':
       case 'piece':

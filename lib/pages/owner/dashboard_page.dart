@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:opini_kopi/constants/app_sizes.dart';
 import 'package:opini_kopi/constants/app_colors.dart';
 import 'package:opini_kopi/services/dashboard_service.dart';
 import 'package:opini_kopi/utils/currency_formatter.dart';
@@ -11,12 +12,14 @@ import 'package:opini_kopi/pages/owner/menu_page.dart';
 import 'package:opini_kopi/pages/owner/stock_page.dart';
 import 'package:opini_kopi/pages/owner/users_page.dart';
 import 'package:opini_kopi/pages/owner/report_page.dart';
-import 'package:opini_kopi/pages/owner/notification_page.dart';
 import 'package:opini_kopi/providers/auth_provider.dart';
+import 'package:opini_kopi/providers/notification_provider.dart';
+import 'package:opini_kopi/pages/owner/notification_page.dart';
 import 'package:provider/provider.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
+
   @override
   State<DashboardPage> createState() => _DashboardPageState();
 }
@@ -42,8 +45,6 @@ class _DashboardPageState extends State<DashboardPage> {
       case 3:
         return const StockPage();
       case 4:
-        return const NotificationPage();
-      case 5:
         return const UsersPage();
       default:
         return const _DashboardContent();
@@ -58,21 +59,75 @@ class _DashboardPageState extends State<DashboardPage> {
       backgroundColor: AppColors.background,
       appBar: isMobile
           ? AppBar(
-              title: Text(_mobileTitle),
+              centerTitle: true,
               backgroundColor: AppColors.surface,
               foregroundColor: AppColors.primary,
-              actions: [
-                IconButton(
-                  onPressed: () async {
-                    await context.read<AuthProvider>().logout();
-                    if (!context.mounted) return;
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (_) => const LoginPage()),
-                    );
-                  },
-                  icon: const Icon(Icons.logout),
+              leading: IconButton(
+                onPressed: () async {
+                  await context.read<AuthProvider>().logout();
+                  if (!context.mounted) return;
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (_) => const LoginPage()),
+                  );
+                },
+                icon: const Icon(Icons.logout),
+              ),
+              title: Text(
+                _mobileTitle,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
+              ),
+              actions: [
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                         Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const NotificationPage(),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.notifications_none),
+                    ),
+                    Consumer<NotificationProvider>(
+                      builder: (context, provider, _) {
+                        if (provider.unreadCount == 0) {
+                          return const SizedBox.shrink();
+                        }
+                        return Positioned(
+                          right: 6,
+                          top: 6,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              provider.unreadCount.toString(),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 8,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(width: 6),
               ],
             )
           : null,
@@ -140,12 +195,18 @@ class _DashboardContent extends StatelessWidget {
           );
         }
 
+        if (snapshot.hasError) {
+          return Center(child: Text('Terjadi kesalahan: ${snapshot.error}'));
+        }
+
+        if (!snapshot.hasData || snapshot.data == null) {
+          return const Center(child: Text('Data tidak tersedia'));
+        }
+
         final data = snapshot.data!;
 
         final isMobile = ResponsiveHelper.isMobile(context);
-        final pagePadding = isMobile
-            ? 16.0
-            : ResponsiveHelper.pagePadding(context);
+        final pagePadding = isMobile ? 16.0 : ResponsiveHelper.pagePadding(context);
 
         return SingleChildScrollView(
           padding: EdgeInsets.all(pagePadding),
@@ -153,27 +214,25 @@ class _DashboardContent extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const _Header(),
-              const SizedBox(height: 32),
-
+              SizedBox(height: isMobile ? 24 : 32),
               _SummarySection(
                 sales: data['sales'],
                 orders: data['orders'],
                 product: data['product'],
               ),
-
-              const SizedBox(height: 24),
+              SizedBox(height: isMobile ? 16 : 24),
               SizedBox(
                 height: isMobile ? null : 360,
                 child: isMobile
                     ? Column(
                         children: [
                           SizedBox(
-                            height: 320,
+                            height: 280,
                             child: _ChartCard(weeklySales: data['weeklySales']),
                           ),
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 12),
                           SizedBox(
-                            height: 360,
+                            height: 300,
                             child: PeakHourCard(
                               peakHour: data['peakHour'],
                               data: data['distData'],
@@ -211,13 +270,15 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final title = const Column(
+    final isMobile = ResponsiveHelper.isMobile(context);
+
+    final title = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           "Ringkasan Bisnis",
           style: TextStyle(
-            fontSize: 32,
+            fontSize: isMobile ? AppSizes.title : 32, 
             fontWeight: FontWeight.bold,
             color: Color(0xFF4E342E),
           ),
@@ -229,6 +290,7 @@ class _Header extends StatelessWidget {
         ),
       ],
     );
+
     final todayChip = Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
@@ -307,7 +369,7 @@ class _SummarySection extends StatelessWidget {
     if (ResponsiveHelper.isMobile(context)) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: cards
+        children: cards 
             .map(
               (card) => Padding(
                 padding: const EdgeInsets.only(bottom: 12),
@@ -339,10 +401,16 @@ class _StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = ResponsiveHelper.isMobile(context);
+
     return Container(
       width: double.infinity,
-      constraints: const BoxConstraints(minHeight: 178),
-      padding: const EdgeInsets.all(24),
+      constraints: isMobile
+          ? const BoxConstraints(minHeight: 80)
+          : const BoxConstraints(minHeight: 178),
+      padding: isMobile
+          ? const EdgeInsets.all(12)
+          : const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
@@ -354,34 +422,74 @@ class _StatCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(color: bg, shape: BoxShape.circle),
-            child: Icon(icon, color: const Color(0xFF4A2419), size: 20),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              color: Colors.black38,
+      child: isMobile
+          ? Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(color: bg, shape: BoxShape.circle),
+                  child: Icon(
+                    icon,
+                    color: const Color(0xFF4A2419),
+                    size: 18,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black38,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        value,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF4E342E),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(color: bg, shape: BoxShape.circle),
+                  child: Icon(icon, color: const Color(0xFF4A2419), size: 20),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black38,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF4E342E),
+                  ),
+                ),
+              ],
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 26,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF4E342E),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -394,7 +502,9 @@ class _ChartCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: ResponsiveHelper.isMobile(context)
+          ? const EdgeInsets.all(16)
+          : const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
@@ -402,15 +512,19 @@ class _ChartCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             "Grafik Penjualan",
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontSize: ResponsiveHelper.isMobile(context) ? 18 : 22,
+                fontWeight: FontWeight.bold),
           ),
-          const Text(
+          Text(
             "Ringkasan Penjualan Minggu Lalu",
-            style: TextStyle(color: Colors.black38, fontSize: 14),
+            style: TextStyle(
+                color: Colors.black38,
+                fontSize: ResponsiveHelper.isMobile(context) ? 12 : 14),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: ResponsiveHelper.isMobile(context) ? 16 : 24),
           Expanded(
             child: LineChart(
               LineChartData(
@@ -451,13 +565,13 @@ class _ChartCard extends StatelessWidget {
                       reservedSize: 30,
                       getTitlesWidget: (value, meta) {
                         const days = [
-                          'SENIN',
-                          'SELASA',
-                          'RABU',
-                          'KAMIS',
-                          'JUMAT',
-                          'SABTU',
-                          'MINGGU',
+                          'SEN',
+                          'SEL',
+                          'RAB',
+                          'KAM',
+                          'JUM',
+                          'SAB',
+                          'MIN',
                         ];
                         if (value >= 0 && value < 7) {
                           return Padding(

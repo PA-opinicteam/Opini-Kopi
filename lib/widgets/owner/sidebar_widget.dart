@@ -26,39 +26,68 @@ class OwnerSidebarWidget extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: const Color(0xFFE8DFD8)),
-                ),
-                child: const Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 18,
-                      backgroundColor: Color(0xFF4A2419),
-                      child: Icon(Icons.coffee_outlined, color: Colors.white),
-                    ),
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Opini Kopi Manajemen',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w800,
-                              color: Color(0xFF4A2419),
-                            ),
-                          ),
-                        ],
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: onLogout,
+                    icon: const Icon(Icons.logout, color: Color(0xFF4A2419)),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        'Opini Kopi Manajemen',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFF4A2419),
+                        ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(width: 8),
+                  Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      IconButton(
+                        onPressed: () => onTap(4),
+                        icon: const Icon(
+                          Icons.notifications_none,
+                          color: Color(0xFF4A2419),
+                        ),
+                      ),
+                      Consumer<NotificationProvider>(
+                        builder: (context, provider, _) {
+                          if (provider.unreadCount == 0) {
+                            return const SizedBox.shrink();
+                          }
+                          return Positioned(
+                            right: 8,
+                            top: 8,
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: const BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Text(
+                                provider.unreadCount.toString(),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 8,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ],
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 28),
 
               Expanded(
                 child: ListView(
@@ -67,33 +96,8 @@ class OwnerSidebarWidget extends StatelessWidget {
                     _item(1, "Menu", Icons.restaurant_menu_outlined),
                     _item(2, "Laporan", Icons.receipt_long_outlined),
                     _item(3, "Stok", Icons.inventory_2_outlined),
-                    _item(4, "Notifikasi", Icons.notifications_none),
-                    _item(5, "Pengguna", Icons.people_alt_outlined),
+                    _item(4, "Pengguna", Icons.people_alt_outlined),
                   ],
-                ),
-              ),
-
-              InkWell(
-                onTap: onLogout,
-                borderRadius: BorderRadius.circular(10),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 10,
-                    horizontal: 6,
-                  ),
-                  child: Row(
-                    children: const [
-                      Icon(Icons.logout, color: Color(0xFF4A2419), size: 20),
-                      SizedBox(width: 8),
-                      Text(
-                        "Keluar",
-                        style: TextStyle(
-                          color: Color(0xFF4A2419),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
                 ),
               ),
             ],
@@ -132,8 +136,9 @@ class OwnerSidebarWidget extends StatelessWidget {
               if (index == 4)
                 Consumer<NotificationProvider>(
                   builder: (context, provider, _) {
-                    if (provider.unreadCount == 0)
+                    if (provider.unreadCount == 0) {
                       return const SizedBox.shrink();
+                    }
                     return Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 7,
@@ -175,6 +180,7 @@ class OwnerBottomNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return NavigationBar(
+      height: 70,
       selectedIndex: selectedIndex,
       onDestinationSelected: onTap,
       backgroundColor: AppColors.surface,
@@ -199,11 +205,6 @@ class OwnerBottomNavigationBar extends StatelessWidget {
           icon: Icon(Icons.inventory_2_outlined),
           selectedIcon: Icon(Icons.inventory_2),
           label: 'Stok',
-        ),
-        NavigationDestination(
-          icon: Icon(Icons.notifications_none),
-          selectedIcon: Icon(Icons.notifications),
-          label: 'Notif',
         ),
         NavigationDestination(
           icon: Icon(Icons.people_alt_outlined),

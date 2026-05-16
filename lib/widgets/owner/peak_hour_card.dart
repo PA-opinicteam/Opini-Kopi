@@ -11,11 +11,11 @@ class PeakHourCard extends StatelessWidget {
     final List<String> hourLabels = ['06', '09', '12', '15', '18', '21', '00'];
     final maxVal = data.isEmpty ? 0 : data.reduce((a, b) => a > b ? a : b);
     final width = MediaQuery.sizeOf(context).width;
-    final isCompact = width < 700;
-    final cardPadding = isCompact ? 20.0 : 24.0;
-    final chartHeight = isCompact ? 72.0 : 90.0;
-    final maxBarHeight = isCompact ? 48.0 : 65.0;
-    final barWidth = isCompact ? 22.0 : 28.0;
+    final isCompact = width < 600;
+    final cardPadding = isCompact ? 16.0 : 24.0;
+    final chartHeight = isCompact ? 85.0 : 90.0;
+    final maxBarHeight = isCompact ? 40.0 : 65.0; 
+    final barWidth = isCompact ? 18.0 : 28.0; 
 
     return Container(
       padding: EdgeInsets.all(cardPadding),
@@ -45,13 +45,13 @@ class PeakHourCard extends StatelessWidget {
                 'Jam Ramai',
                 style: TextStyle(
                   color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: isCompact ? 16 : 18,
+                  fontWeight: FontWeight.bold, 
+                  fontSize: isCompact ? 14 : 18, 
                 ),
               ),
             ],
           ),
-          SizedBox(height: isCompact ? 16 : 24),
+          SizedBox(height: isCompact ? 12 : 24), 
           Container(
             width: double.infinity,
             padding: EdgeInsets.all(isCompact ? 16 : 20),
@@ -69,16 +69,16 @@ class PeakHourCard extends StatelessWidget {
                 const SizedBox(height: 10),
                 Text(
                   peakHour,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: isCompact ? 24 : 28,
-                    fontWeight: FontWeight.bold,
+                  style: TextStyle( 
+                    color: Colors.white, 
+                    fontSize: isCompact ? 20 : 28, 
+                    fontWeight: FontWeight.bold, 
                   ),
                 ),
               ],
             ),
           ),
-          SizedBox(height: isCompact ? 14 : 20),
+          SizedBox(height: isCompact ? 10 : 20), 
           const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -92,7 +92,7 @@ class PeakHourCard extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: isCompact ? 10 : 16),
+          SizedBox(height: isCompact ? 8 : 16), 
 
           SizedBox(
             height: chartHeight,
