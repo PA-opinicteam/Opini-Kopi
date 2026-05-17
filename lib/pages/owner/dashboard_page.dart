@@ -278,7 +278,7 @@ class _Header extends StatelessWidget {
         Text(
           "Ringkasan Bisnis",
           style: TextStyle(
-            fontSize: isMobile ? AppSizes.title : 32, 
+            fontSize: isMobile ? 20 : 28, 
             fontWeight: FontWeight.bold,
             color: Color(0xFF4E342E),
           ),
@@ -286,45 +286,12 @@ class _Header extends StatelessWidget {
         SizedBox(height: 4),
         Text(
           "Laporan performa harian kedai kopi Anda.",
-          style: TextStyle(color: Colors.black45, fontSize: 16),
+          style: TextStyle(color: Colors.black45, fontSize: isMobile ? 13 : 15),
         ),
       ],
     );
-
-    final todayChip = Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.black12),
-      ),
-      child: const Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.calendar_today, size: 16, color: Color(0xFF4A2419)),
-          SizedBox(width: 8),
-          Text(
-            "Hari Ini",
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF4A2419),
-            ),
-          ),
-        ],
-      ),
-    );
-
-    if (ResponsiveHelper.isMobile(context)) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [title, const SizedBox(height: 12), todayChip],
-      );
-    }
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [title, todayChip],
-    );
+    
+    return title;
   }
 }
 
@@ -413,7 +380,7 @@ class _StatCard extends StatelessWidget {
           : const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.02),
@@ -482,8 +449,8 @@ class _StatCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   value,
-                  style: const TextStyle(
-                    fontSize: 26,
+                  style: TextStyle(
+                    fontSize: isMobile ? 18 : 26,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF4E342E),
                   ),
@@ -501,40 +468,39 @@ class _ChartCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double maxVal = weeklySales.isEmpty ? 0 : weeklySales.reduce((a, b) => a > b ? a : b);
+    double dynamicMaxY = maxVal == 0 ? 1000000 : maxVal * 1.2;
+
     return Container(
       padding: ResponsiveHelper.isMobile(context)
-          ? const EdgeInsets.all(16)
-          : const EdgeInsets.all(24),
+          ? const EdgeInsets.all(24)
+          : const EdgeInsets.all(32),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 12),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             "Grafik Penjualan",
-            style: TextStyle(
-                fontSize: ResponsiveHelper.isMobile(context) ? 18 : 22,
-                fontWeight: FontWeight.bold),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
           ),
-          Text(
-            "Ringkasan Penjualan Minggu Lalu",
-            style: TextStyle(
-                color: Colors.black38,
-                fontSize: ResponsiveHelper.isMobile(context) ? 12 : 14),
-          ),
-          SizedBox(height: ResponsiveHelper.isMobile(context) ? 16 : 24),
+          const SizedBox(height: 24),
           Expanded(
             child: LineChart(
               LineChartData(
                 minY: 0,
-                gridData: const FlGridData(show: false),
+                maxY: dynamicMaxY,
+                gridData: const FlGridData(show: true, drawVerticalLine: false),
                 borderData: FlBorderData(show: false),
                 lineTouchData: LineTouchData(
                   handleBuiltInTouches: true,
                   touchTooltipData: LineTouchTooltipData(
-                    getTooltipColor: (touchedSpot) => const Color(0xFF4A2419),
+                    getTooltipColor: (touchedSpot) => const Color(0xFF6D4C41),
                     getTooltipItems: (spots) {
                       return spots.map((s) {
                         return LineTooltipItem(
@@ -573,20 +539,20 @@ class _ChartCard extends StatelessWidget {
                           'SAB',
                           'MIN',
                         ];
-                        if (value >= 0 && value < 7) {
+                        int index = value.toInt();
+                        if (index >= 0 && index < 7) {
                           return Padding(
                             padding: const EdgeInsets.only(top: 8),
                             child: Text(
-                              days[value.toInt()],
+                              days[index],
                               style: const TextStyle(
                                 fontSize: 10,
-                                color: Colors.black38,
-                                fontWeight: FontWeight.bold,
+                                color: Colors.grey,
                               ),
                             ),
                           );
                         }
-                        return const Text("");
+                        return const SizedBox();
                       },
                     ),
                   ),
@@ -598,20 +564,12 @@ class _ChartCard extends StatelessWidget {
                       (i) => FlSpot(i.toDouble(), weeklySales[i]),
                     ),
                     isCurved: true,
-                    curveSmoothness: 0.3,
-                    color: const Color(0xFF4A2419),
-                    barWidth: 5,
+                    color: const Color(0xFF6D4C41),
+                    barWidth: 4,
                     dotData: const FlDotData(show: true),
                     belowBarData: BarAreaData(
                       show: true,
-                      gradient: LinearGradient(
-                        colors: [
-                          const Color(0xFF4A2419).withOpacity(0.12),
-                          const Color(0xFF4A2419).withOpacity(0),
-                        ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ),
+                      color: const Color(0xFF6D4C41).withOpacity(0.05),
                     ),
                   ),
                 ],

@@ -240,9 +240,13 @@ class _HomePageState extends State<HomePage> {
       appBar: isMobile
           ? AppBar(
             centerTitle: true,
-              title: const Text(
+              title: Text(
                 'Opini Kopi Kasir',
-                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primary,
+                ),
               ),
               backgroundColor: AppColors.surface,
               foregroundColor: AppColors.primary,

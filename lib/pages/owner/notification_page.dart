@@ -65,21 +65,34 @@ class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isCompact = ResponsiveHelper.isMobile(context);
-    final title = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    final title = Row(
       children: [
-        Text(
-          'Notifikasi Stok',
-          style: TextStyle(
-            fontSize: isCompact ? 24 : 32,
-            fontWeight: FontWeight.bold,
-            color: AppColors.textBrown,
+        if (isCompact) ...[
+          IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: const Icon(Icons.arrow_back, color: AppColors.textBrown),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
           ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          '$unread belum dibaca',
-          style: const TextStyle(color: Colors.black45, fontSize: 14),
+          const SizedBox(width: 12),
+        ],
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Notifikasi Stok',
+              style: TextStyle(
+                fontSize: isCompact ? 20 : 28,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textBrown,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              '$unread belum dibaca',
+              style: TextStyle(color: Colors.black45, fontSize: isCompact ? 13 : 15),
+            ),
+          ],
         ),
       ],
     );

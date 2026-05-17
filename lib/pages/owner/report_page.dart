@@ -20,6 +20,7 @@ class _ReportPageState extends State<ReportPage> {
   final dateFormat = DateFormat('dd MMM yyyy HH:mm', 'id_ID');
 
   String selectedFilter = 'Mingguan';
+  String _chartGrouping = 'Mingguan';
   DateTimeRange? selectedRange;
   bool _isExporting = false;
   Map<String, dynamic>? _latestSummary;
@@ -38,10 +39,19 @@ class _ReportPageState extends State<ReportPage> {
 
   void loadData() {
     final range = getActiveRange();
+    _chartGrouping = selectedFilter;
+
+    if (selectedFilter == 'Kustom' && range != null) {
+      final days = range.duration.inDays;
+      if (days > 90) _chartGrouping = 'Bulanan';
+      else if (days > 30) _chartGrouping = 'Mingguan';
+    }
+
     summaryFuture = service.getSalesSummary(range);
     topProductsFuture = service.getTopProducts(range);
-    chartFuture = service.getChartDataGrouped(range, selectedFilter);
+    chartFuture = service.getChartDataGrouped(range, _chartGrouping);
     orderHistoryFuture = service.getOrderHistory(range);
+    if (mounted) setState(() {});
   }
 
   Future<void> _exportPdf() async {
@@ -132,30 +142,38 @@ class _ReportPageState extends State<ReportPage> {
                   height: 350,
                   child: SfDateRangePicker(
                     selectionMode: DateRangePickerSelectionMode.range,
-
-                    selectionColor: const Color(0xFF6D4C41),
-                    startRangeSelectionColor: const Color(0xFF6D4C41),
-                    endRangeSelectionColor: const Color(0xFF6D4C41),
-                    rangeSelectionColor: const Color(0xFFD7CCC8),
-                    todayHighlightColor: const Color(0xFF6D4C41),
-
+                    selectionColor: const Color(0xFF4A2419),
+                    startRangeSelectionColor: const Color(0xFF4A2419),
+                    endRangeSelectionColor: const Color(0xFF4A2419),
+                    rangeSelectionColor: const Color(0xFF4A2419).withOpacity(0.1),
+                    todayHighlightColor: const Color(0xFF4A2419),
+                    selectionShape: DateRangePickerSelectionShape.circle,
                     monthCellStyle: DateRangePickerMonthCellStyle(
                       todayTextStyle: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
                       todayCellDecoration: BoxDecoration(
-                        color: Color(0xFF6D4C41),
+                        color: Color(0xFF4A2419),
                         shape: BoxShape.circle,
                       ),
                     ),
-
-                    headerStyle: const DateRangePickerHeaderStyle(
+                    yearCellStyle: DateRangePickerYearCellStyle(
+                      todayTextStyle: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      todayCellDecoration: BoxDecoration(
+                        color: Color(0xFF4A2419),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    headerStyle: DateRangePickerHeaderStyle(
                       textAlign: TextAlign.center,
                       textStyle: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
-                        color: Color(0xFF4A2419),
+                        color: const Color(0xFF4A2419),
                       ),
                     ),
 
@@ -255,13 +273,14 @@ class _ReportPageState extends State<ReportPage> {
   }
 
   Widget _buildHeader() {
-    return const Column(
+    final isMobile = ResponsiveHelper.isMobile(context);
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           "Laporan Penjualan",
           style: TextStyle(
-            fontSize: 32,
+            fontSize: isMobile ? 20 : 28,
             fontWeight: FontWeight.bold,
             color: Color(0xFF4B3932),
           ),
@@ -269,56 +288,63 @@ class _ReportPageState extends State<ReportPage> {
         SizedBox(height: 4),
         Text(
           "Pantau laporan bisnis anda.",
-          style: TextStyle(color: Colors.black45, fontSize: 16),
+          style: TextStyle(color: Colors.black45, fontSize: isMobile ? 13 : 15),
         ),
       ],
     );
   }
 
   Widget _buildFilterBar() {
+    final isKustom = selectedFilter == 'Kustom';
     final filters = Wrap(
       spacing: 12,
       runSpacing: 12,
       children: [
         Container(
-          padding: const EdgeInsets.all(4),
+          width: ResponsiveHelper.isMobile(context) ? double.infinity : 300,
+          padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
-            color: Colors.grey.shade200,
-            borderRadius: BorderRadius.circular(12),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14),
           ),
           child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [_pill("Mingguan"), _pill("Bulanan")],
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Expanded(child: Center(child: _pill("Mingguan"))),
+              const SizedBox(width: 4),
+              Expanded(child: _pill("Bulanan")),
+            ],
           ),
         ),
         GestureDetector(
           onTap: _openDatePicker,
           child: Container(
+            width: ResponsiveHelper.isMobile(context) ? double.infinity : null,
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
+              color: isKustom ? const Color(0xFF4A2419) : Colors.white,
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: const Color(0xFF6D4C41).withOpacity(0.2),
+                color: isKustom ? const Color(0xFF4A2419) : const Color(0xFF4A2419).withOpacity(0.2),
               ),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(
+                Icon(
                   Icons.calendar_today,
                   size: 14,
-                  color: Color(0xFF6D4C41),
+                  color: isKustom ? Colors.white : const Color(0xFF4A2419),
                 ),
                 const SizedBox(width: 8),
                 Text(
                   selectedRange == null
                       ? "Pilih Tanggal"
-                      : "${selectedRange!.start.day}/${selectedRange!.start.month} - ...",
-                  style: const TextStyle(
+                      : "${DateFormat('dd/MM').format(selectedRange!.start)} - ${DateFormat('dd/MM').format(selectedRange!.end)}",
+                  style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF6D4C41),
+                    color: isKustom ? Colors.white : const Color(0xFF4A2419),
                   ),
                 ),
               ],
@@ -332,21 +358,30 @@ class _ReportPageState extends State<ReportPage> {
       spacing: 10,
       runSpacing: 10,
       children: [
-        OutlinedButton.icon(
-          onPressed: _isExporting ? null : _exportPdf,
-          icon: const Icon(Icons.picture_as_pdf_outlined, size: 18),
-          label: const Text('PDF'),
-          style: OutlinedButton.styleFrom(
-            foregroundColor: const Color(0xFF4A2419),
+        SizedBox(
+          width: ResponsiveHelper.isMobile(context) ? double.infinity : null,
+          child: OutlinedButton.icon(
+            onPressed: _isExporting ? null : _exportPdf,
+            icon: const Icon(Icons.picture_as_pdf_outlined, size: 18),
+            label: const Text('Ekspor PDF'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: const Color(0xFF4A2419),
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
           ),
         ),
-        ElevatedButton.icon(
-          onPressed: _isExporting ? null : _exportExcel,
-          icon: const Icon(Icons.table_chart_outlined, size: 18),
-          label: const Text('Excel'),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF7A5240),
-            foregroundColor: Colors.white,
+        SizedBox(
+          width: ResponsiveHelper.isMobile(context) ? double.infinity : null,
+          child: OutlinedButton.icon(
+            onPressed: _isExporting ? null : _exportExcel,
+            icon: const Icon(Icons.table_chart_outlined, size: 18),
+            label: const Text('Ekspor Excel'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: const Color(0xFF4A2419),
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
           ),
         ),
       ],
@@ -371,13 +406,17 @@ class _ReportPageState extends State<ReportPage> {
       onTap: () {
         setState(() {
           selectedFilter = label;
+          if (label != 'Kustom') {
+            selectedRange = null;
+          }
           loadData();
         });
       },
       child: Container(
+        alignment: Alignment.center,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isActive ? const Color(0xFF6D4C41) : Colors.transparent,
+          color: isActive ? const Color(0xFF4A2419) : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Text(
@@ -406,7 +445,7 @@ class _ReportPageState extends State<ReportPage> {
               _card(
                 "TOTAL PENJUALAN",
                 CurrencyFormatter.idr(data['total_sales']),
-                true,
+                false,
               ),
               const SizedBox(height: 12),
               _card("TOTAL PESANAN", "${data['total_order']}", false),
@@ -426,7 +465,7 @@ class _ReportPageState extends State<ReportPage> {
               child: _card(
                 "TOTAL PENJUALAN",
                 CurrencyFormatter.idr(data['total_sales']),
-                true,
+                false,
               ),
             ),
             const SizedBox(width: 20),
@@ -448,49 +487,96 @@ class _ReportPageState extends State<ReportPage> {
   }
 
   Widget _card(String title, String value, bool isDark) {
+    final isMobile = ResponsiveHelper.isMobile(context);
     final icon = _summaryIcon(title);
-    final iconColor = isDark ? Colors.white : const Color(0xFF6D4C41);
+    final iconColor = isDark ? Colors.white : const Color(0xFF4A2419);
+    final bgIcon = isDark 
+        ? Colors.white.withOpacity(0.14) 
+        : const Color(0xFFFBE9E7);
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      constraints: isMobile
+          ? const BoxConstraints(minHeight: 80)
+          : const BoxConstraints(minHeight: 160),
+      padding: isMobile
+          ? const EdgeInsets.all(12)
+          : const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF6D4C41) : Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        color: isDark ? const Color(0xFF4A2419) : Colors.white,
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
-          if (!isDark)
-            BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 12),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: isDark
-                  ? Colors.white.withOpacity(0.14)
-                  : const Color(0xFF6D4C41).withOpacity(0.08),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(icon, color: iconColor, size: 20),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            title,
-            style: TextStyle(color: isDark ? Colors.white70 : Colors.grey),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            value,
-            style: TextStyle(
-              color: isDark ? Colors.white : Colors.black,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
+      child: isMobile
+          ? Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(color: bgIcon, shape: BoxShape.circle),
+                  child: Icon(icon, color: iconColor, size: 18),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.white70 : Colors.black38,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        value,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.white : const Color(0xFF4E342E),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(color: bgIcon, shape: BoxShape.circle),
+                  child: Icon(icon, color: iconColor, size: 20),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white70 : Colors.black38,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : const Color(0xFF4E342E),
+                  ),
+                ),
+              ],
+            ),
     );
   }
 
@@ -511,10 +597,8 @@ class _ReportPageState extends State<ReportPage> {
     return FutureBuilder<List<FlSpot>>(
       future: chartFuture,
       builder: (context, snapshot) {
-        if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return _emptyCard("Belum ada data grafik");
-        }
-        if (!snapshot.hasData || snapshot.data!.isEmpty)
+        if (snapshot.connectionState == ConnectionState.waiting) return _emptyCard("Memuat grafik...");
+        if (!snapshot.hasData || snapshot.data!.isEmpty) 
           return _emptyCard("Belum ada data grafik");
 
         double maxDataValue = snapshot.data!
@@ -543,7 +627,7 @@ class _ReportPageState extends State<ReportPage> {
                     borderData: FlBorderData(show: false),
                     lineTouchData: LineTouchData(
                       touchTooltipData: LineTouchTooltipData(
-                        getTooltipColor: (spot) => const Color(0xFF6D4C41),
+                        getTooltipColor: (spot) => const Color(0xFF4A2419),
                         getTooltipItems: (spots) {
                           return spots
                               .map(
@@ -564,14 +648,18 @@ class _ReportPageState extends State<ReportPage> {
                         sideTitles: SideTitles(
                           showTitles: true,
                           reservedSize: 30,
-                          interval: 1,
+                          interval: (_chartGrouping == 'Kustom' && selectedRange != null)
+                              ? (selectedRange!.duration.inDays > 14 ? 5.0 : (selectedRange!.duration.inDays > 7 ? 2.0 : 1.0))
+                              : 1,
                           getTitlesWidget: (val, _) {
-                            if (selectedFilter == 'Bulanan') {
+                            if (_chartGrouping == 'Bulanan') {
                               if (val < 1 || val > 4) return const SizedBox();
                               return Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
                                 child: Text(
-                                  "MINGGU ${val.toInt()}",
+                                  selectedFilter == 'Bulanan' 
+                                    ? "MING ${val.toInt()}"
+                                    : DateFormat('MMM').format(DateTime(2024, val.toInt())),
                                   style: const TextStyle(
                                     fontSize: 10,
                                     color: Colors.grey,
@@ -579,22 +667,24 @@ class _ReportPageState extends State<ReportPage> {
                                 ),
                               );
                             } else {
-                              const days = [
-                                'SENIN',
-                                'SELASA',
-                                'RABU',
-                                'KAMIS',
-                                'JUMAT',
-                                'SABTU',
-                                'MINGGU',
-                              ];
-                              int index = val.toInt();
-                              if (index < 0 || index > 6)
-                                return const SizedBox();
+                              final range = getActiveRange();
+                              if (range == null) return const SizedBox();
+                              
+                              String label = "";
+                              if (_chartGrouping == 'Mingguan' && selectedFilter == 'Kustom') {
+                              
+                                label = "MING ${val.toInt() + 1}";
+                              } else {
+                                final date = range.start.add(Duration(days: val.toInt()));
+                                label = _chartGrouping == 'Mingguan' 
+                                    ? DateFormat('EEE', 'id_ID').format(date).toUpperCase()
+                                    : DateFormat('dd/MM').format(date);
+                              }
+
                               return Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
                                 child: Text(
-                                  days[index],
+                                  label,
                                   style: const TextStyle(
                                     fontSize: 10,
                                     color: Colors.grey,
@@ -619,12 +709,12 @@ class _ReportPageState extends State<ReportPage> {
                       LineChartBarData(
                         spots: snapshot.data!,
                         isCurved: true,
-                        color: const Color(0xFF6D4C41),
+                        color: const Color(0xFF4A2419),
                         barWidth: 4,
                         dotData: FlDotData(show: true),
                         belowBarData: BarAreaData(
                           show: true,
-                          color: const Color(0xFF6D4C41).withOpacity(0.05),
+                          color: const Color(0xFF4A2419).withOpacity(0.05),
                         ),
                       ),
                     ],
@@ -642,10 +732,8 @@ class _ReportPageState extends State<ReportPage> {
     return FutureBuilder<List<Map<String, dynamic>>>(
       future: topProductsFuture,
       builder: (context, snapshot) {
-        if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return _emptyCard("Belum ada data produk");
-        }
-        if (!snapshot.hasData || snapshot.data!.isEmpty)
+        if (snapshot.connectionState == ConnectionState.waiting) return _emptyCard("Memuat produk...");
+        if (!snapshot.hasData || snapshot.data!.isEmpty) 
           return _emptyCard("Belum ada data produk");
 
         final products = snapshot.data!;
@@ -674,14 +762,14 @@ class _ReportPageState extends State<ReportPage> {
                         width: 24,
                         height: 24,
                         decoration: BoxDecoration(
-                          color: const Color(0xFF6D4C41).withOpacity(0.1),
+                          color: const Color(0xFF4A2419).withOpacity(0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Center(
                           child: Text(
                             "$index",
                             style: const TextStyle(
-                              color: Color(0xFF6D4C41),
+                              color: Color(0xFF4A2419),
                               fontWeight: FontWeight.bold,
                               fontSize: 10,
                             ),
@@ -737,12 +825,14 @@ class _ReportPageState extends State<ReportPage> {
 
         final orders = snapshot.data!;
         _latestOrders = orders;
+        final isMobile = ResponsiveHelper.isMobile(context);
 
         return Container(
-          padding: const EdgeInsets.all(24),
+          padding: EdgeInsets.all(isMobile ? 16 : 24),
           decoration: _cardDecoration(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
               const Text(
                 "Riwayat Transaksi",
@@ -755,7 +845,7 @@ class _ReportPageState extends State<ReportPage> {
                   child: Center(child: Text("Belum ada riwayat Transaksi")),
                 )
               else
-                ListView.separated(
+                isMobile ? _buildMobileOrderList(orders) : ListView.separated(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: orders.length,
@@ -769,6 +859,49 @@ class _ReportPageState extends State<ReportPage> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildMobileOrderList(List<Map<String, dynamic>> orders) {
+    return Column(
+      children: orders.map((order) {
+        final payment = _firstPayment(order);
+        final date = DateTime.tryParse((order['created_at'] ?? '').toString());
+        final method = (payment?['payment_method'] ?? '-').toString();
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      (payment?['invoice_code'] ?? '-').toString(),
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                    ),
+                    Text(
+                      date == null ? '-' : DateFormat('dd/MM/yy HH:mm').format(date.toLocal()),
+                      style: const TextStyle(color: Colors.grey, fontSize: 11),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(color: Colors.brown.shade50, borderRadius: BorderRadius.circular(8)),
+                child: Text(method.toUpperCase(), style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color(0xFF4A2419))),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                CurrencyFormatter.idr(order['total_price'] ?? 0),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
     );
   }
 

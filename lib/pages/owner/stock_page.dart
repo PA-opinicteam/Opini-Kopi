@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:opini_kopi/services/export_service.dart';
 import 'package:opini_kopi/providers/notification_provider.dart';
 import 'package:opini_kopi/services/stock_notification_service.dart';
@@ -34,7 +35,7 @@ class _StockPageState extends State<StockPage> {
   Future<void> _refresh() async {
     setState(() => _isLoading = true);
     final list = await _service.getStock();
-    await StockNotificationService.notifyStockRisks(list);
+    StockNotificationService.notifyStockRisks(list); 
     if (mounted) {
       context.read<NotificationProvider>().syncStockRisks(list);
     }
@@ -180,13 +181,13 @@ class _StockPageState extends State<StockPage> {
   }
 
   Widget _buildHeader(bool isCompact) {
-    final title = const Column(
+    final title = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Stok bahan",
+          "Stok Bahan",
           style: TextStyle(
-            fontSize: 32,
+            fontSize: isCompact ? 20 : 28,
             fontWeight: FontWeight.bold,
             color: Color(0xFF4E342E),
           ),
@@ -194,13 +195,13 @@ class _StockPageState extends State<StockPage> {
         SizedBox(height: 4),
         Text(
           "Kelola ketersediaan bahan baku coffee shop.",
-          style: TextStyle(color: Colors.black45, fontSize: 16),
+          style: TextStyle(color: Colors.black45, fontSize: isCompact ? 13 : 15),
         ),
       ],
     );
 
     final searchField = AppSearchBar(
-      hintText: "Cari bahan...",
+      hintText: "Cari Bahan...",
       onChanged: _search,
     );
     final addButton = ElevatedButton.icon(
@@ -231,9 +232,9 @@ class _StockPageState extends State<StockPage> {
         children: [
           title,
           const SizedBox(height: 16),
-          searchField,
-          const SizedBox(height: 12),
           SizedBox(width: double.infinity, child: addButton),
+          const SizedBox(height: 12),
+          searchField,
           const SizedBox(height: 12),
           SizedBox(width: double.infinity, child: exportButton),
         ],
@@ -262,24 +263,24 @@ class _StockPageState extends State<StockPage> {
   }) {
     final cards = [
       _card(
-        "Jumlah Bahan",
+        "JUMLAH BAHAN",
         _data.length.toString(),
         Icons.inventory_2_outlined,
         Colors.brown,
       ),
       _card(
-        "Tingkat Optimal",
+        "TINGKAT OPTIMAL",
         aman.toString(),
         Icons.check_circle_outline,
         Colors.green,
       ),
       _card(
-        "Stok Rendah",
+        "STOK RENDAH",
         rendah.toString(),
         Icons.warning_amber_rounded,
         Colors.orange,
       ),
-      _card("Stok Habis", habis.toString(), Icons.error_outline, Colors.red),
+      _card("STOK HABIS", habis.toString(), Icons.error_outline, Colors.red),
     ];
 
     if (isCompact) {
@@ -311,7 +312,7 @@ class _StockPageState extends State<StockPage> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
+            color: Colors.black.withOpacity(0.03),
             blurRadius: 10,
           ),
         ],
@@ -445,44 +446,97 @@ class _StockPageState extends State<StockPage> {
   }
 
   Widget _card(String title, String val, IconData icon, Color color) {
+    final isMobile = ResponsiveHelper.isMobile(context);
+    final iconColor = const Color(0xFF4A2419);
+    final bgIcon = const Color(0xFFFBE9E7);
+
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      constraints: isMobile
+          ? const BoxConstraints(minHeight: 80)
+          : const BoxConstraints(minHeight: 178),
+      padding: isMobile
+          ? const EdgeInsets.all(12)
+          : const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey[200]!),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.05),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(icon, color: color, size: 20),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            title,
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            val,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 32,
-              color: color,
-            ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
+      child: isMobile
+          ? Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(color: bgIcon, shape: BoxShape.circle),
+                  child: Icon(
+                    icon,
+                    color: iconColor,
+                    size: 18,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black38,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        val,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: color,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(color: bgIcon, shape: BoxShape.circle),
+                  child: Icon(icon, color: iconColor, size: 20),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black38,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  val,
+                  style: TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                  ),
+                ),
+              ],
+            ),
     );
   }
 
@@ -576,16 +630,22 @@ class _StockPageState extends State<StockPage> {
   }
 
   Widget _ingredientInfo(Map<String, dynamic> item, double stock) {
+    final imageUrl = item['image_url']?.toString() ?? '';
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CircleAvatar(
-          backgroundColor: Colors.grey[100],
-          child: Icon(
-            Icons.opacity,
-            size: 18,
-            color: stock == 0 ? Colors.red : Colors.green,
-          ),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: imageUrl.isNotEmpty
+              ? FancyShimmerImage(
+                  imageUrl: imageUrl,
+                  width: 44,
+                  height: 44,
+                  boxFit: BoxFit.cover,
+                  errorWidget: _buildPlaceholderIcon(stock),
+                )
+              : _buildPlaceholderIcon(stock),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -611,6 +671,19 @@ class _StockPageState extends State<StockPage> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildPlaceholderIcon(double stock) {
+    return Container(
+      width: 44,
+      height: 44,
+      color: Colors.grey[100],
+      child: Icon(
+        Icons.inventory_2_outlined,
+        size: 20,
+        color: stock == 0 ? Colors.red : Colors.green,
+      ),
     );
   }
 
@@ -658,7 +731,7 @@ class _StockPageState extends State<StockPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(

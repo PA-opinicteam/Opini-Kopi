@@ -23,6 +23,13 @@ class _MenuPageState extends State<MenuPage> {
   String _search = "";
   String _category = "Semua";
 
+  final List<String> _categories = const [
+    "Semua",
+    "Coffee",
+    "Non Coffee",
+    "Snack",
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -124,25 +131,61 @@ class _MenuPageState extends State<MenuPage> {
   }
 
   Widget _buildHeader(bool isCompact) {
-    final title = const Column(
+    final title = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           "Manajemen Menu",
           style: TextStyle(
-            fontSize: 28,
+            fontSize: isCompact ? 20 : 28,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF4E342E),
+            color: const Color(0xFF4E342E),
           ),
         ),
-        SizedBox(height: 4),
+        const SizedBox(height: 4),
         Text(
           "Atur daftar menu makanan dan minuman anda.",
-          style: TextStyle(color: Colors.black45, fontSize: 16),
+          style: TextStyle(color: Colors.black45, fontSize: isCompact ? 13 : 15),
         ),
       ],
     );
-    final button = ElevatedButton.icon(
+    if (isCompact) {
+      final button = ElevatedButton.icon(
+        onPressed: () async {
+          final res = await showDialog(
+            context: context,
+            builder: (_) => const AddMenuDialog(),
+          );
+          if (res == true) _fetch();
+        },
+        icon: const Icon(Icons.add, size: 18),
+        label: const Text("Tambah Menu"),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF4A2419),
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          title,
+          const SizedBox(height: 16),
+          SizedBox(width: double.infinity, child: button),
+        ],
+      );
+    }
+
+    final searchField = AppSearchBar(
+      hintText: "Cari Menu...",
+      onChanged: (v) {
+        _search = v;
+        _applyFilter();
+      },
+    );
+
+    final addButton = ElevatedButton.icon(
       onPressed: () async {
         final res = await showDialog(
           context: context,
@@ -155,29 +198,38 @@ class _MenuPageState extends State<MenuPage> {
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color(0xFF4A2419),
         foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
 
-    if (isCompact) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          title,
-          const SizedBox(height: 16),
-          SizedBox(width: double.infinity, child: button),
-        ],
-      );
-    }
-
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [title, button],
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(child: title),
+        const SizedBox(width: 16),
+        SizedBox(width: 280, child: searchField),
+        const SizedBox(width: 12),
+        addButton,
+      ],
     );
   }
 
   Widget _buildSearchFilter(bool isCompact) {
+    if (!isCompact) {
+      return FilterBar<String>(
+        value: _category,
+        items: _categories,
+        labelBuilder: (value) => value,
+        onChanged: (v) {
+          setState(() {
+            _category = v;
+            _applyFilter();
+          });
+        },
+      );
+    }
+
     final search = AppSearchBar(
       hintText: "Cari Menu...",
       onChanged: (v) {
@@ -185,9 +237,10 @@ class _MenuPageState extends State<MenuPage> {
         _applyFilter();
       },
     );
+
     final filter = FilterBar<String>(
       value: _category,
-      items: const ["Semua", "Coffee", "Non Coffee", "Snack"],
+      items: _categories,
       labelBuilder: (value) => value,
       onChanged: (v) {
         setState(() {
@@ -199,20 +252,68 @@ class _MenuPageState extends State<MenuPage> {
 
     if (isCompact) {
       return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           search,
           const SizedBox(height: 12),
-          Align(alignment: Alignment.centerLeft, child: filter),
+          SizedBox(
+            height: 48,
+            child: _buildMobileFilterBar(),
+          ),
         ],
       );
     }
 
     return Row(
       children: [
-        Expanded(child: search),
+        SizedBox(width: 280, child: search),
         const SizedBox(width: 16),
         filter,
       ],
+    );
+  }
+
+  Widget _buildMobileFilterBar() {
+    return Container(
+      height: 48,
+      padding: const EdgeInsets.symmetric(horizontal: 14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.black12),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: _category,
+          isExpanded: true,
+          icon: const Icon(
+            Icons.keyboard_arrow_down_rounded,
+            color: Color(0xFF4A2419),
+          ),
+          style: const TextStyle(
+            color: Color(0xFF2B1B18),
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+          ),
+          dropdownColor: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          items: _categories
+              .map(
+                (value) => DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                ),
+              )
+              .toList(),
+          onChanged: (v) {
+            if (v == null) return;
+            setState(() {
+              _category = v;
+              _applyFilter();
+            });
+          },
+        ),
+      ),
     );
   }
 
@@ -447,6 +548,7 @@ class _MenuPageState extends State<MenuPage> {
       ),
     ),
   );
+
   Widget _status(bool active) => Row(
     mainAxisSize: MainAxisSize.min,
     children: [

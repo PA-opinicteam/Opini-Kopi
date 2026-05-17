@@ -18,7 +18,6 @@ class _AddStockDialogState extends State<AddStockDialog> {
 
   late TextEditingController _nameCtrl;
   late TextEditingController _stockCtrl;
-  late TextEditingController _minimumStockCtrl;
 
   String _selectedUnit = "Kg";
   Uint8List? _imageBytes;
@@ -38,9 +37,6 @@ class _AddStockDialogState extends State<AddStockDialog> {
     _stockCtrl = TextEditingController(
       text: widget.item?['stock']?.toString() ?? "",
     );
-    _minimumStockCtrl = TextEditingController(
-      text: widget.item?['minimum_stock']?.toString() ?? "",
-    );
     _currentImageUrl = widget.item?['image_url']?.toString();
 
     if (widget.item?['unit'] != null) {
@@ -52,7 +48,6 @@ class _AddStockDialogState extends State<AddStockDialog> {
   void dispose() {
     _nameCtrl.dispose();
     _stockCtrl.dispose();
-    _minimumStockCtrl.dispose();
     super.dispose();
   }
 
@@ -107,8 +102,6 @@ class _AddStockDialogState extends State<AddStockDialog> {
       'product_name': InputSanitizer.sanitizeName(_nameCtrl.text),
       'stock': double.parse(_stockCtrl.text),
       'unit': _selectedUnit,
-      if (_minimumStockCtrl.text.trim().isNotEmpty)
-        'minimum_stock': double.parse(_minimumStockCtrl.text),
       if (_imageBytes != null) '_imageBytes': _imageBytes,
     });
   }
@@ -282,7 +275,7 @@ class _AddStockDialogState extends State<AddStockDialog> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        "Jumlah Awal",
+                        "Jumlah",
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           color: Color(0xFF4A2419),
@@ -299,27 +292,6 @@ class _AddStockDialogState extends State<AddStockDialog> {
                               v,
                               field: "Jumlah",
                             ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "Minimum Stok",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF4A2419),
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      TextFormField(
-                        controller: _minimumStockCtrl,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [InputSanitizer.numericFormatter],
-                        decoration: inputDeco("Opsional"),
-                        validator: _minimumStockValidator,
                       ),
                     ],
                   ),
@@ -355,7 +327,7 @@ class _AddStockDialogState extends State<AddStockDialog> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text(
-                              "Jumlah Awal",
+                              "Jumlah",
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: Color(0xFF4A2419),
@@ -384,31 +356,6 @@ class _AddStockDialogState extends State<AddStockDialog> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text(
-                              "Minimum Stok",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xFF4A2419),
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            TextFormField(
-                              controller: _minimumStockCtrl,
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                InputSanitizer.numericFormatter,
-                              ],
-                              decoration: inputDeco("Opsional"),
-                              validator: _minimumStockValidator,
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
                               "Satuan",
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
@@ -420,15 +367,9 @@ class _AddStockDialogState extends State<AddStockDialog> {
                               value: _selectedUnit,
                               decoration: inputDeco("Pilih Satuan"),
                               items: ["Kg", "L", "Gram", "Pcs"]
-                                  .map(
-                                    (e) => DropdownMenuItem(
-                                      value: e,
-                                      child: Text(e),
-                                    ),
-                                  )
+                                  .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                                   .toList(),
-                              onChanged: (v) =>
-                                  setState(() => _selectedUnit = v!),
+                              onChanged: (v) => setState(() => _selectedUnit = v!),
                             ),
                           ],
                         ),
@@ -534,14 +475,6 @@ class _AddStockDialogState extends State<AddStockDialog> {
         ),
       ),
     );
-  }
-
-  String? _minimumStockValidator(String? value) {
-    if (value == null || value.trim().isEmpty) return null;
-    final parsed = double.tryParse(value);
-    if (parsed == null) return "Harus angka";
-    if (parsed < 0) return "Tidak boleh minus";
-    return null;
   }
 
   Widget _buildImagePicker() {

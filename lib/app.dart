@@ -17,8 +17,8 @@ class MainApp extends StatelessWidget {
       builder: (context, snapshot) {
         final mode = snapshot.data ?? AmbientLightMode.normal;
         final overlayColor = switch (mode) {
-          AmbientLightMode.dim => Colors.black.withValues(alpha: 0.04),
-          AmbientLightMode.bright => Colors.white.withValues(alpha: 0.05),
+          AmbientLightMode.dim => Colors.black.withOpacity(0.04),
+          AmbientLightMode.bright => Colors.white.withOpacity(0.05),
           AmbientLightMode.normal => Colors.transparent,
         };
 
